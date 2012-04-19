@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Persistanttest
+Bundle-SymbolicName: org.juxtapose.streamline.laboration
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.juxtapose.streamline;bundle-version="1.0.0"
+Export-Package: org.juxtapose.streamline.util.lock
+

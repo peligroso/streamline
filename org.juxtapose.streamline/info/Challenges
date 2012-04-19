@@ -1,0 +1,22 @@
+Update overtake
+ 
+ update		A		B
+ 			\		/
+ 				Obj1
+ 				A||B
+ 				 ||
+				Obj2
+			
+			B overtakes A between update from Obj1 to Obj2
+			Obj2 will be recalculated with data from "Obj1 update B" and then recalculated from "Obj2 update A"
+			Leaving Obj2 in a state calculated from "Obj2 update A", which is stale.
+				
+Deadlock due to Transaction within Transaction Within Transaction
+Is this a problem? or will it simply work?
+
+Reference to Reference eternal loop
+
+Race condition in Reference links
+	If someone adds a reference and then removes a reference on two different threads the remove might be done before the add
+	Since references are created/disposed outside of locking scheme.
+	That will may cause a long chain of events to take place within the lock.

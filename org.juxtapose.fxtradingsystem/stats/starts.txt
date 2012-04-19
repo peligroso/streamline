@@ -1,0 +1,280 @@
+MAX 200 
+warmup 180
+
+updates = 200
+
+timebetween = 2 sec.
+
+closes and restarts for every RFQ. First takes suffers bigtime.
+
+10000 : 0
+20000 : 0
+30000 : 0
+40000 : 0
+60000 : 0
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 1
+2000000 : 1
+5000000 : 10
+1000000000 : 7
+
+Undate stats: 
+10000 : 579
+20000 : 2972
+30000 : 149
+40000 : 13
+60000 : 50
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+
+
+MAX 200 
+warmup 180
+
+updates = 200
+
+timebetween = 0.6 sec.
+
+RFQ will overlap and leave Price subscription open. First take is extremely fast.
+Updates is a little bit slower due to a 2 way listener update.
+
+10000 : 1
+20000 : 16
+30000 : 2
+40000 : 0
+60000 : 0
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+Undate stats: 
+10000 : 329
+20000 : 2861
+30000 : 500
+40000 : 21
+60000 : 49
+80000 : 2
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+
+long maxTimeBetweenRFQ = 5l * 1000000l;
+	
+	int maxRFQs = 3500;
+	int warmup = 2000;
+	
+	int avgPriceUpdates = 200;
+	
+	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}};
+	
+	Slow update times due to not so many ccy pairs. -> queued updates
+	
+	RFQ alive time is 4 Sec. in 4 Sec 50 RFQ's per pair is initiated.
+	So queues of 50 should be normal. each RFQ process is approx. 5 us so updates between 20 - 250 us, avg update should be 115 us.
+	
+	This result is actually somewhat better.
+
+10000 : 343
+15000 : 184
+20000 : 629
+30000 : 332
+40000 : 11
+60000 : 0
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+Undate stats: 
+10000 : 550
+15000 : 4151
+20000 : 8302
+30000 : 20110
+40000 : 22175
+60000 : 46198
+80000 : 48964
+100000 : 49242
+150000 : 89494
+200000 : 5571
+300000 : 525
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 52
+1000000000 : 0
+
+
+int maxRFQs = 3500;
+	int warmup = 2000;
+	
+	int avgPriceUpdates = 200;
+	
+	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
+	
+	More instruments yield negligible improvements, since each instrument now has fewer updates and hence RFQ's have longer lifetimes.
+	Results should be approx. as previous
+	
+FirstTake stats: 
+10000 : 298
+15000 : 446
+20000 : 409
+30000 : 344
+40000 : 2
+60000 : 0
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+Undate stats: 
+10000 : 620
+15000 : 4308
+20000 : 8577
+30000 : 19829
+40000 : 21314
+60000 : 43388
+80000 : 43368
+100000 : 41333
+150000 : 84648
+200000 : 24745
+300000 : 3067
+500000 : 10
+1000000 : 0
+2000000 : 0
+5000000 : 61
+1000000000 : 42
+
+
+
+long maxTimeBetweenRFQ = 10l * 1000000l;
+	
+	int maxRFQs = 3500;
+	int warmup = 2000;
+	
+	int avgPriceUpdates = 100;
+	
+	less RFQ's and smaller alive time reduces listener queues and improves performance
+
+
+10000 : 221
+15000 : 601
+20000 : 334
+30000 : 322
+40000 : 11
+60000 : 9
+80000 : 1
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0
+
+Undate stats: 
+10000 : 1998
+15000 : 11730
+20000 : 17597
+30000 : 35166
+40000 : 33743
+60000 : 34253
+80000 : 8361
+100000 : 1817
+150000 : 594
+200000 : 91
+300000 : 32
+500000 : 15
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 15
+
+	long maxTimeBetweenRFQ = 5l * 1000000l;
+	
+	int maxRFQs = 3500;
+	int warmup = 2000;
+	
+	int avgPriceUpdates = 5;
+	
+	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
+	
+	quick to DR after only 2 updates almost eliminates subscriber queues, causing prices to sometimes unload and First takes to soar.
+	Update performance is really good. Might have expected lock contention between updates / subscribe / unsubscribe to cause more latency.
+	
+FirstTake stats: 
+10000 : 14
+15000 : 106
+20000 : 212
+30000 : 113
+40000 : 15
+60000 : 5
+80000 : 0
+100000 : 0
+150000 : 1
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 11
+5000000 : 36
+1000000000 : 986
+
+Undate stats: 
+10000 : 142
+15000 : 1104
+20000 : 1074
+30000 : 660
+40000 : 29
+60000 : 5
+80000 : 0
+100000 : 0
+150000 : 0
+200000 : 0
+300000 : 0
+500000 : 0
+1000000 : 0
+2000000 : 0
+5000000 : 0
+1000000000 : 0

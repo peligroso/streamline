@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.juxtapose.fxtradingsystem.stm">
+   <implementation class="org.juxtapose.streamline.stm.osgi.BSTMActivator"/>
+   <service>
+      <provide interface="org.juxtapose.streamline.stm.ISTM"/>
+   </service>
+   <property name="PROP_DATA_FACTORY_CLASS" type="String" value="org.juxtapose.streamline.stm.PublishedDataFactory"/>
+</scr:component>
