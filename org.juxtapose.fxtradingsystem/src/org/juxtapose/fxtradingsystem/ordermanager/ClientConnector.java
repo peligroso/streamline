@@ -28,10 +28,10 @@ public class ClientConnector
 	
 	long maxTimeBetweenRFQ = 5l * 1000000l;
 	
-	int maxRFQs = 5000;
-	int warmup = 4000;
+	int maxRFQs = 3500;
+	int warmup = 2000;
 	
-	int avgPriceUpdates = 20;
+	int avgPriceUpdates = 5;
 	
 	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
 	
@@ -45,7 +45,7 @@ public class ClientConnector
 		initStatsContainer( updateToCount );
 		initStatsContainer( firstTakeToCount );
 		
-		executor = new ScheduledThreadPoolExecutor( 1 );
+		executor = new ScheduledThreadPoolExecutor( 10 );
 	}
 	
 	private void initStatsContainer( Map<Long, Long> inMap )
@@ -144,6 +144,12 @@ public class ClientConnector
 		};
 		
 		disruptor = new Disruptor<ClientEvent>(ClientEvent.EVENT_FACTORY, executor, new MultiThreadedClaimStrategy(2048), new SleepingWaitStrategy());
+		
+		/**Code to use multiple consumers for disruptor**/
+//		ClientEventHandler handler1 = new ClientEventHandler(0, 2);
+//		ClientEventHandler handler2 = new ClientEventHandler(1, 2);
+//		disruptor.handleEventsWith(handler1, handler2);
+		
 		disruptor.handleEventsWith( clientEventHandler );
 		ringBuffer = disruptor.start();
 		
@@ -209,7 +215,7 @@ public class ClientConnector
 	{
 		lastRFQTime = System.nanoTime();
 		String[] instrument = instruments[ rand.nextInt( instruments.length ) ];
-		RFQMessage rfq = new RFQMessage( instrument[0], instrument[1], FXDataConstants.STATE_INSTRUMENT_FWD, null, null, tag++ );
+		RFQMessage rfq = new RFQMessage( instrument[0], instrument[1], FXDataConstants.STATE_INSTRUMENT_SPOT, null, null, tag++ );
 		manager.sendRFQ( rfq );
 	}
 	
