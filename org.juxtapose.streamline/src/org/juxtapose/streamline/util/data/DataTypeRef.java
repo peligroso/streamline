@@ -1,6 +1,7 @@
 package org.juxtapose.streamline.util.data;
 
 import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.stm.DataSerializer;
 import org.juxtapose.streamline.util.IPublishedData;
 
 /**
@@ -29,6 +30,20 @@ public class DataTypeRef extends DataType<IDataKey>
 		return referenceData;
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.data.DataType#serialize(java.lang.Integer)
+	 */
+	public byte[] serialize( Integer inField )
+	{
+		//[Field, REF, mapByteLength, mapBytes]
+		byte[] mapBytes = DataSerializer.serialize( referenceData.getDataMap() );
+		byte[] bytes = new byte[mapBytes.length+9];
+		serializeInt( bytes, 0, inField );
+		bytes[4] = REF;
+		serializeInt( bytes, 5, mapBytes.length );
+		System.arraycopy( mapBytes, 0, bytes, 9, mapBytes.length );
+		
+		return bytes;
+	}
 
 }

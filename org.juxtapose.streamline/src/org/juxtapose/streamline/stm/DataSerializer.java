@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeLong;
+import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -121,7 +123,16 @@ public class DataSerializer
 		map = map.assoc( 4, new DataTypeBoolean( false ) );
 		map = map.assoc( 5, new DataTypeLong( 12345l ) );
 		map = map.assoc( 1, new DataTypeLong( 123456789l ) );
-		map = map.assoc( 6, new DataTypeBigDecimal( new BigDecimal( 1.23456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
+		map = map.assoc( 6, new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
+		
+		IPersistentMap<Integer, DataType<?>> subMap = PersistentHashMap.emptyMap();
+		subMap = subMap.assoc( 1, new DataTypeLong( 1l ) );
+		subMap = subMap.assoc( 2, new DataTypeBoolean( false ) );
+		
+		PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
+		DataTypeRef ref = new DataTypeRef(null, pd);
+		
+		map = map.assoc( 7, ref );
 		
 		byte[] bytes = serialize( map );
 		
@@ -132,7 +143,17 @@ public class DataSerializer
 		while( iter.hasNext() )
 		{
 			Map.Entry<Integer,DataType<?>> entry = iter.next();
-			System.out.println("key: "+entry.getKey()+" has value: "+entry.getValue());
+			if( entry.getValue() instanceof DataTypeRef )
+			{
+				Iterator<Map.Entry<Integer,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
+				while( subIter.hasNext() )
+				{
+					Map.Entry<Integer,DataType<?>> subEntry = subIter.next();
+					System.out.println("---key: "+subEntry.getKey()+" has value: "+subEntry.getValue());
+				}
+			}
+			else
+				System.out.println("key: "+entry.getKey()+" has value: "+entry.getValue());
 		}
 		
 	}
@@ -300,17 +321,38 @@ public class DataSerializer
 			else if( inBytes[cursor] == BIG_DEC )
 			{
 				cursor++;
-				int stringLenght = (int)numberFromByteArray( inBytes, cursor, 4, null );
+				int intLenght = (int)numberFromByteArray( inBytes, cursor, 4, null );
 				cursor+= 4;
 				
-				byte[] bdBytes = ArrayUtils.subarray( inBytes, cursor, cursor+stringLenght );
+				byte[] bdBytes = ArrayUtils.subarray( inBytes, cursor, cursor+intLenght );
 				
 				BigInteger bi = new BigInteger(bdBytes);
-				DataTypeBigDecimal bd = new DataTypeBigDecimal( new BigDecimal(bi, 0) );
 				
 				cursor += bdBytes.length;
 				
+				int scale = (int)numberFromByteArray( inBytes, cursor, 4, null );
+				DataTypeBigDecimal bd = new DataTypeBigDecimal( new BigDecimal(bi, scale) );
+				
+				cursor += 4;
+				
 				map = map.assoc( field, bd );
+			}
+			else if( inBytes[cursor] == REF )
+			{
+				cursor++;
+				int mapLenght = (int)numberFromByteArray( inBytes, cursor, 4, null );
+				cursor+= 4;
+				
+				byte[] mapBytes = ArrayUtils.subarray( inBytes, cursor, cursor+mapLenght );
+				
+				IPersistentMap<Integer, DataType<?>> subMap = unSerialize( mapBytes );
+				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
+				
+				DataTypeRef ref = new DataTypeRef(null, pd);
+				
+				map = map.assoc( field, ref );
+				
+				cursor+= mapBytes.length;
 			}
 		}
 		while( cursor < inBytes.length );

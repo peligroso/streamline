@@ -17,14 +17,17 @@ public class DataTypeBigDecimal extends DataType<BigDecimal>{
 	
 	public final byte[] serialize( Integer inField )
 	{
+		//[Field, BIG_DEC, unscaledValue, lengthOfUnscaledValue, scale]
 		BigInteger theInt = get().unscaledValue();
-		byte[] bdBytes = theInt.toByteArray();
-		byte[] bytes = new byte[bdBytes.length+9];
+		int scale = get().scale();
+		
+		byte[] intBytes = theInt.toByteArray();
+		byte[] bytes = new byte[intBytes.length+13];
 		serializeInt( bytes, 0, inField );
 		bytes[4] = BIG_DEC;
-		serializeInt( bytes, 5, bdBytes.length );
-		System.arraycopy( bdBytes, 0, bytes, 9, bdBytes.length );
-		
+		serializeInt( bytes, 5, intBytes.length );
+		System.arraycopy( intBytes, 0, bytes, 9, intBytes.length );
+		serializeInt( bytes, intBytes.length+9, scale);
 		return bytes;
 		
 	}
