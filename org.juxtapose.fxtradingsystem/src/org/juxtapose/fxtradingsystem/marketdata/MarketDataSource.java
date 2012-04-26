@@ -69,9 +69,9 @@ public class MarketDataSource
 							if( instDef == null )
 								continue;
 							
-							QPMessage quoteMessage = new QPMessage( QPMessage.QUOTE, instDef.ccy1, instDef.ccy2, instDef.period, bid, ask );
+							QPMessage quoteMessage = new QPMessage( QPMessage.QUOTE, instDef.ccy1, instDef.ccy2, instDef.period, bid, ask, System.nanoTime() );
 							
-							sub.marketDataUpdated( quoteMessage );
+							sub.marketDataUpdated( quoteMessage, name.hashCode() );
 
 							int sleepTime = rand.nextInt( 10 );
 

@@ -16,13 +16,13 @@ public class RunnableEventHandler implements EventHandler<RunnableEvent> {
 	@Override
 	public void onEvent(RunnableEvent event, long sequence, boolean endOfBatch)throws Exception 
 	{
-		if( event.getRunnable() == null )
+		if( event.getExecutable() == null )
 			return;
 		
 		if ( !((event.getHash() % numberOfConsumers) == ordinal))
 			 return;
 		
-		event.getRunnable().run();
+		event.getExecutable().run();
 	}
 
 }

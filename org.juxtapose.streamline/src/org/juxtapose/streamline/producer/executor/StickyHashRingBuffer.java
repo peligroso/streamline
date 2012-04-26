@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.MultiThreadedClaimStrategy;
 import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.SleepingWaitStrategy;
+import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 
 /**
@@ -24,7 +24,7 @@ public class StickyHashRingBuffer
 	 */
 	public StickyHashRingBuffer( int inEventHandlers, Executor inExecutor )
 	{
-		Disruptor<RunnableEvent> disruptor = new Disruptor<RunnableEvent>(RunnableEvent.EVENT_FACTORY, inExecutor, new MultiThreadedClaimStrategy( RING_SIZE ), new SleepingWaitStrategy());
+		Disruptor<RunnableEvent> disruptor = new Disruptor<RunnableEvent>(RunnableEvent.EVENT_FACTORY, new ScheduledThreadPoolExecutor( inEventHandlers ), new MultiThreadedClaimStrategy( RING_SIZE ), new YieldingWaitStrategy());
 		EventHandler<RunnableEvent>[] eventHandlers = new RunnableEventHandler[inEventHandlers];
 		
 		for( int i = 0; i < inEventHandlers; i++ )
@@ -34,12 +34,11 @@ public class StickyHashRingBuffer
 		
 		disruptor.handleEventsWith( eventHandlers );
 		
-		ringBuffer = disruptor.getRingBuffer();
+		ringBuffer = disruptor.start();
 	}
 	
-	public void execute( StickyRunnable inRunnable )
+	public void execute( IExecutable inRunnable )
 	{
-		
 		long sequence = ringBuffer.next();
 		RunnableEvent event = ringBuffer.get(sequence);
 

@@ -18,17 +18,17 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 	}
 	
 	
-	public void execute( final Runnable inRunnable, int inPrio )
+	public void execute( final IExecutable inExecutable, int inPrio )
 	{
 		ThreadPoolExecutor executor = inPrio == IExecutor.HIGH ? highThroughputExecutor : lowThroughputExecutor;
-		executor.execute( inRunnable );
+		executor.execute( inExecutable );
 	}
 	
 	/**
 	 * @param inRunnable
 	 * @param inSequenceKey
 	 */
-	public void execute( final Runnable inRunnable, int inPrio, final String inSequenceKey )
+	public void execute( final IExecutable inExecutable, int inPrio, final String inSequenceKey )
 	{
 		ThreadPoolExecutor executor = inPrio == IExecutor.HIGH ? highThroughputExecutor : lowThroughputExecutor;
 		executor.execute( new Runnable(){
@@ -38,7 +38,7 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 			{
 				synchronized (inSequenceKey.intern())
 				{
-					inRunnable.run();
+					inExecutable.run();
 				}
 			}
 
@@ -49,7 +49,7 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 	 * @param inRunnable
 	 * @param inSequenceLock
 	 */
-	public void executeBlocking( final Runnable inRunnable, int inPrio, final ReentrantLock inSequenceLock )
+	public void executeBlocking( final IExecutable inExecutable, int inPrio, final ReentrantLock inSequenceLock )
 	{
 		ThreadPoolExecutor executor = inPrio == IExecutor.HIGH ? highThroughputExecutor : lowThroughputExecutor;
 		executor.execute( new Runnable(){
@@ -59,7 +59,7 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 			{
 				inSequenceLock.lock();
 				{
-					inRunnable.run();
+					inExecutable.run();
 				}
 				inSequenceLock.unlock();
 			}
@@ -70,9 +70,9 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 	 * @param inRunnable
 	 * @param inSequenceLock
 	 */
-	public void scheduleExecution( final Runnable inRunnable, int inPrio, long inTime, TimeUnit inTimeUnit )
+	public void scheduleExecution( final IExecutable inExecutable, int inPrio, long inTime, TimeUnit inTimeUnit )
 	{
 		ScheduledExecutorService executor = inPrio == IExecutor.HIGH ? highTPScheduledExecutorService : lowTPScheduledExecutorService;
-		executor.schedule( inRunnable, inTime, inTimeUnit );
+		executor.schedule( inExecutable, inTime, inTimeUnit );
 	}
 }

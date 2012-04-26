@@ -17,6 +17,8 @@ public class QPMessage
 	
 	public final Double bid;
 	public final Double ask;
+	
+	public final long timestamp;
 		
 	public QPMessage( String inType, String inCcy1, String inCcy2, String inPeriod )
 	{
@@ -26,6 +28,7 @@ public class QPMessage
 		period = inPeriod;
 		bid = null;
 		ask = null;
+		timestamp = 0;
 	}
 	
 	public QPMessage( String inType, String inCcy1, String inCcy2, String inPeriod, Double inBid, Double inAsk )
@@ -36,6 +39,18 @@ public class QPMessage
 		period = inPeriod;
 		bid = inBid;
 		ask = inAsk;
+		timestamp = 0;
+	}
+	
+	public QPMessage( String inType, String inCcy1, String inCcy2, String inPeriod, Double inBid, Double inAsk, long inTimeStamp )
+	{
+		type = inType;
+		ccy1 = inCcy1;
+		ccy2 = inCcy2;
+		period = inPeriod;
+		bid = inBid;
+		ask = inAsk;
+		timestamp = inTimeStamp;
 	}
 	
 	public QPMessage( String inMessage )
@@ -56,6 +71,7 @@ public class QPMessage
 			bid = null;
 			ask = null;
 		}
+		timestamp = 0;
 	}
 	
 	public String toString()

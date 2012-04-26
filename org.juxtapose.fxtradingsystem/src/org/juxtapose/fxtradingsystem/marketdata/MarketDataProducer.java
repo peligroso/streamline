@@ -2,6 +2,9 @@ package org.juxtapose.fxtradingsystem.marketdata;
 
 import org.juxtapose.streamline.producer.DataProducer;
 import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.executor.Executable;
+import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
@@ -124,7 +127,7 @@ public class MarketDataProducer extends DataProducer implements IMarketDataSubsc
 				
 				Long timeStamp = System.nanoTime();
 				
-				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( timeStamp ));
+				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( inQuote.timestamp ));
 				
 				if( getStatus() != Status.OK )
 					setStatus( Status.OK );
@@ -132,9 +135,18 @@ public class MarketDataProducer extends DataProducer implements IMarketDataSubsc
 		});
 	}
 	@Override
-	public void marketDataUpdated(QPMessage inMessage)
+	public void marketDataUpdated( final QPMessage inMessage, final int inHash )
 	{
-		parseQuote( inMessage );
+		stm.execute( new Executable( inHash ) {
+			
+			@Override
+			public void run() 
+			{
+				parseQuote( inMessage );
+			}
+			
+		}, IExecutor.HIGH );
+		
 	}
 	
 }

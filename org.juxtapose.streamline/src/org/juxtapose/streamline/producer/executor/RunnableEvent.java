@@ -8,13 +8,13 @@ import com.lmax.disruptor.EventFactory;
  */
 public class RunnableEvent 
 {
-	private StickyRunnable runnable;
+	private IExecutable runnable;
 	
 	/**
 	 * @param inRun
 	 * @param inHash
 	 */
-	public void setRunnable( StickyRunnable inRun )
+	public void setRunnable( IExecutable inRun )
 	{
 		runnable = inRun;
 	}
@@ -22,7 +22,7 @@ public class RunnableEvent
 	/**
 	 * @return
 	 */
-	public Runnable getRunnable()
+	public IExecutable getExecutable()
 	{
 		return runnable;
 	}

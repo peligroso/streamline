@@ -2,5 +2,5 @@ package org.juxtapose.fxtradingsystem.marketdata;
 
 public interface IMarketDataSubscriber
 {
-	public void marketDataUpdated( QPMessage inMessage );
+	public void marketDataUpdated( QPMessage inMessage, int inHash );
 }

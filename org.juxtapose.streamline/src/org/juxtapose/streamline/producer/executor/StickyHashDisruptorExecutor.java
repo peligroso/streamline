@@ -24,30 +24,27 @@ public class StickyHashDisruptorExecutor extends Executor implements IExecutor {
 	
 	
 	@Override
-	public void execute(Runnable inRunnable, int inPrio) 
+	public void execute(IExecutable inExecutable, int inPrio) 
 	{
-		StickyRunnable sr = (StickyRunnable)inRunnable;
-		
 		StickyHashRingBuffer ringBuffer = inPrio == IExecutor.HIGH ? highTP_ringBuffer: lowTP_ringBuffer;
-		ringBuffer.execute( sr );
+		ringBuffer.execute( inExecutable );
 	}
 
 	@Override
-	public void execute(Runnable inRunnable, int inPrio, String inSequenceKey) 
+	public void execute(IExecutable inExecutable, int inPrio, String inSequenceKey) 
 	{
-		execute( inRunnable, inPrio );
+		execute( inExecutable, inPrio );
 	}
 
 	@Override
-	public void executeBlocking(Runnable inRunnable, int inPrio, ReentrantLock inSequenceLock) 
+	public void executeBlocking(IExecutable inExecutable, int inPrio, ReentrantLock inSequenceLock) 
 	{
-		StickyRunnable sr = (StickyRunnable)inRunnable;
 		StickyHashRingBuffer ringBuffer = inPrio == IExecutor.HIGH ? blockingHTP_ringBuffer : blockingHTP_ringBuffer;
-		ringBuffer.execute( sr );
+		ringBuffer.execute( inExecutable );
 	}
 
 	@Override
-	public void scheduleExecution(Runnable inRunnable, int inPrio, long inTime, TimeUnit inTimeUnit) 
+	public void scheduleExecution(IExecutable inExecutable, int inPrio, long inTime, TimeUnit inTimeUnit) 
 	{
 		
 		//TODO implement a scheduledThreadPoolExecutor

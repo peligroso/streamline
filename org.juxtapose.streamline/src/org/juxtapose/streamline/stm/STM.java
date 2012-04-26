@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.IDataProducer;
 import org.juxtapose.streamline.producer.IDataProducerService;
+import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.util.IDataRequestSubscriber;
 import org.juxtapose.streamline.util.IDataSubscriber;
@@ -220,27 +221,27 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	}
 	
 	@Override
-	public void execute(Runnable inRunnable, int inPrio)
+	public void execute(IExecutable inExecutable, int inPrio)
 	{
-		executor.execute( inRunnable, inPrio );
+		executor.execute( inExecutable, inPrio );
 	}
 
 	@Override
-	public void execute(Runnable inRunnable, int inPrio, String inSequenceKey)
+	public void execute(IExecutable inExecutable, int inPrio, String inSequenceKey)
 	{
-		executor.execute( inRunnable, inPrio, inSequenceKey );
+		executor.execute( inExecutable, inPrio, inSequenceKey );
 	}
 
 	@Override
-	public void executeBlocking(Runnable inRunnable, int inPrio, ReentrantLock inSequenceLock)
+	public void executeBlocking(IExecutable inExecutable, int inPrio, ReentrantLock inSequenceLock)
 	{
-		executor.executeBlocking( inRunnable, inPrio, inSequenceLock );
+		executor.executeBlocking( inExecutable, inPrio, inSequenceLock );
 	}
 
 	@Override
-	public void scheduleExecution(Runnable inRunnable, int inPrio, long inTime, TimeUnit inTimeUnit)
+	public void scheduleExecution(IExecutable inExecutable, int inPrio, long inTime, TimeUnit inTimeUnit)
 	{
-		executor.scheduleExecution( inRunnable, inPrio, inTime, inTimeUnit );
+		executor.scheduleExecution( inExecutable, inPrio, inTime, inTimeUnit );
 	}
 	
 	public void deliverKey( IDataKey inDataKey, Long inTag )

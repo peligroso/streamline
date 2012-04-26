@@ -1,7 +1,9 @@
 package org.juxtapose.streamline.stm.osgi;
 
 import org.juxtapose.streamline.producer.IDataProducerService;
+import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.IDataSubscriber;
 import org.juxtapose.streamline.util.KeyConstants;
@@ -49,14 +51,13 @@ public abstract class DataProducerService implements IDataProducerService, IData
 	
 	protected void init()
 	{
-		stm.execute( new Runnable(){
+		stm.execute( new Executable(){
 
 			@Override
 			public void run()
 			{
 				doInit();
 			}
-			
 		}, IExecutor.HIGH );
 	}
 	

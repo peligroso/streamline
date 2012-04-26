@@ -11,7 +11,9 @@ import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.IDataProducer;
 import org.juxtapose.streamline.producer.IDataProducerService;
 import org.juxtapose.streamline.producer.ProducerUtil;
+import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.IDataRequestSubscriber;
@@ -187,7 +189,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	 */
 	public void sendRFQ( final RFQMessage inMessage )
 	{
-		stm.execute( new Runnable(){
+		stm.execute( new Executable(){
 
 			@Override
 			public void run()
@@ -236,6 +238,18 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				
 				seq.start();
 			}
+
+			@Override
+			public void setHash(int inHash) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public int getHash() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
 			
 		}, IExecutor.HIGH );
 	}
@@ -245,7 +259,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	 */
 	public void sendDR( final RFQMessage inMessage )
 	{
-		stm.execute( new Runnable(){
+		stm.execute( new Executable(){
 
 			@Override
 			public void run()
