@@ -45,7 +45,7 @@ public class ClientConnector
 		initStatsContainer( updateToCount );
 		initStatsContainer( firstTakeToCount );
 		
-		executor = new ScheduledThreadPoolExecutor( 10 );
+		executor = new ScheduledThreadPoolExecutor( 2 );
 	}
 	
 	private void initStatsContainer( Map<Long, Long> inMap )
@@ -146,11 +146,11 @@ public class ClientConnector
 		disruptor = new Disruptor<ClientEvent>(ClientEvent.EVENT_FACTORY, executor, new MultiThreadedClaimStrategy(2048), new SleepingWaitStrategy());
 		
 		/**Code to use multiple consumers for disruptor**/
-//		ClientEventHandler handler1 = new ClientEventHandler(0, 2);
-//		ClientEventHandler handler2 = new ClientEventHandler(1, 2);
-//		disruptor.handleEventsWith(handler1, handler2);
+		ClientEventHandler handler1 = new ClientEventHandler(0, 2);
+		ClientEventHandler handler2 = new ClientEventHandler(1, 2);
+		disruptor.handleEventsWith(handler1, handler2);
 		
-		disruptor.handleEventsWith( clientEventHandler );
+//		disruptor.handleEventsWith( clientEventHandler );
 		ringBuffer = disruptor.start();
 		
 		manager = inManager;

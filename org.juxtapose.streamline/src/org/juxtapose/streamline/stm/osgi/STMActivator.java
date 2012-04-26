@@ -1,6 +1,6 @@
 package org.juxtapose.streamline.stm.osgi;
 
-import org.juxtapose.streamline.producer.executor.Executor;
+import org.juxtapose.streamline.producer.executor.BlockingQueueExecutor;
 import org.juxtapose.streamline.stm.IPublishedDataFactory;
 import org.juxtapose.streamline.stm.NonBlockingSTM;
 import org.osgi.service.component.ComponentContext;
@@ -45,6 +45,6 @@ public class STMActivator extends NonBlockingSTM
 			}
 		}
 		
-		init( new Executor( 5, 3, 2, 2 ));
+		init( new BlockingQueueExecutor( 5, 3, 2, 2 ));
 	}
 }

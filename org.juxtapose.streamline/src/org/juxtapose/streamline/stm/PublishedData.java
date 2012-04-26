@@ -52,7 +52,7 @@ final class PublishedData implements IPublishedData
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	PublishedData( IPersistentMap<Integer, DataType<?>> inData, Set<Integer> inChanges, IDataSubscriber[] inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
+	protected PublishedData( IPersistentMap<Integer, DataType<?>> inData, Set<Integer> inChanges, IDataSubscriber[] inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
