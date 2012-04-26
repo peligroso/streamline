@@ -2,6 +2,8 @@ package org.juxtapose.streamline.laboration.performance;
 
 import java.util.Random;
 
+import org.juxtapose.streamline.util.data.DataTypeLong;
+
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
 
@@ -9,25 +11,29 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 
  * @author Pontus
  *
- *	100 000 set and 10 000 get
+ *	1000 000 set and 100 000 get
  *
- *	NOP 	assignment time to do 100000 assignments and 10000 reads: 8910412 avg for each operation: 81 anchor10000
- *	Assign:	time to do 100000 assignments and 10000 reads: 14029023 avg for each operation: 113 anchor-1592240142784605370  	32 ns over NOP
- *	Map:	time to do 100000 assignments and 10000 reads: 39634482 avg for each operation: 270 anchor-6854261056496305582		189 ns over NOP (6 times slower than assign)
+ *	NOP 		time to do 1000 000 assignments and 100 000 reads: 8910412 avg for each operation: 81 anchor10000
+ *	Assign:		time to do 1000 000 assignments and 100 000 reads: 95655191 avg for each operation: 86 anchor-8629611403722282306  		5 ns over NOP
+ *	MapPrime:	time to do 1000 000 assignments and 100 000 reads: 192477648 avg for each operation: 174 anchor-7149332335452569461		93 ns over NOP (18.6 times slower than assign)
+ *	Map:		time to do 1000 000 assignments and 100 000 reads: 189520771 avg for each operation: 172 anchor-3846565576987744005		91 ns over NOP (18.5 times slower than assign)
  *
- *	10 000 set and 100 000 get
+ *	100 000 set and 1000 000 get
  *
- *	NOP:	time to do 10 000 assignments and 100 000 reads: 3179296 avg for each operation: 28 anchor10000
- *	Assign:	time to do 10 000 assignments and 100 000 reads: 3965886 avg for each operation: 36 anchor-3897281743898921993		8 ns over NOP
- *	Map:	time to do 10 000 assignments and 100 000 reads: 6613090 avg for each operation: 60 anchor-431033611692094618		32 ns over NOP (4 times slower)
+ *	NOP:		time to do 1000 000 assignments and 100 000 reads: 27101648 avg for each operation: 24 anchor1000000
+ *	Assign:		time to do 1000 000 assignments and 100 000 reads: 31004658 avg for each operation: 28 anchor3283451791681994166		4 ns over NOP
+ *	MapPrime:	time to do 1000 000 assignments and 100 000 reads: 47558555 avg for each operation: 43 anchor-2451373388643267596		15 ns over NOP (3 times slower than assign)
+ *	Map:		time to do 1000 000 assignments and 100 000 reads: 59987451 avg for each operation: 54 anchor-5861777654442649388		26 ns over NOP (6.5 times slower than assign)
  *
- *	Read overhead for Map is ~24 ns 
- *	Write overhead for Map is ~157 ns
+ *	Read overhead for Map is ~22 ns 
+ *	Write overhead for Map is ~86 ns
  *
  *	Looking at some paths over fairly complex calculation and object relations the field sets are ~ 7 - 18 and gets are 12 - 25
- *	This would mean a over head of 1387 - 3423 ns.
- *	To put this in perspective. It is the same overhead it takes to convert one double to string. 1/25 the overhead of a context switch.
+ *	This would mean a over head of 866 - 1032 ns.
+ *	To put this in perspective. It is the half the time it takes to convert one double to string. 1/50 the latency of a context switch.
  *	plus it saves the overhead of creating messages between parts of the system.
+ *
+ *	There is not difference in performance weather we use Long's or Strings (constants) as Map Keys 
  * 
  */
 
@@ -101,20 +107,80 @@ public class FieldAssignment {
 		}
 	}
 	
-	static final  int ONE = 1;
-	static final  int TWO = 2;
-	static final  int THREE = 3;
-	static final  int FOUR = 4;
-	static final  int FIVE = 5;
-	static final  int SIX = 6;
-	static final  int SEVEN = 7;
-	static final  int EIGHT = 8;
-	static final  int NINE = 9;
-	static final  int TEN = 9;
+	static final  String ONE = "1";
+	static final  String TWO = "2";
+	static final  String THREE = "3";
+	static final  String FOUR = "4";
+	static final  String FIVE = "5";
+	static final  String SIX = "6";
+	static final  String SEVEN = "7";
+	static final  String EIGHT = "8";
+	static final  String NINE = "9";
+	static final  String TEN = "10";
 	
 	class MapPerformance implements Performance
 	{
-		IPersistentMap<Integer, Long> map = PersistentHashMap.emptyMap();
+		IPersistentMap<String, DataTypeLong> map = PersistentHashMap.emptyMap();
+		
+		public void assign( int inPlace, Long inVal )
+		{
+			if( inPlace == 1 )
+				map = map.assoc(ONE, new DataTypeLong(inVal));
+			else if( inPlace == 2 )
+				map = map.assoc(TWO, new DataTypeLong(inVal));
+			else if( inPlace == 3 )
+				map = map.assoc(THREE, new DataTypeLong(inVal));
+			else if( inPlace == 4 )
+				map = map.assoc(FOUR, new DataTypeLong(inVal));
+			else if( inPlace == 5 )
+				map = map.assoc(FIVE, new DataTypeLong(inVal));
+			else if( inPlace == 6 )
+				map = map.assoc(SIX, new DataTypeLong(inVal));
+			else if( inPlace == 7 )
+				map = map.assoc(SEVEN, new DataTypeLong(inVal));
+			else if( inPlace == 8 )
+				map = map.assoc(EIGHT, new DataTypeLong(inVal));
+			else if( inPlace == 9 )
+				map = map.assoc(NINE, new DataTypeLong(inVal));
+			else if( inPlace == 10 )
+				map = map.assoc(TEN, new DataTypeLong(inVal));
+		}
+		
+		public Long get( int inPlace )
+		{
+			DataTypeLong ret;
+			
+			if( inPlace == 1 )
+				ret = map.valAt(ONE);
+			else if( inPlace == 2 )
+				ret = map.valAt(TWO);
+			else if( inPlace == 3 )
+				ret = map.valAt(THREE);
+			else if( inPlace == 4 )
+				ret = map.valAt(FOUR);
+			else if( inPlace == 5 )
+				ret = map.valAt(FIVE);
+			else if( inPlace == 6 )
+				ret = map.valAt(SIX);
+			else if( inPlace == 7 )
+				ret = map.valAt(SEVEN);
+			else if( inPlace == 8 )
+				ret = map.valAt(EIGHT);
+			else if( inPlace == 9 )
+				ret = map.valAt(NINE);
+			else
+				ret = map.valAt(TEN);
+			
+			if( ret == null )
+				return null;
+			
+			return ret.get();
+		}
+	}
+	
+	class MapPrimePerformance implements Performance
+	{
+		IPersistentMap<String, Long> map = PersistentHashMap.emptyMap();
 		
 		public void assign( int inPlace, Long inVal )
 		{
@@ -162,6 +228,7 @@ public class FieldAssignment {
 				return map.valAt(NINE);
 			else
 				return map.valAt(TEN);
+			
 		}
 	}
 	
@@ -185,15 +252,15 @@ public class FieldAssignment {
 		Performance obj = new MapPerformance();
 		Random rand = new Random();
 
-		for( int i = 0; i < 10000; i++ )
+		for( int i = 0; i < 100000; i++ )
 		{
-			test( rand, obj, 10, 1 );
+			test( rand, obj, 1, 10 );
 		}
 
 		long start = System.nanoTime();
 		Long anchor = 0l;
 		
-		for( int i = 0; i < 10000; i++ )
+		for( int i = 0; i < 100000; i++ )
 		{
 			Long res = test( rand, obj, 1, 10 );
 			if( res != null )
@@ -202,9 +269,9 @@ public class FieldAssignment {
 		long end = System.nanoTime();
 		long time = end - start;
 
-		long each = time / 110000;
+		long each = time / 1100000;
 
-		System.out.println("time to do 10 000 assignments and 100 000 reads: "+time+" avg for each operation: "+each+" anchor"+anchor);
+		System.out.println("time to do 1000 000 assignments and 100 000 reads: "+time+" avg for each operation: "+each+" anchor"+anchor);
 	}
 
 	public void assign( Random inRand, Performance inObj, int inAssignTimes )
@@ -224,7 +291,7 @@ public class FieldAssignment {
 		int place = inRand.nextInt( 10 );
 
 		long ret = 0;
-		for( int i = 0; i < inAssignTimes; i++ )
+		for( int i = 0; i < inGetTimes; i++ )
 		{
 			Long r = inObj.get( place );
 			if( r != null )
