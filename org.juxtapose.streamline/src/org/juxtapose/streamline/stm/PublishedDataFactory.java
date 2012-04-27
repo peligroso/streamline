@@ -5,13 +5,12 @@ import java.util.HashSet;
 import org.juxtapose.streamline.producer.IDataProducer;
 import org.juxtapose.streamline.util.IDataSubscriber;
 import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 
 import com.trifork.clj_ds.IPersistentMap;
-import com.trifork.clj_ds.IPersistentVector;
 import com.trifork.clj_ds.PersistentHashMap;
-import com.trifork.clj_ds.PersistentVector;
 
 /**
  * @author Pontus Jörgne
@@ -28,7 +27,7 @@ public class PublishedDataFactory implements IPublishedDataFactory
 	public IPublishedData createData( Status inStatus, IDataProducer inProducer )
 	{
 		IPersistentMap<Integer, DataType<?>> dataMap = PersistentHashMap.create();
-		IDataSubscriber[] subscribers = new IDataSubscriber[]{};
+		PersistentArrayList<IDataSubscriber> subscribers = new PersistentArrayList<IDataSubscriber>();
 		
 		return new PublishedData( dataMap, new HashSet<Integer>(), subscribers, inProducer, inStatus, 0l, true );
 	}
@@ -39,7 +38,7 @@ public class PublishedDataFactory implements IPublishedDataFactory
 	public IPublishedData createData( Status inStatus, IDataProducer inProducer, IDataSubscriber inSubscriber )
 	{
 		IPersistentMap<Integer, DataType<?>> dataMap = PersistentHashMap.create( );
-		IDataSubscriber[] subscribers = new IDataSubscriber[]{inSubscriber};
+		PersistentArrayList<IDataSubscriber> subscribers = new PersistentArrayList<IDataSubscriber>( new IDataSubscriber[]{inSubscriber});
 		
 		return new PublishedData( dataMap, new HashSet<Integer>(), subscribers, inProducer, inStatus, 0l, true );
 	}

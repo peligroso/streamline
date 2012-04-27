@@ -10,6 +10,7 @@ import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.IDataProducer;
 import org.juxtapose.streamline.util.IDataSubscriber;
 import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeNull;
@@ -34,7 +35,7 @@ final class PublishedData implements IPublishedData
 	final IPersistentMap<Integer, DataType<?>> dataMap;
 	final Set<Integer> deltaSet;
 	
-	final IDataSubscriber[] subscribers;
+	final PersistentArrayList<IDataSubscriber> subscribers;
 	
 	
 	final IDataProducer producer;
@@ -52,7 +53,7 @@ final class PublishedData implements IPublishedData
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	protected PublishedData( IPersistentMap<Integer, DataType<?>> inData, Set<Integer> inChanges, IDataSubscriber[] inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
+	protected PublishedData( IPersistentMap<Integer, DataType<?>> inData, Set<Integer> inChanges, PersistentArrayList<IDataSubscriber> inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
@@ -65,9 +66,9 @@ final class PublishedData implements IPublishedData
 	
 	public void updateSubscribers( IDataKey inKey )
 	{
-		for( int i = 0; i < subscribers.length; i++ )
+		for( int i = 0; i < subscribers.size(); i++ )
 		{
-			IDataSubscriber subscriber = subscribers[ i ];
+			IDataSubscriber subscriber = subscribers.get( i );
 			subscriber.updateData( inKey, this, false );
 		}
 	}
@@ -78,11 +79,8 @@ final class PublishedData implements IPublishedData
 	 */
 	public IPublishedData addSubscriber( IDataSubscriber inSubscriber )
 	{
-		IDataSubscriber[] newArr = new IDataSubscriber[ subscribers.length +1 ];
-		System.arraycopy( subscribers, 0, newArr, 0, subscribers.length );
-		
-		newArr[subscribers.length] = inSubscriber;
-		return new PublishedData( dataMap, deltaSet, newArr, producer, status, sequenceID, completeVersion );
+		PersistentArrayList<IDataSubscriber> newSub = subscribers.add( inSubscriber );
+		return new PublishedData( dataMap, deltaSet, newSub, producer, status, sequenceID, completeVersion );
 	}
 	
 	/**
@@ -91,28 +89,9 @@ final class PublishedData implements IPublishedData
 	 */
 	public IPublishedData removeSubscriber( IDataSubscriber inSubscriber )
 	{ 
-		IDataSubscriber[] newArr = new IDataSubscriber[ subscribers.length -1];
-		int newI = 0;
-		for (int i = 0; i < newArr.length; ++i) 
-		{
-			if( inSubscriber.equals( subscribers[i])) 
-			{
-				 for (int k = i + 1; k < subscribers.length; ++k)
-					 newArr[k-1] = subscribers[k];
-				 
-				 return new PublishedData( dataMap, deltaSet, newArr, producer, status, sequenceID, completeVersion );
-			}
-			else
-			{
-				newArr[newI] = subscribers[i];
-				newI++;
-			}
-		}
-		if( inSubscriber.equals( subscribers[subscribers.length-1])) 
-		{
-			return new PublishedData( dataMap, deltaSet, newArr, producer, status, sequenceID, completeVersion );
-		}
-		return new PublishedData( dataMap, deltaSet, subscribers, producer, status, sequenceID, completeVersion );
+		PersistentArrayList<IDataSubscriber> newSub = subscribers.remove( inSubscriber );
+		
+		return new PublishedData( dataMap, deltaSet, newSub, producer, status, sequenceID, completeVersion );
 	}
 	
 	/**
@@ -120,7 +99,7 @@ final class PublishedData implements IPublishedData
 	 */
 	public boolean hasSubscribers()
 	{
-		return subscribers.length > 0;
+		return subscribers.size() > 0;
 	}
 	
 	/**
