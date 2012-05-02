@@ -21,12 +21,12 @@ public class ProducerUtil
 	 * @param inKeyValues
 	 * @return
 	 */
-	public static IDataKey createDataKey( Integer inServiceKey, String inType, Integer[] inKeys, String[] inValues )
+	public static IDataKey createDataKey( String inServiceKey, String inType, String[] inKeys, String[] inValues )
 	{
 		if( inKeys.length != inValues.length )
 			throw new IllegalArgumentException("Key-value pairs must be even ");
 		
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		HashMap<String, String> map = new HashMap<String, String>();
 		StringBuilder sb = new StringBuilder(inServiceKey.toString());
 		sb.append(SERVICE_KEY_DELIM);
 		sb.append(inType);
@@ -34,7 +34,7 @@ public class ProducerUtil
 		
 		for( int i = 0; i < inKeys.length; i++ )
 		{
-			Integer key = inKeys[i];
+			String key = inKeys[i];
 			String value = inValues[i];
 			
 			map.put( key, value );
@@ -53,7 +53,7 @@ public class ProducerUtil
 	 * @param inSingleValue
 	 * @return
 	 */
-	public static IDataKey createDataKey( Integer inServiceKey, String inType, String inSingleValue )
+	public static IDataKey createDataKey( String inServiceKey, String inType, String inSingleValue )
 	{
 		String key = inServiceKey+SERVICE_KEY_DELIM+inType+SERVICE_KEY_DELIM+FIELD_SINGLE_VALUE_DATA_KEY+EQUALS+inSingleValue;
 		

@@ -34,7 +34,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 {
 	protected final ConcurrentHashMap<String, IPublishedData> keyToData = new ConcurrentHashMap<String, IPublishedData>();	
 	//Services that create producers to data id is service ID
-	protected final ConcurrentHashMap<Integer, IDataProducerService> idToProducerService = new ConcurrentHashMap<Integer, IDataProducerService>();
+	protected final ConcurrentHashMap<String, IDataProducerService> idToProducerService = new ConcurrentHashMap<String, IDataProducerService>();
 	
 	private IExecutor executor;
 	
@@ -56,7 +56,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 */
 	public void registerProducer( final IDataProducerService inProducerService, final Status initState )
 	{
-		Integer id = inProducerService.getServiceId();
+		String id = inProducerService.getServiceId();
 		idToProducerService.put( id, inProducerService );
 		
 		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
@@ -91,7 +91,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @see org.juxtapose.streamline.util.producer.IDataProducerService#getServiceId()
 	 */
 	@Override
-	public Integer getServiceId()
+	public String getServiceId()
 	{
 		return ProducerServiceConstants.STM_SERVICE_KEY;
 	}
@@ -100,7 +100,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @see org.juxtapose.streamline.util.producer.IDataProducerService#getKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<Integer, String> inQuery)
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
 	{
 		String val = inQuery.get( FIELD_QUERY_KEY );
 		
@@ -114,7 +114,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.exp.ISTM#getDataKey(java.lang.Integer, java.util.HashMap)
 	 */
-	public void getDataKey(Integer inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, HashMap<Integer, String> inQuery)
+	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
 	{
 		IDataProducerService producerService = idToProducerService.get( inProducerService );
 		if( producerService == null )
@@ -261,8 +261,8 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	}
 	
 	
-	public void addDataReferences( Integer inFieldKey, ReferenceLink inLink ){}
-	public ReferenceLink removeReferenceLink( Integer inField ){ return null; }
-	public void disposeReferenceLinks( List< Integer > inReferenceFields ){}
-	public void referencedDataUpdated( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData ){}
+	public void addDataReferences( String inFieldKey, ReferenceLink inLink ){}
+	public ReferenceLink removeReferenceLink( String inField ){ return null; }
+	public void disposeReferenceLinks( List< String > inReferenceFields ){}
+	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData ){}
 }

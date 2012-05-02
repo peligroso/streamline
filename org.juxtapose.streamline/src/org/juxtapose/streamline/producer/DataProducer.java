@@ -3,7 +3,6 @@ package org.juxtapose.streamline.producer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.juxtapose.streamline.stm.DataProducerDependencyController;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
@@ -22,7 +21,7 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
 public abstract class DataProducer extends TemporaryController implements IDataProducer, IDataSubscriber
 {
 	private final HashMap<String, TemporaryController> dependencies = new HashMap<String, TemporaryController>();
-	private final HashMap<Integer, ReferenceLink> keyToReferensLinks = new HashMap<Integer, ReferenceLink>();
+	private final HashMap<String, ReferenceLink> keyToReferensLinks = new HashMap<String, ReferenceLink>();
 	
 	
 	protected final IDataKey dataKey;
@@ -41,7 +40,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inKey
 	 * Needs external Synchronization on dataKey
 	 */
-	protected Map<Integer, ReferenceLink> getReferensList( String inKey )
+	protected Map<String, ReferenceLink> getReferensList( String inKey )
 	{
 		return keyToReferensLinks;
 	}
@@ -52,7 +51,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 */
 	private void disposeAllReferenceLinks( )
 	{
-		for( Integer key : keyToReferensLinks.keySet() )
+		for( String key : keyToReferensLinks.keySet() )
 		{
 			ReferenceLink link = keyToReferensLinks.get( key );
 			link.dispose();
@@ -74,7 +73,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inKey
 	 * Needs external Synchronization on dataKey
 	 */
-	public ReferenceLink removeReferenceLink( Integer inField )
+	public ReferenceLink removeReferenceLink( String inField )
 	{
 		return keyToReferensLinks.remove( inField );
 	}
@@ -96,7 +95,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @see org.juxtapose.streamline.producer.IDataProducer#addDataReferences(java.util.Map)
 	 * initDataReference is always done within STM sync and IDataKey lock.
 	 */
-	public void addDataReferences( Integer inFieldKey, ReferenceLink inLink )
+	public void addDataReferences( String inFieldKey, ReferenceLink inLink )
 	{
 		assert keyToReferensLinks.get( inFieldKey ) == null : "Reference already exists";
 		keyToReferensLinks.put( inFieldKey, inLink );
@@ -126,7 +125,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @see org.juxtapose.streamline.producer.IDataProducer#referencedDataUpdated(java.lang.Integer, org.juxtapose.streamline.util.IPublishedData)
 	 * TODO Can this method be package private to ensure always called from ReferenceLink
 	 */
-	public void referencedDataUpdated( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
+	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
 	{
 		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
 		{
@@ -162,7 +161,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inTransaction
 	 * To be overridden by subclasses that to continue the work on a transaction after the referenced Data has been updated
 	 */
-	protected void referenceDataCall( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
+	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
 	{
 		
 	}
@@ -173,7 +172,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inData
 	 * To be overridden by subclass that needs to take action after referenced Data has been updated and transaction completed
 	 */
-	protected void postReferenceDataCall( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
+	protected void postReferenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
 	{
 		
 	}

@@ -33,15 +33,14 @@ public class DataTypeRef extends DataType<IDataKey>
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.util.data.DataType#serialize(java.lang.Integer)
 	 */
-	public byte[] serialize( Integer inField )
+	public byte[] serialize( byte[] inField )
 	{
 		//[Field, REF, mapByteLength, mapBytes]
 		byte[] mapBytes = DataSerializer.serialize( referenceData.getDataMap() );
-		byte[] bytes = new byte[mapBytes.length+9];
-		serializeInt( bytes, 0, inField );
-		bytes[4] = REF;
-		serializeInt( bytes, 5, mapBytes.length );
-		System.arraycopy( mapBytes, 0, bytes, 9, mapBytes.length );
+		byte[] bytes = getByteArrayFrame(inField, mapBytes.length+5);
+		bytes[inField.length] = REF;
+		serializeInt( bytes, inField.length+1, mapBytes.length );
+		System.arraycopy( mapBytes, 0, bytes, inField.length+5, mapBytes.length );
 		
 		return bytes;
 	}

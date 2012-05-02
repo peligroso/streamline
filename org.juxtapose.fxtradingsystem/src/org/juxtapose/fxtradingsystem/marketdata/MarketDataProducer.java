@@ -127,7 +127,7 @@ public class MarketDataProducer extends DataProducer implements IMarketDataSubsc
 				
 				Long timeStamp = System.nanoTime();
 				
-				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( inQuote.timestamp ));
+				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( timeStamp ));
 				
 				if( getStatus() != Status.OK )
 					setStatus( Status.OK );

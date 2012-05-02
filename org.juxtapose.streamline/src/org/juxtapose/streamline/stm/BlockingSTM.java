@@ -112,8 +112,8 @@ public class BlockingSTM extends STM
 			{
 				return;
 			}
-			IPersistentMap<Integer, DataType<?>> inst = inTransaction.getStateInstruction();
-			Set<Integer> delta = inTransaction.getDeltaState();
+			IPersistentMap<String, DataType<?>> inst = inTransaction.getStateInstruction();
+			Set<String> delta = inTransaction.getDeltaState();
 			if( !existingData.isCompleteVersion() )
 			{
 				/**If previous update was a partial update we need to merge the deltas**/
@@ -126,7 +126,7 @@ public class BlockingSTM extends STM
 			if( inTransaction.containesReferenceInstructions() )
 			{
 				//Init reference links
-				Map< Integer, DataTypeRef > dataReferences = inTransaction.getAddedReferences();
+				Map< String, DataTypeRef > dataReferences = inTransaction.getAddedReferences();
 				addedLinks = dataReferences == null ? null : new ReferenceLink[ dataReferences.size() ];
 
 				if( dataReferences == null || !dataReferences.isEmpty() )
@@ -137,7 +137,7 @@ public class BlockingSTM extends STM
 					else
 					{
 						int i = 0;
-						for( Integer fieldKey : dataReferences.keySet() )
+						for( String fieldKey : dataReferences.keySet() )
 						{
 							DataTypeRef ref = dataReferences.get( fieldKey );
 							ReferenceLink refLink = new ReferenceLink( producer, this, fieldKey, ref );
@@ -150,7 +150,7 @@ public class BlockingSTM extends STM
 
 
 				//Dispose reference links
-				List< Integer > removedReferences = inTransaction.getRemovedReferences();
+				List< String > removedReferences = inTransaction.getRemovedReferences();
 				removedLinks = removedReferences == null ? null : new ReferenceLink[ removedReferences.size() ];
 
 				if( removedReferences != null && !removedReferences.isEmpty() )
@@ -161,7 +161,7 @@ public class BlockingSTM extends STM
 					else
 					{
 						int i = 0;
-						for( Integer fieldKey : dataReferences.keySet() )
+						for( String fieldKey : dataReferences.keySet() )
 						{
 							ReferenceLink refLink = producer.removeReferenceLink( fieldKey );
 							if( refLink == null )

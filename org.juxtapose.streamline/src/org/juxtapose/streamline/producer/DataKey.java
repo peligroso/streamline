@@ -11,8 +11,8 @@ import org.juxtapose.streamline.util.DataConstants;
  */
 public class DataKey implements IDataKey
 {
-	private final HashMap<Integer, String> keyMap;
-	private final Integer producerServiceKey;
+	private final HashMap<String, String> keyMap;
+	private final String producerServiceKey;
 	private final String type;
 	private final String key;
 	private final String singleValue;
@@ -23,7 +23,7 @@ public class DataKey implements IDataKey
 	 * @param inKey
 	 * DataKey are created via ProducerUtil
 	 */
-	protected DataKey( Integer inProducerServiceKey, String inType, HashMap<Integer, String> inMap, String inKey )
+	protected DataKey( String inProducerServiceKey, String inType, HashMap<String, String> inMap, String inKey )
 	{
 		producerServiceKey = inProducerServiceKey;
 		keyMap = inMap;
@@ -38,10 +38,10 @@ public class DataKey implements IDataKey
 	 * @param inSingleValue
 	 * @param inKey
 	 */
-	protected DataKey( Integer inProducerServiceKey, String inType, String inSingleValue, String inKey )
+	protected DataKey( String inProducerServiceKey, String inType, String inSingleValue, String inKey )
 	{
 		producerServiceKey = inProducerServiceKey;
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		HashMap<String, String> map = new HashMap<String, String>();
 		map.put( DataConstants.FIELD_SINGLE_VALUE_DATA_KEY, inSingleValue );
 		keyMap = map;
 		key = inKey;
@@ -64,7 +64,7 @@ public class DataKey implements IDataKey
 	 * @param inKey
 	 * @return
 	 */
-	public String getValue( Integer inKey )
+	public String getValue( String inKey )
 	{
 		return keyMap.get( inKey );
 	}
@@ -94,7 +94,7 @@ public class DataKey implements IDataKey
 	}
 
 	@Override
-	public Integer getService()
+	public String getService()
 	{
 		return producerServiceKey;
 	}

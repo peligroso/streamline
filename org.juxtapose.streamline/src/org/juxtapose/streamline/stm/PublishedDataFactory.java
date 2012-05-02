@@ -26,10 +26,10 @@ public class PublishedDataFactory implements IPublishedDataFactory
 	 */
 	public IPublishedData createData( Status inStatus, IDataProducer inProducer )
 	{
-		IPersistentMap<Integer, DataType<?>> dataMap = PersistentHashMap.create();
+		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create();
 		PersistentArrayList<IDataSubscriber> subscribers = new PersistentArrayList<IDataSubscriber>();
 		
-		return new PublishedData( dataMap, new HashSet<Integer>(), subscribers, inProducer, inStatus, 0l, true );
+		return new PublishedData( dataMap, new HashSet<String>(), subscribers, inProducer, inStatus, 0l, true );
 	}
 	
 	/* (non-Javadoc)
@@ -37,9 +37,9 @@ public class PublishedDataFactory implements IPublishedDataFactory
 	 */
 	public IPublishedData createData( Status inStatus, IDataProducer inProducer, IDataSubscriber inSubscriber )
 	{
-		IPersistentMap<Integer, DataType<?>> dataMap = PersistentHashMap.create( );
+		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create( );
 		PersistentArrayList<IDataSubscriber> subscribers = new PersistentArrayList<IDataSubscriber>( new IDataSubscriber[]{inSubscriber});
 		
-		return new PublishedData( dataMap, new HashSet<Integer>(), subscribers, inProducer, inStatus, 0l, true );
+		return new PublishedData( dataMap, new HashSet<String>(), subscribers, inProducer, inStatus, 0l, true );
 	}
 }

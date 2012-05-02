@@ -6,11 +6,10 @@ public class DataTypeNull extends DataType<Object>{
 		super(inValue);
 	}
 
-	public final byte[] serialize( Integer inField )
+	public final byte[] serialize( byte[] inField )
 	{
-		byte[] bytes = new byte[5];
-		serializeInt( bytes, 0, inField );
-		bytes[5] = NULL;
+		byte[] bytes = getByteArrayFrame(inField, 1);
+		bytes[inField.length] = NULL;
 		
 		return bytes;
 		

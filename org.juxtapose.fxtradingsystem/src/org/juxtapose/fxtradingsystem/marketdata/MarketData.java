@@ -25,7 +25,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(org.juxtapose.streamline.util.IDataSubscriber, java.lang.Long, java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<Integer, String> inQuery )
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 
@@ -42,7 +42,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 				inSubscriber.queryNotAvailible( inTag );
 			}
 
-			IDataKey key = ProducerUtil.createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new Integer[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
+			IDataKey key = ProducerUtil.createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new String[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
 			inSubscriber.deliverKey( key, inTag );
 		}
 		else
@@ -65,7 +65,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	}
 
 	@Override
-	public Integer getServiceId()
+	public String getServiceId()
 	{
 		return FXProducerServiceConstants.MARKET_DATA;
 	}

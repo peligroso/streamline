@@ -16,7 +16,7 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
  */
 public class ReferenceLink extends DataProducerDependencyController implements IDataSubscriber
 {
-	private final Integer hashKey;
+	private final String fieldKey;
 	private final DataTypeRef ref;
 	
 	/**
@@ -25,10 +25,10 @@ public class ReferenceLink extends DataProducerDependencyController implements I
 	 * @param inHashKey
 	 * @param inRef
 	 */
-	public ReferenceLink( IDataProducer inProducer, ISTM inSTM, Integer inHashKey, DataTypeRef inRef )
+	public ReferenceLink( IDataProducer inProducer, ISTM inSTM, String inFieldKey, DataTypeRef inRef )
 	{
 		super( inProducer, inSTM, inRef.get() );
-		hashKey = inHashKey;
+		fieldKey = inFieldKey;
 		ref = inRef;
 	}
 	
@@ -39,7 +39,7 @@ public class ReferenceLink extends DataProducerDependencyController implements I
 		//Notify producer about delivered Data. ON_Request Data is not interesting
 		if( inData.getStatus() != Status.ON_REQUEST )
 		{
-			parentProducer.referencedDataUpdated( hashKey, this, inData );
+			parentProducer.referencedDataUpdated( fieldKey, this, inData );
 		}
 	}
 	

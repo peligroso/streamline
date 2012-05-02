@@ -52,7 +52,7 @@ public class RFQProducer extends DataProducer implements IDataRequestSubscriber
 			}
 		});
 		
-		HashMap<Integer, String> query;
+		HashMap<String, String> query;
 		
 		if( nearPeriod == null && farPeriod == null )
 			query = PriceEngineUtil.getSpotPriceQuery( ccy1, ccy2 );
@@ -88,7 +88,7 @@ public class RFQProducer extends DataProducer implements IDataRequestSubscriber
 		return;
 	}
 	
-	protected void referenceDataCall( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
+	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
 	{
 		if( inFieldKey == FXDataConstants.FIELD_PRICE )
 		{

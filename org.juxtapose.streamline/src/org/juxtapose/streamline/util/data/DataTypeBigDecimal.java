@@ -15,19 +15,20 @@ public class DataTypeBigDecimal extends DataType<BigDecimal>{
 		super( new BigDecimal( inValue ) );
 	}
 	
-	public final byte[] serialize( Integer inField )
+	public final byte[] serialize( byte[] inField )
 	{
 		//[Field, BIG_DEC, unscaledValue, lengthOfUnscaledValue, scale]
 		BigInteger theInt = get().unscaledValue();
 		int scale = get().scale();
 		
 		byte[] intBytes = theInt.toByteArray();
-		byte[] bytes = new byte[intBytes.length+13];
-		serializeInt( bytes, 0, inField );
-		bytes[4] = BIG_DEC;
-		serializeInt( bytes, 5, intBytes.length );
-		System.arraycopy( intBytes, 0, bytes, 9, intBytes.length );
-		serializeInt( bytes, intBytes.length+9, scale);
+//		byte[] bytes = new byte[ 1 + 4 + intBytes.length + 4 ];
+		byte[] bytes = getByteArrayFrame(inField, intBytes.length + 9);
+		
+		bytes[inField.length] = BIG_DEC;
+		serializeInt( bytes, inField.length+1, intBytes.length );
+		System.arraycopy( intBytes, 0, bytes, inField.length+5, intBytes.length );
+		serializeInt( bytes, inField.length+5+intBytes.length, scale);
 		return bytes;
 		
 	}

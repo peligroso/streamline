@@ -17,9 +17,9 @@ public interface IDataProducer extends IDataSubscriber
 	public void init();
 	public void dispose();
 	
-	public void addDataReferences( Integer inFieldKey, ReferenceLink inLink );
-	public ReferenceLink removeReferenceLink( Integer inField );
-	void referencedDataUpdated( final Integer inFieldKey, final ReferenceLink inLink, final IPublishedData inData );
+	public void addDataReferences( String inFieldKey, ReferenceLink inLink );
+	public ReferenceLink removeReferenceLink( String inField );
+	void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData );
 	
 	public void addDependency( String inKey, TemporaryController inController );
 	public TemporaryController removeDependency( String inDataKey );

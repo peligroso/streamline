@@ -46,9 +46,17 @@ public abstract class DataType<T> {
 		return get().equals( inObject.get() );
 	}
 	
-	public byte[] serialize( Integer inField )
+	public byte[] serialize( byte[] inField )
 	{
 		return new byte[]{};
+	}
+	
+	public byte[] getByteArrayFrame( byte[] inField, int inLength )
+	{
+		byte[] bytes = new byte[ inField.length + inLength ];
+		System.arraycopy(inField, 0, bytes, 0, inField.length);
+		
+		return bytes;
 	}
 	
 	/**Serialization methods**/
@@ -75,50 +83,50 @@ public abstract class DataType<T> {
 	{
 		if( inNumber < Integer.MIN_VALUE )
 		{
-			byte[] ret = new byte[13];
-			ret[4] = NUMBER_LONG_NEG;
+			byte[] ret = new byte[9];
+			ret[0] = NUMBER_LONG_NEG;
 			return ret;
 		}
 		else if( inNumber < Short.MIN_VALUE )
 		{
-			byte[] ret = new byte[9];
-			ret[4] = NUMBER_INT_NEG;
+			byte[] ret = new byte[5];
+			ret[0] = NUMBER_INT_NEG;
 			return ret;
 		}
 		else if( inNumber < Byte.MIN_VALUE )
 		{
-			byte[] ret = new byte[7];
-			ret[4] = NUMBER_SHORT_NEG;
+			byte[] ret = new byte[3];
+			ret[0] = NUMBER_SHORT_NEG;
 			return ret;
 		}
 		else if( inNumber < 0 )
 		{
-			byte[] ret = new byte[6];
-			ret[4] = NUMBER_BYTE_NEG;
+			byte[] ret = new byte[2];
+			ret[0] = NUMBER_BYTE_NEG;
 			return ret;
 		}
 		else if( inNumber < Byte.MAX_VALUE )
 		{
-			byte[] ret = new byte[6];
-			ret[4] = NUMBER_BYTE;
+			byte[] ret = new byte[2];
+			ret[0] = NUMBER_BYTE;
 			return ret;
 		}
 		else if( inNumber < Short.MAX_VALUE )
 		{
-			byte[] ret = new byte[7];
-			ret[4] = NUMBER_SHORT;
+			byte[] ret = new byte[3];
+			ret[0] = NUMBER_SHORT;
 			return ret;
 		}
 		else if( inNumber < Integer.MAX_VALUE )
 		{
-			byte[] ret = new byte[9];
-			ret[4] = NUMBER_INT;
+			byte[] ret = new byte[5];
+			ret[0] = NUMBER_INT;
 			return ret;
 		}
 		else
 		{
-			byte[] ret = new byte[13];
-			ret[4] = NUMBER_LONG;
+			byte[] ret = new byte[9];
+			ret[0] = NUMBER_LONG;
 			return ret;
 		}
 	}
@@ -133,6 +141,19 @@ public abstract class DataType<T> {
 			inBytes[inOffSet + i] = (byte)(number >>> 8 * shift);
 		}
 		return inBytes;
+	}
+	
+	public static final byte[] serializeString( String inString )
+	{
+		assert (inString.length() < Integer.MAX_VALUE ) : "String is to big.. larger than Integer.MAX_VALUE";
+		
+		byte[] strBytes = inString.getBytes();
+		byte[] bytes = new byte[strBytes.length+4];
+		
+		serializeInt(bytes, 0, strBytes.length);
+		System.arraycopy(strBytes, 0, bytes, 4, strBytes.length);
+		
+		return bytes;
 	}
 
 

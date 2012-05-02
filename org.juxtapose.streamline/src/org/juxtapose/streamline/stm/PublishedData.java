@@ -2,9 +2,7 @@ package org.juxtapose.streamline.stm;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.IDataProducer;
@@ -17,23 +15,20 @@ import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.trifork.clj_ds.IPersistentMap;
-import com.trifork.clj_ds.IPersistentVector;
-import com.trifork.clj_ds.ISeq;
-import com.trifork.clj_ds.PersistentTreeMap.Seq;
 
 /**
  * @author Pontus Jörgne
  * 28 jun 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  * 
- * This class belongs to the the STM
+ * This class belongs to the the STM. PublishedData is an STM entry
  * only STM may create or modify a PublishedData on pub/sub requests
  *
  */
 final class PublishedData implements IPublishedData
 {
-	final IPersistentMap<Integer, DataType<?>> dataMap;
-	final Set<Integer> deltaSet;
+	final IPersistentMap<String, DataType<?>> dataMap;
+	final Set<String> deltaSet;
 	
 	final PersistentArrayList<IDataSubscriber> subscribers;
 	
@@ -53,7 +48,7 @@ final class PublishedData implements IPublishedData
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	protected PublishedData( IPersistentMap<Integer, DataType<?>> inData, Set<Integer> inChanges, PersistentArrayList<IDataSubscriber> inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
+	protected PublishedData( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<IDataSubscriber> inSubscribers, IDataProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
@@ -108,9 +103,9 @@ final class PublishedData implements IPublishedData
 	 * @return
 	 * @throws Exception
 	 */
-	public IPublishedData putDataValue( Integer inKey, DataType<?> inValue )throws Exception
+	public IPublishedData putDataValue( String inKey, DataType<?> inValue )throws Exception
 	{
-		IPersistentMap<Integer, DataType<?>> newMap;
+		IPersistentMap<String, DataType<?>> newMap;
 		
 		if( inValue instanceof DataTypeNull )
 			newMap = dataMap.without( inKey );
@@ -125,11 +120,11 @@ final class PublishedData implements IPublishedData
 	 * @return
 	 * @throws Exception
 	 */
-	public IPublishedData putDataValues( HashMap<Integer, DataType<?>> inStateTransitionMap )throws Exception
+	public IPublishedData putDataValues( HashMap<String, DataType<?>> inStateTransitionMap )throws Exception
 	{
-		IPersistentMap<Integer, DataType<?>> newDataMap = dataMap;
+		IPersistentMap<String, DataType<?>> newDataMap = dataMap;
 		
-		for( Integer key : inStateTransitionMap.keySet() )
+		for( String key : inStateTransitionMap.keySet() )
 		{
 			DataType<?> value = inStateTransitionMap.get( key );
 			if( value instanceof DataTypeNull )
@@ -151,7 +146,7 @@ final class PublishedData implements IPublishedData
 	 * @param inDataMap
 	 * @return
 	 */
-	public IPublishedData setDataMap( IPersistentMap<Integer, DataType<?>> inDataMap )
+	public IPublishedData setDataMap( IPersistentMap<String, DataType<?>> inDataMap )
 	{
 		return new PublishedData( inDataMap, deltaSet, subscribers, producer, status, sequenceID+1, completeVersion );
 	}
@@ -160,7 +155,7 @@ final class PublishedData implements IPublishedData
 	 * @param inDataMap
 	 * @return
 	 */
-	public IPublishedData setUpdatedData( IPersistentMap<Integer, DataType<?>> inDataMap, Set<Integer> inDelta, Status inStatus, boolean inCompleteUpdate )
+	public IPublishedData setUpdatedData( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDelta, Status inStatus, boolean inCompleteUpdate )
 	{
 		return new PublishedData( inDataMap, inDelta, subscribers, producer, inStatus, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
 	}
@@ -174,7 +169,7 @@ final class PublishedData implements IPublishedData
 	/**
 	 * @return
 	 */
-	public IPersistentMap<Integer, DataType<?>> getDataMap()
+	public IPersistentMap<String, DataType<?>> getDataMap()
 	{
 		return dataMap;
 	}
@@ -182,7 +177,7 @@ final class PublishedData implements IPublishedData
 	/**
 	 * @return
 	 */
-	public Set<Integer> getDeltaSet()
+	public Set<String> getDeltaSet()
 	{
 		return deltaSet;
 	}
@@ -196,13 +191,13 @@ final class PublishedData implements IPublishedData
 	 * @param inKey
 	 * @return
 	 */
-	public DataType<?> getValue( int inKey )
+	public DataType<?> getValue( String inKey )
 	{
 		return dataMap.valAt( inKey );
 	}
 
 	@Override
-	public boolean isDeltaValue(int inKey)
+	public boolean isDeltaValue(String inKey)
 	{
 		return deltaSet.contains( inKey );
 	}

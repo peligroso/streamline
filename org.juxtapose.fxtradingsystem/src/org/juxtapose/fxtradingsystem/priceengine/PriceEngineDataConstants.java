@@ -4,8 +4,6 @@ import org.juxtapose.fxtradingsystem.FXDataConstants;
 
 public class PriceEngineDataConstants extends FXDataConstants
 {
-	public static final int BASE = FXDataConstants.getBase();
-	
 	public static final String STATE_TYPE_CCYMODEL = "CCY_MODEL";
 	public static final String STATE_TYPE_PRICE = "PRICE";
 	public static final String STATE_TYPE_CCY = "CCY";

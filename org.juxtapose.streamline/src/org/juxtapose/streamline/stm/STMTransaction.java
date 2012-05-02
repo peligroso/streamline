@@ -31,12 +31,12 @@ import com.trifork.clj_ds.IPersistentMap;
 public abstract class STMTransaction
 {
 	private final IDataKey m_dataKey;	
-	private IPersistentMap<Integer, DataType<?>> m_stateInstruction;
+	private IPersistentMap<String, DataType<?>> m_stateInstruction;
 	
-	private final Set<Integer> m_deltaState = new HashSet<Integer>();
+	private final Set<String> m_deltaState = new HashSet<String>();
 	
-	private final Map<Integer, DataTypeRef> addedDataReferences;
-	private final List<Integer> removedDataReferences;
+	private final Map<String, DataTypeRef> addedDataReferences;
+	private final List<String> removedDataReferences;
 	
 	private IDataProducer m_producer = null;
 	
@@ -53,15 +53,15 @@ public abstract class STMTransaction
 	public STMTransaction( IDataKey inDataKey, int inAddedRefenrence, int inRemovedReferences ) 
 	{
 		m_dataKey = inDataKey;
-		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<Integer, DataTypeRef>( inAddedRefenrence );
-		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<Integer>( inRemovedReferences );
+		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
+		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
 	}
 	
 	public STMTransaction( IDataKey inDataKey ) 
 	{
 		m_dataKey = inDataKey;
-		addedDataReferences = new HashMap<Integer, DataTypeRef>( 8 );
-		removedDataReferences = new ArrayList<Integer>( 8 );
+		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
+		removedDataReferences = new ArrayList<String>( 8 );
 	}
 	
 	/**
@@ -73,8 +73,8 @@ public abstract class STMTransaction
 		m_dataKey = inDataKey;
 		m_producer = inProducer;
 		
-		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<Integer, DataTypeRef>( inAddedRefenrence );
-		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<Integer>( inRemovedReferences );
+		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
+		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
 	}
 	
 	/**
@@ -86,14 +86,14 @@ public abstract class STMTransaction
 		m_dataKey = inDataKey;
 		m_producer = inProducer;
 		
-		addedDataReferences = new HashMap<Integer, DataTypeRef>( 8 );
-		removedDataReferences = new ArrayList<Integer>( 8 );
+		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
+		removedDataReferences = new ArrayList<String>( 8 );
 	}
 	
 	/**
 	 * @param inMap
 	 */
-	public void putInitDataState( IPersistentMap<Integer, DataType<?>> inMap, Status inStatus )
+	public void putInitDataState( IPersistentMap<String, DataType<?>> inMap, Status inStatus )
 	{
 		m_stateInstruction = inMap;
 		status = inStatus;
@@ -106,7 +106,7 @@ public abstract class STMTransaction
 	 * @param inKey
 	 * @param inData
 	 */
-	public void putValue( Integer inKey, DataType<?> inData )
+	public void putValue( String inKey, DataType<?> inData )
 	{
 		assert STMUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
 		assert !( inData instanceof DataTypeRef ) : "Reference values should be added via addReference method";
@@ -119,7 +119,7 @@ public abstract class STMTransaction
 	 * @param inKey
 	 * @param inDataTypeRef
 	 */
-	public void updateReferenceValue( Integer inKey, DataTypeRef inDataTypeRef )
+	public void updateReferenceValue( String inKey, DataTypeRef inDataTypeRef )
 	{
 		assert STMUtil.validateTransactionStack() : "Transaction.updateReferenceValue was not from called from within a STM commit as required";
 		assert m_stateInstruction.valAt( inKey) != null : "Tried to update non existing Reference";
@@ -133,7 +133,7 @@ public abstract class STMTransaction
 	 * @param inKey
 	 * @param inDataRef
 	 */
-	public void addReference( Integer inKey, DataTypeRef inDataRef )
+	public void addReference( String inKey, DataTypeRef inDataRef )
 	{
 		assert STMUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
 		
@@ -149,7 +149,7 @@ public abstract class STMTransaction
 	 * @param inKey
 	 * @throws Exception
 	 */
-	public void removeValue( Integer inKey )throws Exception
+	public void removeValue( String inKey )throws Exception
 	{
 		assert STMUtil.validateTransactionStack() : "Transaction.removeValue was not from called from within a STM commit as required";
 		assert m_deltaState.contains( inKey ) : "Transaction may not add and remove the same field value: "+inKey;
@@ -171,7 +171,7 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	protected IPersistentMap<Integer, DataType<?>> getStateInstruction()
+	protected IPersistentMap<String, DataType<?>> getStateInstruction()
 	{
 		return m_stateInstruction;
 	}
@@ -179,7 +179,7 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	protected Set<Integer> getDeltaState()
+	protected Set<String> getDeltaState()
 	{
 		return m_deltaState;
 	}
@@ -200,7 +200,7 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	public Map<Integer, DataTypeRef> getAddedReferences()
+	public Map<String, DataTypeRef> getAddedReferences()
 	{
 		return addedDataReferences;
 	}
@@ -208,7 +208,7 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	public List<Integer> getRemovedReferences()
+	public List<String> getRemovedReferences()
 	{
 		return removedDataReferences;
 	}
@@ -223,7 +223,7 @@ public abstract class STMTransaction
 		return status;
 	}
 	
-	public DataType<?> get( Integer inFieldKey )
+	public DataType<?> get( String inFieldKey )
 	{
 		return m_stateInstruction.valAt( inFieldKey );
 	}

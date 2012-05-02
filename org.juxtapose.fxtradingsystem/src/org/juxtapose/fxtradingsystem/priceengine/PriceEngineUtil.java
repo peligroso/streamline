@@ -10,9 +10,9 @@ import org.juxtapose.streamline.util.data.DataTypeLong;
 
 public class PriceEngineUtil
 {
-	public static HashMap<Integer, String> getSpotPriceQuery( String inCcy1, String inCcy2 )
+	public static HashMap<String, String> getSpotPriceQuery( String inCcy1, String inCcy2 )
 	{
-		HashMap<Integer, String> query = new HashMap<Integer, String>();
+		HashMap<String, String> query = new HashMap<String, String>();
 		query.put( PriceEngineDataConstants.FIELD_TYPE, PriceEngineDataConstants.STATE_TYPE_PRICE );
 		query.put( PriceEngineDataConstants.FIELD_INSTRUMENT, PriceEngineDataConstants.STATE_INSTRUMENT_SPOT );
 		query.put( FXDataConstants.FIELD_CCY1, inCcy1 );
@@ -21,9 +21,9 @@ public class PriceEngineUtil
 		return query;
 	}
 	
-	public static HashMap<Integer, String> getFwdPriceQuery( String inCcy1, String inCcy2, String inPeriod )
+	public static HashMap<String, String> getFwdPriceQuery( String inCcy1, String inCcy2, String inPeriod )
 	{
-		HashMap<Integer, String> query = new HashMap<Integer, String>();
+		HashMap<String, String> query = new HashMap<String, String>();
 		query.put( PriceEngineDataConstants.FIELD_TYPE, PriceEngineDataConstants.STATE_TYPE_PRICE );
 		query.put( PriceEngineDataConstants.FIELD_INSTRUMENT, PriceEngineDataConstants.STATE_INSTRUMENT_FWD );
 		query.put( FXDataConstants.FIELD_CCY1, inCcy1 );
@@ -33,9 +33,9 @@ public class PriceEngineUtil
 		return query;
 	}
 	
-	public static HashMap<Integer, String> getSwapPriceQuery( String inCcy1, String inCcy2, String inPeriod1, String inPeriod2 )
+	public static HashMap<String, String> getSwapPriceQuery( String inCcy1, String inCcy2, String inPeriod1, String inPeriod2 )
 	{
-		HashMap<Integer, String> query = new HashMap<Integer, String>();
+		HashMap<String, String> query = new HashMap<String, String>();
 		query.put( PriceEngineDataConstants.FIELD_TYPE, PriceEngineDataConstants.STATE_TYPE_PRICE );
 		query.put( PriceEngineDataConstants.FIELD_INSTRUMENT, PriceEngineDataConstants.STATE_INSTRUMENT_SWAP );
 		query.put( FXDataConstants.FIELD_CCY1, inCcy1 );

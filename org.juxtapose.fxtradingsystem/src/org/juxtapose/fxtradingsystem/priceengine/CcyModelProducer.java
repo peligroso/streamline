@@ -74,7 +74,7 @@ public class CcyModelProducer extends DataProducer
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.producer.IDataProducer#referencedDataUpdated(java.lang.Integer, org.juxtapose.streamline.util.IPublishedData)
 	 */
-	public void postReferenceDataCall( Integer inFieldKey, ReferenceLink inLink, IPublishedData inData )
+	public void postReferenceDataCall( String inFieldKey, ReferenceLink inLink, IPublishedData inData )
 	{
 		checkStatus();
 	}
@@ -86,11 +86,11 @@ public class CcyModelProducer extends DataProducer
 		{
 			if( data.getStatus() == Status.INITIALIZING )
 			{
-				Iterator<Entry<Integer, DataType<?>>> iterator = data.getDataMap().iterator();
+				Iterator<Entry<String, DataType<?>>> iterator = data.getDataMap().iterator();
 				
 				while( iterator.hasNext() )
 				{
-					Entry<Integer, DataType<?>> entry = iterator.next();
+					Entry<String, DataType<?>> entry = iterator.next();
 					
 					IPublishedData ref = ((DataTypeRef)entry.getValue()).getReferenceData();
 					

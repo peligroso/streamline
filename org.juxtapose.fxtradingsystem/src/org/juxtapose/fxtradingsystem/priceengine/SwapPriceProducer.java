@@ -49,7 +49,7 @@ public class SwapPriceProducer  extends DataProducer implements IDataRequestSubs
 	
 	public void subscribe()
 	{
-		HashMap<Integer, String> query = new HashMap<Integer, String>();
+		HashMap<String, String> query = new HashMap<String, String>();
 		query.put( MarketDataConstants.FIELD_TYPE, MarketDataConstants.STATE_TYPE_INSTRUMENT );
 		query.put( MarketDataConstants.FIELD_CCY1, ccy1 );
 		query.put( MarketDataConstants.FIELD_CCY2, ccy2 );
@@ -59,7 +59,7 @@ public class SwapPriceProducer  extends DataProducer implements IDataRequestSubs
 		PriceEngineUtil.getSpotPriceQuery( STATE_EUR, STATE_SEK );
 		stm.getDataKey( FXProducerServiceConstants.MARKET_DATA, this, reutersTag, query );
 		
-		HashMap<Integer, String> queryB = new HashMap<Integer, String>();
+		HashMap<String, String> queryB = new HashMap<String, String>();
 		queryB.putAll( query );
 		queryB.put( MarketDataConstants.FIELD_SOURCE, "BLOOMBERG" );
 		

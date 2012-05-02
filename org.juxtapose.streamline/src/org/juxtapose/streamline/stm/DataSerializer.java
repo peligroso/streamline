@@ -116,39 +116,39 @@ public class DataSerializer
 	
 	public static final void main( String... inArg )
 	{
-		IPersistentMap<Integer, DataType<?>> map = PersistentHashMap.emptyMap();
-		map = map.assoc( 1, new DataTypeLong( 12l ) );
-		map = map.assoc( 2, new DataTypeBoolean( true ) );
-		map = map.assoc( 3, new DataTypeString("hej och hå") );
-		map = map.assoc( 4, new DataTypeBoolean( false ) );
-		map = map.assoc( 5, new DataTypeLong( 12345l ) );
-		map = map.assoc( 1, new DataTypeLong( 123456789l ) );
-		map = map.assoc( 6, new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
+		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
+		map = map.assoc( "1", new DataTypeLong( 12l ) );
+		map = map.assoc( "2", new DataTypeBoolean( true ) );
+		map = map.assoc( "3", new DataTypeString("hej och hå") );
+		map = map.assoc( "4", new DataTypeBoolean( false ) );
+		map = map.assoc( "5", new DataTypeLong( 12345l ) );
+		map = map.assoc( "1", new DataTypeLong( -123456789l ) );
+		map = map.assoc( "6", new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
 		
-		IPersistentMap<Integer, DataType<?>> subMap = PersistentHashMap.emptyMap();
-		subMap = subMap.assoc( 1, new DataTypeLong( 1l ) );
-		subMap = subMap.assoc( 2, new DataTypeBoolean( false ) );
+		IPersistentMap<String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+		subMap = subMap.assoc( "1", new DataTypeLong( 1l ) );
+		subMap = subMap.assoc( "2", new DataTypeBoolean( false ) );
 		
 		PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
 		DataTypeRef ref = new DataTypeRef(null, pd);
 		
-		map = map.assoc( 7, ref );
+		map = map.assoc( "7", ref );
 		
 		byte[] bytes = serialize( map );
 		
 		map = unSerialize( bytes );
 		
-		Iterator<Map.Entry<Integer,DataType<?>>> iter = map.iterator();
+		Iterator<Map.Entry<String,DataType<?>>> iter = map.iterator();
 		
 		while( iter.hasNext() )
 		{
-			Map.Entry<Integer,DataType<?>> entry = iter.next();
+			Map.Entry<String,DataType<?>> entry = iter.next();
 			if( entry.getValue() instanceof DataTypeRef )
 			{
-				Iterator<Map.Entry<Integer,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
+				Iterator<Map.Entry<String,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
 				while( subIter.hasNext() )
 				{
-					Map.Entry<Integer,DataType<?>> subEntry = subIter.next();
+					Map.Entry<String,DataType<?>> subEntry = subIter.next();
 					System.out.println("---key: "+subEntry.getKey()+" has value: "+subEntry.getValue());
 				}
 			}
@@ -242,9 +242,9 @@ public class DataSerializer
 		return ret;
 	}
 	
-	public static final byte[] serialize( IPersistentMap<Integer, DataType<?>> inData )
+	public static final byte[] serialize( IPersistentMap<String, DataType<?>> inData )
 	{
-		Iterator<Map.Entry<Integer,DataType<?>>> iter = inData.iterator();
+		Iterator<Map.Entry<String,DataType<?>>> iter = inData.iterator();
 		
 		byte[][] byteArrays = new byte[inData.count()][];
 		
@@ -252,9 +252,11 @@ public class DataSerializer
 		int totalBytes = 0;
 		while( iter.hasNext() )
 		{
-			Map.Entry<Integer,DataType<?>> entry = iter.next();
+			Map.Entry<String,DataType<?>> entry = iter.next();
 			
-			byte[] bytes = entry.getValue().serialize( entry.getKey() );
+			byte[] fieldBytes = DataType.serializeString( entry.getKey() );
+			
+			byte[] bytes = entry.getValue().serialize( fieldBytes );
 			byteArrays[ i ] = bytes;
 			
 			i++;
@@ -273,17 +275,23 @@ public class DataSerializer
 		return bytes;
 	}
 	
-	public static final IPersistentMap<Integer, DataType<?>> unSerialize( byte[] inBytes )
+	public static final IPersistentMap<String, DataType<?>> unSerialize( byte[] inBytes )
 	{
-		IPersistentMap<Integer, DataType<?>> map = PersistentHashMap.emptyMap();
+		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
 		
 		int cursor = 0;
 		
 		do
 		{
-			int field = (int)numberFromByteArray( inBytes, cursor, FIELD_BYTE_LENGTH, null );
+			int fieldLength = (int)numberFromByteArray( inBytes, cursor, FIELD_BYTE_LENGTH, null );
 			
 			cursor+=4;
+			
+			byte[] fieldCharBytes = ArrayUtils.subarray( inBytes, cursor, cursor+fieldLength );
+			
+			String field = new String(fieldCharBytes);
+			
+			cursor += fieldCharBytes.length;
 			
 			if( inBytes[cursor] == BOOLEAN_TRUE )
 			{
@@ -345,7 +353,7 @@ public class DataSerializer
 				
 				byte[] mapBytes = ArrayUtils.subarray( inBytes, cursor, cursor+mapLenght );
 				
-				IPersistentMap<Integer, DataType<?>> subMap = unSerialize( mapBytes );
+				IPersistentMap<String, DataType<?>> subMap = unSerialize( mapBytes );
 				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
 				
 				DataTypeRef ref = new DataTypeRef(null, pd);

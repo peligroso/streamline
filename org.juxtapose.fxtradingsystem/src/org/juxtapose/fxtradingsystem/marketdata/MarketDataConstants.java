@@ -4,10 +4,8 @@ import org.juxtapose.fxtradingsystem.FXDataConstants;
 
 public class MarketDataConstants extends FXDataConstants
 {
-	public static final int BASE = FXDataConstants.getBase();
-	public static int inc = BASE;
 	
-	public static final int FIELD_SOURCE = inc;
+	public static final String FIELD_SOURCE = "SRC";
 	
 	//Types
 	public static final String STATE_TYPE_INSTRUMENT = "INSTRUMENT";

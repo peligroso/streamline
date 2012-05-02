@@ -70,7 +70,7 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 
 	public void subscribe()
 	{
-		HashMap<Integer, String> query = new HashMap<Integer, String>();
+		HashMap<String, String> query = new HashMap<String, String>();
 		query.put( MarketDataConstants.FIELD_TYPE, MarketDataConstants.STATE_TYPE_INSTRUMENT );
 		query.put( MarketDataConstants.FIELD_CCY1, ccy1 );
 		query.put( MarketDataConstants.FIELD_CCY2, ccy2 );

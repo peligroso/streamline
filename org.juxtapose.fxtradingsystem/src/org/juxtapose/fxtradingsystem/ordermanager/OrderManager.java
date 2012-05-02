@@ -13,7 +13,6 @@ import org.juxtapose.streamline.producer.IDataProducerService;
 import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.IDataRequestSubscriber;
@@ -90,7 +89,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 	
 	@Override
-	public Integer getServiceId()
+	public String getServiceId()
 	{
 		return FXProducerServiceConstants.ORDER_MANAGER;
 	}
@@ -204,7 +203,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SPOT ))
 				{
 					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
-						new Integer[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2}, 
+						new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2}, 
 						new String[]{id, inMessage.ccy1, inMessage.ccy2 } );
 					
 					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, null, null );
@@ -212,7 +211,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_FWD ))
 				{
 					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
-							new Integer[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP}, 
+							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate } );
 					
 					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, null );
@@ -220,7 +219,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SWAP ))
 				{
 					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
-							new Integer[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP, FXDataConstants.FIELD_FAR_SWAP}, 
+							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP, FXDataConstants.FIELD_FAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate } );
 					
 					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate );
@@ -275,7 +274,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 	
 	@Override
-	public void getDataKey(IDataRequestSubscriber inSubscriber, Long inTag, HashMap<Integer, String> inQuery)
+	public void getDataKey(IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
 	{
 		inSubscriber.queryNotAvailible( inTag );
 	}

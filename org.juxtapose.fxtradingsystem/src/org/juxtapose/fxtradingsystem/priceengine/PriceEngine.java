@@ -34,7 +34,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<Integer, String> inQuery )
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 		if( type == null )
@@ -51,7 +51,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 			String ccy1 = inQuery.get( FXDataConstants.FIELD_CCY1 );
 			String ccy2 = inQuery.get( FXDataConstants.FIELD_CCY2 );
 		
-			inSubscriber.deliverKey(  ProducerUtil.createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new Integer[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
+			inSubscriber.deliverKey(  ProducerUtil.createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
 		}
 		else
 		{
@@ -117,7 +117,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.stm.osgi.DataProducerService#getServiceId()
 	 */
 	@Override
-	public Integer getServiceId()
+	public String getServiceId()
 	{
 		return FXProducerServiceConstants.PRICE_ENGINE;
 	}

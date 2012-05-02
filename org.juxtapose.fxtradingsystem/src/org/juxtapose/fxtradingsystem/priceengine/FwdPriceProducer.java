@@ -37,10 +37,10 @@ public class FwdPriceProducer extends DataProducer implements IDataRequestSubscr
 	
 	public void linkData()
 	{
-		HashMap<Integer, String> querySp = PriceEngineUtil.getSpotPriceQuery( STATE_EUR, STATE_SEK );
+		HashMap<String, String> querySp = PriceEngineUtil.getSpotPriceQuery( STATE_EUR, STATE_SEK );
 		stm.getDataKey( FXProducerServiceConstants.PRICE_ENGINE, this, spotTag, querySp );
 		
-		HashMap<Integer, String> querySw = PriceEngineUtil.getFwdPriceQuery( STATE_EUR, STATE_SEK, period );
+		HashMap<String, String> querySw = PriceEngineUtil.getFwdPriceQuery( STATE_EUR, STATE_SEK, period );
 		stm.getDataKey( FXProducerServiceConstants.PRICE_ENGINE, this, swapTag, querySw );
 	}
 	

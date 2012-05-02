@@ -73,5 +73,5 @@ public abstract class DataProducerService implements IDataProducerService, IData
 	}
 
 	@Override
-	public abstract Integer getServiceId();
+	public abstract String getServiceId();
 }
