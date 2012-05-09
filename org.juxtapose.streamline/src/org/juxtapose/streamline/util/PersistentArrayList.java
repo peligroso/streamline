@@ -8,25 +8,39 @@ package org.juxtapose.streamline.util;
  */
 public class PersistentArrayList<T> 
 {
+	public static final int DEFAULT_SIZE = 32;
+	
+	private final int size;
 	private final T[] arr;
 	
 	public PersistentArrayList()
 	{
-		arr = (T[])new Object[0];
+		arr = (T[])new Object[DEFAULT_SIZE];
+		size = DEFAULT_SIZE;
 	}
 	
 	public PersistentArrayList( T[] inArr )
 	{
 		arr = inArr;
+		size = inArr.length;
+	}
+	
+	private PersistentArrayList( T[] inArr, int inSize )
+	{
+		arr = inArr;
+		size = inArr.length;
 	}
 	
 	public int size()
 	{
-		return arr.length;
+		return size;
 	}
 	
 	public T get( int i )
 	{
+		if( i > size-1 )
+			throw new ArrayIndexOutOfBoundsException();
+		
 		return arr[i];
 	}
 	
@@ -36,22 +50,35 @@ public class PersistentArrayList<T>
 	 */
 	public PersistentArrayList<T> add( T inEl )
 	{
-		T[] newArr = (T[]) new Object[ arr.length +1 ];
-		System.arraycopy( arr, 0, newArr, 0, arr.length );
-	
-		newArr[arr.length] = inEl;
-		
-		return new PersistentArrayList( newArr );
+		if( size < arr.length )
+		{
+			arr[size] = inEl;
+			return new PersistentArrayList<T>( arr, size+1 );
+		}
+		else
+		{
+			T[] newArr = (T[]) new Object[ size + DEFAULT_SIZE ];
+			System.arraycopy( arr, 0, newArr, 0, size );
+
+			newArr[size] = inEl;
+
+			return new PersistentArrayList<T>( newArr, size+1 );
+		}
 	}
 	
+	/**
+	 * @param index
+	 * @param e
+	 * @return
+	 */
 	public PersistentArrayList<T> add(int index, T e)
 	{
-		T[] newData = (T[]) new Object[arr.length + 1];
+		T[] newData = (T[]) new Object[size + 1];
 		System.arraycopy(arr, 0, newData, 0, index);
 		newData[index] = e;
-		System.arraycopy(arr, index, newData, index + 1, arr.length - index);
+		System.arraycopy(arr, index, newData, index + 1, size - index);
 		
-		return new PersistentArrayList( newData );
+		return new PersistentArrayList<T>( newData, size+1 );
 	}
 
 
@@ -61,12 +88,12 @@ public class PersistentArrayList<T>
 	 */
 	public PersistentArrayList<T> remove( T inEl )
 	{
-		T[] newData = (T[]) new Object[arr.length - 1];
+		T[] newData = (T[]) new Object[size - 1];
 
 		// search the element to remove while filling the backup array
 		// this way we can run this method in O(n)
 		int elementIndex = -1;
-		for (int i = 0; i < arr.length; i++)
+		for (int i = 0; i < size; i++)
 		{
 			if ( inEl.equals(arr[i]) )
 			{
@@ -81,8 +108,9 @@ public class PersistentArrayList<T>
 		if (elementIndex < 0)
 			return this;
 
-		System.arraycopy(arr, elementIndex + 1, newData, elementIndex,arr.length - elementIndex - 1);
-		return new PersistentArrayList<T>( newData );
+		System.arraycopy(arr, elementIndex + 1, newData, elementIndex, size - elementIndex - 1);
+		
+		return new PersistentArrayList<T>( newData, size-1 );
 	}
 	
 	/**
@@ -91,10 +119,10 @@ public class PersistentArrayList<T>
 	 */
 	public PersistentArrayList<T> remove(int index)
 	{
-		if (index < 0 || index >= arr.length)
+		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException("index = " +  index);
 
-		T[] newData = (T[]) new Object[arr.length - 1];
+		T[] newData = (T[]) new Object[size - 1];
 
 		T result = arr[index];
 
@@ -102,9 +130,9 @@ public class PersistentArrayList<T>
 			System.arraycopy(arr, 0, newData, 0, index);
 
 		System.arraycopy(arr, index + 1, newData, index,
-				arr.length - index - 1);
+				size - index - 1);
 
-		return new PersistentArrayList<T>( newData );
+		return new PersistentArrayList<T>( newData, size-1 );
 
 	}
 
