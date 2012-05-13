@@ -37,8 +37,8 @@ public class DataSerializer
 	static final byte REF	 				= 13;
 	static final byte DATA	 				= 14;
 	
-	static final int STRING_DESC_BYTE_LENGTH = 4;
-	static final int FIELD_BYTE_LENGTH = 4;
+	public static final int STRING_DESC_BYTE_LENGTH = 4;
+	public static final int FIELD_BYTE_LENGTH = 4;
 	
 	
 	public static final int getNumberByteCount( byte inKey )

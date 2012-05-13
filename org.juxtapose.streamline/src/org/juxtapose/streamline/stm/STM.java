@@ -20,6 +20,7 @@ import org.juxtapose.streamline.util.IPublishedData;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeString;
+import org.juxtapose.streamline.util.net.ServerConnector;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 /**
@@ -40,6 +41,8 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	
 	private IPublishedDataFactory dataFactory;
 	
+	private ServerConnector connector;
+	
 	/**
 	 * @param inExecutor
 	 */
@@ -48,6 +51,9 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 		executor = inExecutor;
 		keyToData.put( KeyConstants.PRODUCER_SERVICE_KEY.getKey(), createEmptyData(Status.OK, this, this));
 		registerProducer( this, Status.OK );
+		
+//		connector = new ServerConnector( 8085 );
+//		connector.run();
 	}
 	
 	/**
