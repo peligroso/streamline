@@ -36,7 +36,7 @@ public class DataTypeRef extends DataType<IDataKey>
 	public byte[] serialize( byte[] inField )
 	{
 		//[Field, REF, mapByteLength, mapBytes]
-		byte[] mapBytes = DataSerializer.serialize( referenceData.getDataMap() );
+		byte[] mapBytes = DataSerializer.serializeData( referenceData.getDataMap() );
 		byte[] bytes = getByteArrayFrame(inField, mapBytes.length+5);
 		bytes[inField.length] = REF;
 		serializeInt( bytes, inField.length+1, mapBytes.length );

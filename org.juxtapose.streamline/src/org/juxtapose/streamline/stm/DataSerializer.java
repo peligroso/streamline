@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -134,9 +135,9 @@ public class DataSerializer
 		
 		map = map.assoc( "7", ref );
 		
-		byte[] bytes = serialize( map );
+		byte[] bytes = serializeData( map );
 		
-		map = unSerialize( bytes );
+		map = unSerializeData( bytes );
 		
 		Iterator<Map.Entry<String,DataType<?>>> iter = map.iterator();
 		
@@ -156,6 +157,21 @@ public class DataSerializer
 				System.out.println("key: "+entry.getKey()+" has value: "+entry.getValue());
 		}
 		
+		
+		Map<String, String> query = new HashMap<String, String>();
+		query.put("CCY1", "SEK");
+		query.put("CCY2", "NOK");
+		query.put("TYPE", "SP");
+		query.put("CPTY", "1");
+		
+		bytes = serializeQuery( query );
+		
+		query = unserializeQuery( bytes );
+		
+		for( Map.Entry<String, String> entry : query.entrySet() )
+		{
+			System.out.println( entry.getKey()+" = "+entry.getValue() );
+		}
 	}
 	
 	//BOOLEAN
@@ -230,19 +246,27 @@ public class DataSerializer
 		return ret;
 	}
 	
+	/**
+	 * @param inString
+	 * @return byte in format[size, string]
+	 *
+	 */
 	public static final byte[] serializeString( String inString )
 	{
 		byte[] strBytes = inString.getBytes();
 		byte[] size = serializeInt( strBytes.length );
-		byte[] ret = new byte[ strBytes.length + size.length + 1 ];
-		System.arraycopy( size, 0, ret, 1, size.length );
-		System.arraycopy( strBytes, 0, ret, size.length+1, strBytes.length );
-		ret[0] = STRING;
+		byte[] ret = new byte[ strBytes.length + size.length ];
+		System.arraycopy( size, 0, ret, 0, size.length );
+		System.arraycopy( strBytes, 0, ret, size.length, strBytes.length );
 		
 		return ret;
 	}
 	
-	public static final byte[] serialize( IPersistentMap<String, DataType<?>> inData )
+	/**
+	 * @param inData
+	 * @return
+	 */
+	public static final byte[] serializeData( IPersistentMap<String, DataType<?>> inData )
 	{
 		Iterator<Map.Entry<String,DataType<?>>> iter = inData.iterator();
 		
@@ -275,7 +299,7 @@ public class DataSerializer
 		return bytes;
 	}
 	
-	public static final IPersistentMap<String, DataType<?>> unSerialize( byte[] inBytes )
+	public static final IPersistentMap<String, DataType<?>> unSerializeData( byte[] inBytes )
 	{
 		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
 		
@@ -353,7 +377,7 @@ public class DataSerializer
 				
 				byte[] mapBytes = ArrayUtils.subarray( inBytes, cursor, cursor+mapLenght );
 				
-				IPersistentMap<String, DataType<?>> subMap = unSerialize( mapBytes );
+				IPersistentMap<String, DataType<?>> subMap = unSerializeData( mapBytes );
 				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
 				
 				DataTypeRef ref = new DataTypeRef(null, pd);
@@ -366,6 +390,66 @@ public class DataSerializer
 		while( cursor < inBytes.length );
 		
 		return map;
+	}
+	
+	
+	public static final byte[] serializeQuery( Map<String, String> inQuery )
+	{
+		byte[] bytes = null;
+		int offset = 0;
+		
+		for( Map.Entry<String, String> entry : inQuery.entrySet() )
+		{
+			byte[] key = serializeString(entry.getKey());
+			byte[] value = serializeString(entry.getValue());
+			
+			if( bytes == null )
+				bytes = new byte[key.length + value.length];
+			else
+			{
+				byte[] newBytes = new byte[bytes.length+key.length+value.length];
+				System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
+				bytes = newBytes;
+			}
+			System.arraycopy( key, 0, bytes, offset, key.length);
+			offset += key.length;
+			System.arraycopy( value, 0, bytes, offset, value.length);
+			offset+= value.length;
+		}
+		
+		return bytes;
+	}
+	
+	public static final Map<String, String> unserializeQuery( byte[] inQueryBytes )
+	{
+		HashMap<String, String> queryMap = new HashMap<String, String>(); 
+		int offset = 0;
+		
+		if( inQueryBytes == null || inQueryBytes.length < 4 )
+			return queryMap;
+		
+		do
+		{
+			int keyLength = (int)numberFromByteArray( inQueryBytes, offset, FIELD_BYTE_LENGTH, null );
+			offset += FIELD_BYTE_LENGTH;
+			
+			byte[] charBytes = ArrayUtils.subarray( inQueryBytes, offset, offset+keyLength );			
+			String key = new String(charBytes);
+			offset += charBytes.length;
+			
+			int valueLength = (int)numberFromByteArray( inQueryBytes, offset, FIELD_BYTE_LENGTH, null );
+			offset += FIELD_BYTE_LENGTH;
+			
+			byte[] valueCharBytes = ArrayUtils.subarray( inQueryBytes, offset, offset+valueLength );			
+			String value = new String( valueCharBytes );
+			offset += valueCharBytes.length;
+			
+			queryMap.put( key, value );
+		}
+		while( offset < inQueryBytes.length );
+			
+		return queryMap;
+		
 	}
 
 }
