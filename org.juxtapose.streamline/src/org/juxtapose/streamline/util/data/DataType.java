@@ -48,7 +48,7 @@ public abstract class DataType<T> {
 	
 	public byte[] serialize( byte[] inField )
 	{
-		return new byte[]{};
+		throw new IllegalAccessError( "This method has not been properly subclassed by datatype");
 	}
 	
 	public byte[] getByteArrayFrame( byte[] inField, int inLength )
@@ -70,6 +70,10 @@ public abstract class DataType<T> {
 		return false;
 	}
 	
+	/**
+	 * @param inByte
+	 * @return
+	 */
 	public static final boolean isNumber( byte inByte )
 	{
 		if( inByte == NUMBER_BYTE || inByte == NUMBER_SHORT || inByte == NUMBER_INT || inByte == NUMBER_LONG || isNegativeNumber( inByte ) )
@@ -79,6 +83,10 @@ public abstract class DataType<T> {
 		return false;
 	}
 	
+	/**
+	 * @param inNumber
+	 * @return
+	 */
 	public static final byte[] getNumberProperties( long inNumber )
 	{
 		if( inNumber < Integer.MIN_VALUE )
@@ -131,6 +139,12 @@ public abstract class DataType<T> {
 		}
 	}
 	
+	/**
+	 * @param inBytes
+	 * @param inOffSet
+	 * @param number
+	 * @return
+	 */
 	public static final byte[] serializeInt( byte[] inBytes, int inOffSet, int number )
 	{
 		assert (inBytes.length - inOffSet) <= 4 : "integer will not fit into byte array from offset";
@@ -143,6 +157,10 @@ public abstract class DataType<T> {
 		return inBytes;
 	}
 	
+	/**
+	 * @param inString
+	 * @return
+	 */
 	public static final byte[] serializeString( String inString )
 	{
 		assert (inString.length() < Integer.MAX_VALUE ) : "String is to big.. larger than Integer.MAX_VALUE";
