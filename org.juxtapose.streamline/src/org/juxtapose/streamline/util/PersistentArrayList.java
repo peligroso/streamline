@@ -28,7 +28,7 @@ public class PersistentArrayList<T>
 	private PersistentArrayList( T[] inArr, int inSize )
 	{
 		arr = inArr;
-		size = inArr.length;
+		size = inSize;
 	}
 	
 	public int size()
