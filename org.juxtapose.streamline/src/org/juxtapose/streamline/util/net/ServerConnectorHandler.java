@@ -11,7 +11,7 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.juxtapose.streamline.util.message.SubQuery;
+import org.juxtapose.streamline.experimental.protocol.message.SubQuery;
 
 public class ServerConnectorHandler extends SimpleChannelUpstreamHandler 
 {	  

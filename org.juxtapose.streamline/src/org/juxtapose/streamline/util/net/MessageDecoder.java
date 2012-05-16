@@ -7,7 +7,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.frame.CorruptedFrameException;
 import org.jboss.netty.handler.codec.frame.FrameDecoder;
-import org.juxtapose.streamline.util.message.MessageSerializer;
+import org.juxtapose.streamline.experimental.protocol.message.MessageSerializer;
 
 public class MessageDecoder extends FrameDecoder
 {

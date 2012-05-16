@@ -5,8 +5,8 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
-import org.juxtapose.streamline.util.message.Message;
-import org.juxtapose.streamline.util.message.MessageSerializer;
+import org.juxtapose.streamline.experimental.protocol.message.Message;
+import org.juxtapose.streamline.experimental.protocol.message.MessageSerializer;
 
 public class MessageEncoder extends OneToOneEncoder{
 
