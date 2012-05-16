@@ -2,15 +2,12 @@ package org.juxtapose.streamline.experimental.protocol.message;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.juxtapose.streamline.stm.PublishedData;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
@@ -66,61 +63,61 @@ public class DataSerializer
 	
 	public static final void main( String... inArg )
 	{
-		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
-		map = map.assoc( "1", new DataTypeLong( 12l ) );
-		map = map.assoc( "2", new DataTypeBoolean( true ) );
-		map = map.assoc( "3", new DataTypeString("hej och hå") );
-		map = map.assoc( "4", new DataTypeBoolean( false ) );
-		map = map.assoc( "5", new DataTypeLong( 12345l ) );
-		map = map.assoc( "1", new DataTypeLong( -123456789l ) );
-		map = map.assoc( "6", new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
-		
-		IPersistentMap<String, DataType<?>> subMap = PersistentHashMap.emptyMap();
-		subMap = subMap.assoc( "1", new DataTypeLong( 1l ) );
-		subMap = subMap.assoc( "2", new DataTypeBoolean( false ) );
-		
-		PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
-		DataTypeRef ref = new DataTypeRef(null, pd);
-		
-		map = map.assoc( "7", ref );
-		
-		byte[] bytes = serializeData( map );
-		
-		map = unSerializeData( bytes );
-		
-		Iterator<Map.Entry<String,DataType<?>>> iter = map.iterator();
-		
-		while( iter.hasNext() )
-		{
-			Map.Entry<String,DataType<?>> entry = iter.next();
-			if( entry.getValue() instanceof DataTypeRef )
-			{
-				Iterator<Map.Entry<String,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
-				while( subIter.hasNext() )
-				{
-					Map.Entry<String,DataType<?>> subEntry = subIter.next();
-					System.out.println("---key: "+subEntry.getKey()+" has value: "+subEntry.getValue());
-				}
-			}
-			else
-				System.out.println("key: "+entry.getKey()+" has value: "+entry.getValue());
-		}
-		
-		
-		Map<String, String> query = new HashMap<String, String>();
-		query.put("CCY1", "SEK");
-		query.put("CCY2", "NOK");
-		query.put("TYPE", "SP");
-		query.put("CPTY", "1");
-		
-		bytes = serializeQuery( query );
-		
-		query = unserializeQuery( bytes );
-		
-		for( Map.Entry<String, String> entry : query.entrySet() )
-		{
-			System.out.println( entry.getKey()+" = "+entry.getValue() );
-		}
+//		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
+//		map = map.assoc( "1", new DataTypeLong( 12l ) );
+//		map = map.assoc( "2", new DataTypeBoolean( true ) );
+//		map = map.assoc( "3", new DataTypeString("hej och hå") );
+//		map = map.assoc( "4", new DataTypeBoolean( false ) );
+//		map = map.assoc( "5", new DataTypeLong( 12345l ) );
+//		map = map.assoc( "1", new DataTypeLong( -123456789l ) );
+//		map = map.assoc( "6", new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
+//		
+//		IPersistentMap<String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+//		subMap = subMap.assoc( "1", new DataTypeLong( 1l ) );
+//		subMap = subMap.assoc( "2", new DataTypeBoolean( false ) );
+//		
+//		PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
+//		DataTypeRef ref = new DataTypeRef(null, pd);
+//		
+//		map = map.assoc( "7", ref );
+//		
+//		byte[] bytes = serializeData( map );
+//		
+//		map = unSerializeData( bytes );
+//		
+//		Iterator<Map.Entry<String,DataType<?>>> iter = map.iterator();
+//		
+//		while( iter.hasNext() )
+//		{
+//			Map.Entry<String,DataType<?>> entry = iter.next();
+//			if( entry.getValue() instanceof DataTypeRef )
+//			{
+//				Iterator<Map.Entry<String,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
+//				while( subIter.hasNext() )
+//				{
+//					Map.Entry<String,DataType<?>> subEntry = subIter.next();
+//					System.out.println("---key: "+subEntry.getKey()+" has value: "+subEntry.getValue());
+//				}
+//			}
+//			else
+//				System.out.println("key: "+entry.getKey()+" has value: "+entry.getValue());
+//		}
+//		
+//		
+//		Map<String, String> query = new HashMap<String, String>();
+//		query.put("CCY1", "SEK");
+//		query.put("CCY2", "NOK");
+//		query.put("TYPE", "SP");
+//		query.put("CPTY", "1");
+//		
+//		bytes = serializeQuery( query );
+//		
+//		query = unserializeQuery( bytes );
+//		
+//		for( Map.Entry<String, String> entry : query.entrySet() )
+//		{
+//			System.out.println( entry.getKey()+" = "+entry.getValue() );
+//		}
 	}
 	
 	//BOOLEAN
@@ -422,11 +419,11 @@ public class DataSerializer
 				byte[] mapBytes = ArrayUtils.subarray( inBytes, cursor, cursor+mapLenght );
 				
 				IPersistentMap<String, DataType<?>> subMap = unSerializeData( mapBytes );
-				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
-				
-				DataTypeRef ref = new DataTypeRef(null, pd);
-				
-				map = map.assoc( field, ref );
+//				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
+//				
+//				DataTypeRef ref = new DataTypeRef(null, pd);
+//				
+//				map = map.assoc( field, ref );
 				
 				cursor+= mapBytes.length;
 			}
