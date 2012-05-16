@@ -124,6 +124,7 @@ public class MultiSplit extends javax.swing.JFrame {
             }
         });
         AtMenu.add(IndicatorsMenuItem);
+        
 
         jMenuBar1.add(AtMenu);
 

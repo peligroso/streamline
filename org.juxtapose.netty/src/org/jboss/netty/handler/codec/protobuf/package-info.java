@@ -13,15 +13,14 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.jboss.netty.container.microcontainer;
-
-import org.jboss.netty.logging.InternalLoggerFactory;
 
 /**
- * A bean that configures the default {@link InternalLoggerFactory}.
+ * Encoder and decoder which transform a
+ * <a href="http://code.google.com/p/protobuf/">Google Protocol Buffers</a>
+ * {@link com.google.protobuf.Message} into a {@link org.jboss.netty.buffer.ChannelBuffer}
+ * and vice versa.
+ *
+ * @apiviz.exclude \.oneone\.
+ * @apiviz.exclude \.frame\.
  */
-public class NettyLoggerConfigurator {
-    public NettyLoggerConfigurator() {
-        InternalLoggerFactory.setDefaultFactory(InternalLoggerFactory.getDefaultFactory());
-    }
-}
+package org.jboss.netty.handler.codec.protobuf;

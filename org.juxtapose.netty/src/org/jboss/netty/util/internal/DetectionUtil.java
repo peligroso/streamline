@@ -46,7 +46,7 @@ public final class DetectionUtil {
     }
 
     private static boolean hasUnsafe(ClassLoader loader) {
-        boolean useUnsafe = Boolean.valueOf(SystemPropertyUtil.get("org.jboss.netty.tryUnsafe", "false"));
+        boolean useUnsafe = Boolean.valueOf(SystemPropertyUtil.get("org.jboss.netty.tryUnsafe", "true"));
         if (!useUnsafe) {
             return false;
         }

@@ -13,15 +13,11 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.jboss.netty.container.microcontainer;
-
-import org.jboss.netty.logging.InternalLoggerFactory;
 
 /**
- * A bean that configures the default {@link InternalLoggerFactory}.
+ * <p>This is an example web service client.
+ * <p>To run this example, you must first start {@link WebSocketServer} and
+ * then {@link WebSocketClient}.
  */
-public class NettyLoggerConfigurator {
-    public NettyLoggerConfigurator() {
-        InternalLoggerFactory.setDefaultFactory(InternalLoggerFactory.getDefaultFactory());
-    }
-}
+package org.jboss.netty.example.http.websocketx.client;
+

@@ -46,3 +46,4 @@ Export-Package: org.jboss.netty.bootstrap,
  org.jboss.netty.util,
  org.jboss.netty.util.internal,
  org.jboss.netty.util.internal.jzlib
+Require-Bundle: org.juxtapose.protobuf;bundle-version="1.0.0"

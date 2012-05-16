@@ -4,6 +4,8 @@
  */
 package testmultisplitpanes;
 
+import javax.swing.JList;
+
 
 public class AtDialog extends javax.swing.JDialog {
 
@@ -54,6 +56,12 @@ public class AtDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE))
         );
+        
+        String[] data = new String[]{"one", "two", "three"};
+        
+        javax.swing.JList<String> indicList = new javax.swing.JList<String>(data);
+        
+        jScrollPane1.add( indicList );
 
         SelectedPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Indicators\n"));
 
