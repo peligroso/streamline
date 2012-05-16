@@ -1,0 +1,68 @@
+message Message
+{
+	required uint64 type = 1;
+
+	optional string service = 2;	
+	optional DataMap dataMap = 3;
+}
+
+message BDecimal 
+{
+  required int32 scale = 1;
+  required bytes intBytes = 2;
+}
+
+message BInteger 
+{
+  required bytes value = 1;
+}
+
+
+message StringEntry 
+{
+	required string field = 1;
+	required string data = 2;
+}
+
+message BooleanEntry 
+{
+	required string field = 1;
+	required bool data = 2;
+}
+
+message LongEntry 
+{
+	required string field = 1;
+	required uint64 data = 2;
+}
+
+message BigDecimalEntry 
+{
+	required string field = 1;
+	required int32 scale = 2;
+  	required bytes intBytes = 3;
+}
+
+message NullEntry 
+{
+	required string field = 1;
+}
+
+message HashMapEntry
+{
+	required string field = 1;
+	required DataMap data = 2;
+}
+
+message DataMap
+{
+	repeated StringEntry stringEntries = 2;
+	repeated LongEntry longEntries = 3;
+	repeated BigDecimalEntry bDEntries = 4;
+	repeated BooleanEntry boolEntries = 5;
+	repeated NullEntry nullEntries = 6;
+	repeated HashMapEntry hashMapEntries = 7;
+	
+}
+
+
