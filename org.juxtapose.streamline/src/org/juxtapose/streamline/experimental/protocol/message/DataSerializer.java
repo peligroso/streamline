@@ -1,4 +1,4 @@
-package org.juxtapose.streamline.stm;
+package org.juxtapose.streamline.experimental.protocol.message;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,10 +10,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.juxtapose.streamline.stm.PublishedData;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeLong;
+import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
@@ -36,6 +38,7 @@ public class DataSerializer
 	static final byte BIG_DEC 				= 12;
 	static final byte REF	 				= 13;
 	static final byte DATA	 				= 14;
+	static final byte NULL	 				= 15;
 	
 	public static final int STRING_DESC_BYTE_LENGTH = 4;
 	public static final int FIELD_BYTE_LENGTH = 4;
@@ -60,60 +63,6 @@ public class DataSerializer
 		
 		return ret;
 	}
-	public static final boolean isNegativeNumber( byte inByte )
-	{
-		if( inByte == NUMBER_BYTE_NEG || inByte == NUMBER_SHORT_NEG || inByte == NUMBER_INT_NEG || inByte == NUMBER_LONG_NEG )
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public static final boolean isNumber( byte inByte )
-	{
-		if( inByte == NUMBER_BYTE || inByte == NUMBER_SHORT || inByte == NUMBER_INT || inByte == NUMBER_LONG || isNegativeNumber( inByte ) )
-		{
-			return true;
-		}
-		return false;
-	}
-	
-	public static final byte[] getNumberProperties( long inNumber )
-	{
-		if( inNumber < Integer.MIN_VALUE )
-		{
-			return new byte[]{ NUMBER_LONG_NEG, 0, 0, 0, 0, 0, 0, 0, 0 };
-		}
-		else if( inNumber < Short.MIN_VALUE )
-		{
-			return new byte[]{ NUMBER_INT_NEG, 0, 0, 0, 0 };
-		}
-		else if( inNumber < Byte.MIN_VALUE )
-		{
-			return new byte[]{ NUMBER_SHORT_NEG, 0, 0 };
-		}
-		else if( inNumber < 0 )
-		{
-			return new byte[]{ NUMBER_BYTE_NEG, 0 };
-		}
-		else if( inNumber < Byte.MAX_VALUE )
-		{
-			return new byte[]{ NUMBER_BYTE, 0 };
-		}
-		else if( inNumber < Short.MAX_VALUE )
-		{
-			return new byte[]{ NUMBER_SHORT, 0, 0 };
-		}
-		else if( inNumber < Integer.MAX_VALUE )
-		{
-			return new byte[]{ NUMBER_INT, 0, 0, 0, 0};
-		}
-		else
-		{
-			return new byte[]{ NUMBER_LONG, 0, 0, 0, 0, 0, 0, 0, 0 };
-		}
-	}
-
 	
 	public static final void main( String... inArg )
 	{
@@ -214,18 +163,6 @@ public class DataSerializer
 		return ret;
 	}
 	
-	public static final byte[] serializeInt( byte[] inBytes, int inOffSet, int number )
-	{
-		assert (inBytes.length - inOffSet) <= 4 : "integer will not fit into byte array from offset";
-		
-		for( int i = inOffSet + inBytes.length-1; i > 0; i-- )
-		{
-			int shift = (inBytes.length-1) - (i);
-			inBytes[i] = (byte)(number >>> 8 * shift);
-		}
-		
-		return inBytes;
-	}
 	
 	public static long numberFromByteArray( byte[] inBytes, int inOffset, int inLength, Integer inDescriptionByte )
 	{
@@ -246,22 +183,129 @@ public class DataSerializer
 		return ret;
 	}
 	
-	/**
-	 * @param inString
-	 * @return byte in format[size, string]
-	 *
-	 */
-	public static final byte[] serializeString( String inString )
+	
+	public static byte[] getByteArrayFrame( byte[] inField, int inLength )
 	{
-		byte[] strBytes = inString.getBytes();
-		byte[] size = serializeInt( strBytes.length );
-		byte[] ret = new byte[ strBytes.length + size.length ];
-		System.arraycopy( size, 0, ret, 0, size.length );
-		System.arraycopy( strBytes, 0, ret, size.length, strBytes.length );
+		byte[] bytes = new byte[ inField.length + inLength ];
+		System.arraycopy(inField, 0, bytes, 0, inField.length);
 		
-		return ret;
+		return bytes;
 	}
 	
+	public static byte[] serializeBigDecimal( byte[] inField, BigDecimal inBigDecimal )
+	{
+		//[Field, BIG_DEC, unscaledValue, lengthOfUnscaledValue, scale]
+		BigInteger theInt = inBigDecimal.unscaledValue();
+		int scale = inBigDecimal.scale();
+
+		byte[] intBytes = theInt.toByteArray();
+		//			byte[] bytes = new byte[ 1 + 4 + intBytes.length + 4 ];
+		byte[] bytes = getByteArrayFrame(inField, intBytes.length + 9);
+
+		bytes[inField.length] = BIG_DEC;
+		serializeInt( bytes, inField.length+1, intBytes.length );
+		System.arraycopy( intBytes, 0, bytes, inField.length+5, intBytes.length );
+		serializeInt( bytes, inField.length+5+intBytes.length, scale);
+		return bytes;
+	}
+	
+	public static byte[] serializeBoolean( byte[] inField, Boolean inBoolean )
+	{
+		byte[] bytes = getByteArrayFrame(inField, 1);
+		bytes[inField.length] = inBoolean ? BOOLEAN_TRUE : BOOLEAN_FALSE;
+		
+		return bytes;
+	}
+	
+	public static byte[] serializeLong( byte[] inField, Long inLong )
+	{
+		long number = inLong;
+		int sign = Long.signum( number );
+		byte[] numberProps = getNumberProperties( number );
+		
+		byte[] bytes = getByteArrayFrame(inField, numberProps.length);
+		
+		bytes[inField.length] = numberProps[0];
+				
+		if( sign == -1 )
+			number *= -1;
+		
+		for( int i = bytes.length-1; i > inField.length; i-- )
+		{
+			int shift = (bytes.length-1) - (i);
+			bytes[i] = (byte)(number >>> 8 * shift);
+		}
+		
+		return bytes;
+	}
+	
+	public static byte[] serializeRef( byte[] inField, DataTypeRef inRef )
+	{
+		byte[] mapBytes = DataSerializer.serializeData( inRef.getReferenceData().getDataMap() );
+		byte[] bytes = getByteArrayFrame(inField, mapBytes.length+5);
+		bytes[inField.length] = REF;
+		serializeInt( bytes, inField.length+1, mapBytes.length );
+		System.arraycopy( mapBytes, 0, bytes, inField.length+5, mapBytes.length );
+		
+		return bytes;
+	}
+	
+	public static byte[] serializeString( byte[] inField, String inString )
+	{
+		byte[] strBytes = inString.getBytes();
+		byte[] bytes = getByteArrayFrame(inField, strBytes.length+5);
+		bytes[inField.length] = STRING;
+		serializeInt( bytes, inField.length+1, strBytes.length );
+		System.arraycopy( strBytes, 0, bytes, inField.length+5, strBytes.length );
+		
+		return bytes;
+	}
+	
+	public static final byte[] serializeNull( byte[] inField )
+	{
+		byte[] bytes = getByteArrayFrame(inField, 1);
+		bytes[inField.length] = NULL;
+		
+		return bytes;
+		
+	}
+
+	/**
+	 * @param inField
+	 * @param inDataEntry
+	 * @return
+	 */
+	public static final byte[] serializeDataEntry( byte[] inField, DataType<?> inDataEntry )
+	{
+		if( inDataEntry instanceof DataTypeBigDecimal )
+		{
+			return serializeBigDecimal(inField, ((DataTypeBigDecimal)inDataEntry).get() );
+		}
+		else if( inDataEntry instanceof DataTypeBoolean )
+		{
+			return serializeBoolean( inField, ((DataTypeBoolean)inDataEntry).get() );
+		}
+		else if( inDataEntry instanceof DataTypeLong )
+		{
+			return serializeLong( inField, ((DataTypeLong)inDataEntry).get() );
+		}
+		else if( inDataEntry instanceof DataTypeRef )
+		{
+			return serializeRef( inField, (DataTypeRef)inDataEntry );
+		}
+		else if( inDataEntry instanceof DataTypeString )
+		{
+			return serializeString( inField, ((DataTypeString)inDataEntry).get() );
+		}
+		else if( inDataEntry instanceof DataTypeNull )
+		{
+			return serializeNull( inField );
+		}
+		else
+		{
+			throw new IllegalArgumentException(" No serialization for "+inDataEntry.getClass() );
+		}
+	}
 	/**
 	 * @param inData
 	 * @return
@@ -278,9 +322,9 @@ public class DataSerializer
 		{
 			Map.Entry<String,DataType<?>> entry = iter.next();
 			
-			byte[] fieldBytes = DataType.serializeString( entry.getKey() );
+			byte[] fieldBytes = serializeString( entry.getKey() );
 			
-			byte[] bytes = entry.getValue().serialize( fieldBytes );
+			byte[] bytes = serializeDataEntry( fieldBytes, entry.getValue() );
 			byteArrays[ i ] = bytes;
 			
 			i++;
@@ -450,6 +494,119 @@ public class DataSerializer
 			
 		return queryMap;
 		
+	}
+	
+	/**
+	 * @param inString
+	 * @return
+	 */
+	public static final byte[] serializeString( String inString )
+	{
+		assert (inString.length() < Integer.MAX_VALUE ) : "String is to big.. larger than Integer.MAX_VALUE";
+		
+		byte[] strBytes = inString.getBytes();
+		byte[] bytes = new byte[strBytes.length+4];
+		
+		serializeInt(bytes, 0, strBytes.length);
+		System.arraycopy(strBytes, 0, bytes, 4, strBytes.length);
+		
+		return bytes;
+	}
+	
+	/**
+	 * @param inBytes
+	 * @param inOffSet
+	 * @param number
+	 * @return
+	 */
+	public static final byte[] serializeInt( byte[] inBytes, int inOffSet, int number )
+	{
+		assert (inBytes.length - inOffSet) <= 4 : "integer will not fit into byte array from offset";
+		
+		for( int i = 3; i >= 0; i-- )
+		{
+			int shift = (3) - (i);
+			inBytes[inOffSet + i] = (byte)(number >>> 8 * shift);
+		}
+		return inBytes;
+	}
+	
+	/**
+	 * @param inNumber
+	 * @return
+	 */
+	public static final byte[] getNumberProperties( long inNumber )
+	{
+		if( inNumber < Integer.MIN_VALUE )
+		{
+			byte[] ret = new byte[9];
+			ret[0] = NUMBER_LONG_NEG;
+			return ret;
+		}
+		else if( inNumber < Short.MIN_VALUE )
+		{
+			byte[] ret = new byte[5];
+			ret[0] = NUMBER_INT_NEG;
+			return ret;
+		}
+		else if( inNumber < Byte.MIN_VALUE )
+		{
+			byte[] ret = new byte[3];
+			ret[0] = NUMBER_SHORT_NEG;
+			return ret;
+		}
+		else if( inNumber < 0 )
+		{
+			byte[] ret = new byte[2];
+			ret[0] = NUMBER_BYTE_NEG;
+			return ret;
+		}
+		else if( inNumber < Byte.MAX_VALUE )
+		{
+			byte[] ret = new byte[2];
+			ret[0] = NUMBER_BYTE;
+			return ret;
+		}
+		else if( inNumber < Short.MAX_VALUE )
+		{
+			byte[] ret = new byte[3];
+			ret[0] = NUMBER_SHORT;
+			return ret;
+		}
+		else if( inNumber < Integer.MAX_VALUE )
+		{
+			byte[] ret = new byte[5];
+			ret[0] = NUMBER_INT;
+			return ret;
+		}
+		else
+		{
+			byte[] ret = new byte[9];
+			ret[0] = NUMBER_LONG;
+			return ret;
+		}
+	}
+	
+	/**
+	 * @param inByte
+	 * @return
+	 */
+	public static final boolean isNumber( byte inByte )
+	{
+		if( inByte == NUMBER_BYTE || inByte == NUMBER_SHORT || inByte == NUMBER_INT || inByte == NUMBER_LONG || isNegativeNumber( inByte ) )
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public static final boolean isNegativeNumber( byte inByte )
+	{
+		if( inByte == NUMBER_BYTE_NEG || inByte == NUMBER_SHORT_NEG || inByte == NUMBER_INT_NEG || inByte == NUMBER_LONG_NEG )
+		{
+			return true;
+		}
+		return false;
 	}
 
 }

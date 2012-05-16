@@ -1,4 +1,4 @@
-package org.juxtapose.streamline.util.message;
+package org.juxtapose.streamline.experimental.protocol.message;
 
 public class Message 
 {

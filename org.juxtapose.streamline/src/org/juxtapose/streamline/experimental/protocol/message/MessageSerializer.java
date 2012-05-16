@@ -1,11 +1,10 @@
-package org.juxtapose.streamline.util.message;
+package org.juxtapose.streamline.experimental.protocol.message;
 
-import static org.juxtapose.streamline.util.message.MessageConstants.*;
+import static org.juxtapose.streamline.experimental.protocol.message.MessageConstants.*;
 
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.juxtapose.streamline.stm.DataSerializer;
 public class MessageSerializer 
 {
 	/**
