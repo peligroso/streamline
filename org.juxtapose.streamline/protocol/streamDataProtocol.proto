@@ -1,9 +1,48 @@
 message Message
 {
-	required uint64 type = 1;
+	enum Type 
+	{ 
+		SubQueryMessage = 1; 
+		SubQueryResponseMessage = 2; 
+		UnSubscribeMessage = 3; 
+		UpdateMessage = 4; 
+	}
+	
+	required Type type = 1;
+	
+	optional SubQueryMessage subQueryMessage = 2;
+	optional SubQueryResponseMessage subQueryResponseMessage = 3;
+	optional UnsubscribeMessage unsubscribeMessage = 4;
+	optional UpdateMessage updateMessage = 5;
 
-	optional string service = 2;	
-	optional DataMap dataMap = 3;
+}
+
+message SubQueryMessage
+{
+	required string service = 1;	
+	required StringMap queryMap = 2;
+	required int32 tag = 3;
+}
+
+message SubQueryResponseMessage
+{
+	required string service = 1;
+	required int32 status = 2;
+	required int32 tag = 3;	
+	
+	optional StringMap queryMap = 4;
+	optional int32 reference = 5;
+}
+
+message UnsubscribeMessage
+{
+	required int32 reference = 1;
+}
+
+message UpdateMessage
+{
+	required int32 type = 1;
+	required DataMap data = 2;
 }
 
 message BDecimal 
@@ -62,7 +101,10 @@ message DataMap
 	repeated BooleanEntry boolEntries = 5;
 	repeated NullEntry nullEntries = 6;
 	repeated HashMapEntry hashMapEntries = 7;
-	
 }
 
+message StringMap
+{
+	repeated StringEntry stringEntries = 1;
+}
 

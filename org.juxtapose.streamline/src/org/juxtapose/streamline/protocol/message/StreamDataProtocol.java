@@ -11,18 +11,29 @@ public final class StreamDataProtocol {
   public interface MessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required uint64 type = 1;
+    // required .Message.Type type = 1;
     boolean hasType();
-    long getType();
+    StreamDataProtocol.Message.Type getType();
     
-    // optional string service = 2;
-    boolean hasService();
-    String getService();
+    // optional .SubQueryMessage subQueryMessage = 2;
+    boolean hasSubQueryMessage();
+    StreamDataProtocol.SubQueryMessage getSubQueryMessage();
+    StreamDataProtocol.SubQueryMessageOrBuilder getSubQueryMessageOrBuilder();
     
-    // optional .DataMap dataMap = 3;
-    boolean hasDataMap();
-    StreamDataProtocol.DataMap getDataMap();
-    StreamDataProtocol.DataMapOrBuilder getDataMapOrBuilder();
+    // optional .SubQueryResponseMessage subQueryResponseMessage = 3;
+    boolean hasSubQueryResponseMessage();
+    StreamDataProtocol.SubQueryResponseMessage getSubQueryResponseMessage();
+    StreamDataProtocol.SubQueryResponseMessageOrBuilder getSubQueryResponseMessageOrBuilder();
+    
+    // optional .UnsubscribeMessage unsubscribeMessage = 4;
+    boolean hasUnsubscribeMessage();
+    StreamDataProtocol.UnsubscribeMessage getUnsubscribeMessage();
+    StreamDataProtocol.UnsubscribeMessageOrBuilder getUnsubscribeMessageOrBuilder();
+    
+    // optional .UpdateMessage updateMessage = 5;
+    boolean hasUpdateMessage();
+    StreamDataProtocol.UpdateMessage getUpdateMessage();
+    StreamDataProtocol.UpdateMessageOrBuilder getUpdateMessageOrBuilder();
   }
   public static final class Message extends
       com.google.protobuf.GeneratedMessage
@@ -52,66 +63,150 @@ public final class StreamDataProtocol {
       return StreamDataProtocol.internal_static_Message_fieldAccessorTable;
     }
     
+    public enum Type
+        implements com.google.protobuf.ProtocolMessageEnum {
+      SubQueryMessage(0, 1),
+      SubQueryResponseMessage(1, 2),
+      UnSubscribeMessage(2, 3),
+      UpdateMessage(3, 4),
+      ;
+      
+      public static final int SubQueryMessage_VALUE = 1;
+      public static final int SubQueryResponseMessage_VALUE = 2;
+      public static final int UnSubscribeMessage_VALUE = 3;
+      public static final int UpdateMessage_VALUE = 4;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static Type valueOf(int value) {
+        switch (value) {
+          case 1: return SubQueryMessage;
+          case 2: return SubQueryResponseMessage;
+          case 3: return UnSubscribeMessage;
+          case 4: return UpdateMessage;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+              public Type findValueByNumber(int number) {
+                return Type.valueOf(number);
+              }
+            };
+      
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return StreamDataProtocol.Message.getDescriptor().getEnumTypes().get(0);
+      }
+      
+      private static final Type[] VALUES = {
+        SubQueryMessage, SubQueryResponseMessage, UnSubscribeMessage, UpdateMessage, 
+      };
+      
+      public static Type valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+      
+      private final int index;
+      private final int value;
+      
+      private Type(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+      
+      // @@protoc_insertion_point(enum_scope:Message.Type)
+    }
+    
     private int bitField0_;
-    // required uint64 type = 1;
+    // required .Message.Type type = 1;
     public static final int TYPE_FIELD_NUMBER = 1;
-    private long type_;
+    private StreamDataProtocol.Message.Type type_;
     public boolean hasType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public long getType() {
+    public StreamDataProtocol.Message.Type getType() {
       return type_;
     }
     
-    // optional string service = 2;
-    public static final int SERVICE_FIELD_NUMBER = 2;
-    private java.lang.Object service_;
-    public boolean hasService() {
+    // optional .SubQueryMessage subQueryMessage = 2;
+    public static final int SUBQUERYMESSAGE_FIELD_NUMBER = 2;
+    private StreamDataProtocol.SubQueryMessage subQueryMessage_;
+    public boolean hasSubQueryMessage() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
-    public String getService() {
-      java.lang.Object ref = service_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          service_ = s;
-        }
-        return s;
-      }
+    public StreamDataProtocol.SubQueryMessage getSubQueryMessage() {
+      return subQueryMessage_;
     }
-    private com.google.protobuf.ByteString getServiceBytes() {
-      java.lang.Object ref = service_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        service_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public StreamDataProtocol.SubQueryMessageOrBuilder getSubQueryMessageOrBuilder() {
+      return subQueryMessage_;
     }
     
-    // optional .DataMap dataMap = 3;
-    public static final int DATAMAP_FIELD_NUMBER = 3;
-    private StreamDataProtocol.DataMap dataMap_;
-    public boolean hasDataMap() {
+    // optional .SubQueryResponseMessage subQueryResponseMessage = 3;
+    public static final int SUBQUERYRESPONSEMESSAGE_FIELD_NUMBER = 3;
+    private StreamDataProtocol.SubQueryResponseMessage subQueryResponseMessage_;
+    public boolean hasSubQueryResponseMessage() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
-    public StreamDataProtocol.DataMap getDataMap() {
-      return dataMap_;
+    public StreamDataProtocol.SubQueryResponseMessage getSubQueryResponseMessage() {
+      return subQueryResponseMessage_;
     }
-    public StreamDataProtocol.DataMapOrBuilder getDataMapOrBuilder() {
-      return dataMap_;
+    public StreamDataProtocol.SubQueryResponseMessageOrBuilder getSubQueryResponseMessageOrBuilder() {
+      return subQueryResponseMessage_;
+    }
+    
+    // optional .UnsubscribeMessage unsubscribeMessage = 4;
+    public static final int UNSUBSCRIBEMESSAGE_FIELD_NUMBER = 4;
+    private StreamDataProtocol.UnsubscribeMessage unsubscribeMessage_;
+    public boolean hasUnsubscribeMessage() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public StreamDataProtocol.UnsubscribeMessage getUnsubscribeMessage() {
+      return unsubscribeMessage_;
+    }
+    public StreamDataProtocol.UnsubscribeMessageOrBuilder getUnsubscribeMessageOrBuilder() {
+      return unsubscribeMessage_;
+    }
+    
+    // optional .UpdateMessage updateMessage = 5;
+    public static final int UPDATEMESSAGE_FIELD_NUMBER = 5;
+    private StreamDataProtocol.UpdateMessage updateMessage_;
+    public boolean hasUpdateMessage() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    public StreamDataProtocol.UpdateMessage getUpdateMessage() {
+      return updateMessage_;
+    }
+    public StreamDataProtocol.UpdateMessageOrBuilder getUpdateMessageOrBuilder() {
+      return updateMessage_;
     }
     
     private void initFields() {
-      type_ = 0L;
-      service_ = "";
-      dataMap_ = StreamDataProtocol.DataMap.getDefaultInstance();
+      type_ = StreamDataProtocol.Message.Type.SubQueryMessage;
+      subQueryMessage_ = StreamDataProtocol.SubQueryMessage.getDefaultInstance();
+      subQueryResponseMessage_ = StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance();
+      unsubscribeMessage_ = StreamDataProtocol.UnsubscribeMessage.getDefaultInstance();
+      updateMessage_ = StreamDataProtocol.UpdateMessage.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -122,8 +217,26 @@ public final class StreamDataProtocol {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (hasDataMap()) {
-        if (!getDataMap().isInitialized()) {
+      if (hasSubQueryMessage()) {
+        if (!getSubQueryMessage().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSubQueryResponseMessage()) {
+        if (!getSubQueryResponseMessage().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasUnsubscribeMessage()) {
+        if (!getUnsubscribeMessage().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasUpdateMessage()) {
+        if (!getUpdateMessage().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -136,13 +249,19 @@ public final class StreamDataProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeUInt64(1, type_);
+        output.writeEnum(1, type_.getNumber());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getServiceBytes());
+        output.writeMessage(2, subQueryMessage_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeMessage(3, dataMap_);
+        output.writeMessage(3, subQueryResponseMessage_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, unsubscribeMessage_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, updateMessage_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -155,15 +274,23 @@ public final class StreamDataProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(1, type_);
+          .computeEnumSize(1, type_.getNumber());
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getServiceBytes());
+          .computeMessageSize(2, subQueryMessage_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, dataMap_);
+          .computeMessageSize(3, subQueryResponseMessage_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, unsubscribeMessage_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, updateMessage_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -281,7 +408,10 @@ public final class StreamDataProtocol {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getDataMapFieldBuilder();
+          getSubQueryMessageFieldBuilder();
+          getSubQueryResponseMessageFieldBuilder();
+          getUnsubscribeMessageFieldBuilder();
+          getUpdateMessageFieldBuilder();
         }
       }
       private static Builder create() {
@@ -290,16 +420,32 @@ public final class StreamDataProtocol {
       
       public Builder clear() {
         super.clear();
-        type_ = 0L;
+        type_ = StreamDataProtocol.Message.Type.SubQueryMessage;
         bitField0_ = (bitField0_ & ~0x00000001);
-        service_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        if (dataMapBuilder_ == null) {
-          dataMap_ = StreamDataProtocol.DataMap.getDefaultInstance();
+        if (subQueryMessageBuilder_ == null) {
+          subQueryMessage_ = StreamDataProtocol.SubQueryMessage.getDefaultInstance();
         } else {
-          dataMapBuilder_.clear();
+          subQueryMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (subQueryResponseMessageBuilder_ == null) {
+          subQueryResponseMessage_ = StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance();
+        } else {
+          subQueryResponseMessageBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000004);
+        if (unsubscribeMessageBuilder_ == null) {
+          unsubscribeMessage_ = StreamDataProtocol.UnsubscribeMessage.getDefaultInstance();
+        } else {
+          unsubscribeMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        if (updateMessageBuilder_ == null) {
+          updateMessage_ = StreamDataProtocol.UpdateMessage.getDefaultInstance();
+        } else {
+          updateMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
       
@@ -345,14 +491,34 @@ public final class StreamDataProtocol {
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.service_ = service_;
+        if (subQueryMessageBuilder_ == null) {
+          result.subQueryMessage_ = subQueryMessage_;
+        } else {
+          result.subQueryMessage_ = subQueryMessageBuilder_.build();
+        }
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        if (dataMapBuilder_ == null) {
-          result.dataMap_ = dataMap_;
+        if (subQueryResponseMessageBuilder_ == null) {
+          result.subQueryResponseMessage_ = subQueryResponseMessage_;
         } else {
-          result.dataMap_ = dataMapBuilder_.build();
+          result.subQueryResponseMessage_ = subQueryResponseMessageBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (unsubscribeMessageBuilder_ == null) {
+          result.unsubscribeMessage_ = unsubscribeMessage_;
+        } else {
+          result.unsubscribeMessage_ = unsubscribeMessageBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        if (updateMessageBuilder_ == null) {
+          result.updateMessage_ = updateMessage_;
+        } else {
+          result.updateMessage_ = updateMessageBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -373,11 +539,17 @@ public final class StreamDataProtocol {
         if (other.hasType()) {
           setType(other.getType());
         }
-        if (other.hasService()) {
-          setService(other.getService());
+        if (other.hasSubQueryMessage()) {
+          mergeSubQueryMessage(other.getSubQueryMessage());
         }
-        if (other.hasDataMap()) {
-          mergeDataMap(other.getDataMap());
+        if (other.hasSubQueryResponseMessage()) {
+          mergeSubQueryResponseMessage(other.getSubQueryResponseMessage());
+        }
+        if (other.hasUnsubscribeMessage()) {
+          mergeUnsubscribeMessage(other.getUnsubscribeMessage());
+        }
+        if (other.hasUpdateMessage()) {
+          mergeUpdateMessage(other.getUpdateMessage());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -388,8 +560,26 @@ public final class StreamDataProtocol {
           
           return false;
         }
-        if (hasDataMap()) {
-          if (!getDataMap().isInitialized()) {
+        if (hasSubQueryMessage()) {
+          if (!getSubQueryMessage().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSubQueryResponseMessage()) {
+          if (!getSubQueryResponseMessage().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasUnsubscribeMessage()) {
+          if (!getUnsubscribeMessage().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasUpdateMessage()) {
+          if (!getUpdateMessage().isInitialized()) {
             
             return false;
           }
@@ -421,22 +611,50 @@ public final class StreamDataProtocol {
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
-              type_ = input.readUInt64();
+              int rawValue = input.readEnum();
+              StreamDataProtocol.Message.Type value = StreamDataProtocol.Message.Type.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(1, rawValue);
+              } else {
+                bitField0_ |= 0x00000001;
+                type_ = value;
+              }
               break;
             }
             case 18: {
-              bitField0_ |= 0x00000002;
-              service_ = input.readBytes();
+              StreamDataProtocol.SubQueryMessage.Builder subBuilder = StreamDataProtocol.SubQueryMessage.newBuilder();
+              if (hasSubQueryMessage()) {
+                subBuilder.mergeFrom(getSubQueryMessage());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setSubQueryMessage(subBuilder.buildPartial());
               break;
             }
             case 26: {
-              StreamDataProtocol.DataMap.Builder subBuilder = StreamDataProtocol.DataMap.newBuilder();
-              if (hasDataMap()) {
-                subBuilder.mergeFrom(getDataMap());
+              StreamDataProtocol.SubQueryResponseMessage.Builder subBuilder = StreamDataProtocol.SubQueryResponseMessage.newBuilder();
+              if (hasSubQueryResponseMessage()) {
+                subBuilder.mergeFrom(getSubQueryResponseMessage());
               }
               input.readMessage(subBuilder, extensionRegistry);
-              setDataMap(subBuilder.buildPartial());
+              setSubQueryResponseMessage(subBuilder.buildPartial());
+              break;
+            }
+            case 34: {
+              StreamDataProtocol.UnsubscribeMessage.Builder subBuilder = StreamDataProtocol.UnsubscribeMessage.newBuilder();
+              if (hasUnsubscribeMessage()) {
+                subBuilder.mergeFrom(getUnsubscribeMessage());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setUnsubscribeMessage(subBuilder.buildPartial());
+              break;
+            }
+            case 42: {
+              StreamDataProtocol.UpdateMessage.Builder subBuilder = StreamDataProtocol.UpdateMessage.newBuilder();
+              if (hasUpdateMessage()) {
+                subBuilder.mergeFrom(getUpdateMessage());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setUpdateMessage(subBuilder.buildPartial());
               break;
             }
           }
@@ -445,15 +663,18 @@ public final class StreamDataProtocol {
       
       private int bitField0_;
       
-      // required uint64 type = 1;
-      private long type_ ;
+      // required .Message.Type type = 1;
+      private StreamDataProtocol.Message.Type type_ = StreamDataProtocol.Message.Type.SubQueryMessage;
       public boolean hasType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
-      public long getType() {
+      public StreamDataProtocol.Message.Type getType() {
         return type_;
       }
-      public Builder setType(long value) {
+      public Builder setType(StreamDataProtocol.Message.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
         bitField0_ |= 0x00000001;
         type_ = value;
         onChanged();
@@ -461,15 +682,835 @@ public final class StreamDataProtocol {
       }
       public Builder clearType() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        type_ = 0L;
+        type_ = StreamDataProtocol.Message.Type.SubQueryMessage;
         onChanged();
         return this;
       }
       
-      // optional string service = 2;
+      // optional .SubQueryMessage subQueryMessage = 2;
+      private StreamDataProtocol.SubQueryMessage subQueryMessage_ = StreamDataProtocol.SubQueryMessage.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.SubQueryMessage, StreamDataProtocol.SubQueryMessage.Builder, StreamDataProtocol.SubQueryMessageOrBuilder> subQueryMessageBuilder_;
+      public boolean hasSubQueryMessage() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public StreamDataProtocol.SubQueryMessage getSubQueryMessage() {
+        if (subQueryMessageBuilder_ == null) {
+          return subQueryMessage_;
+        } else {
+          return subQueryMessageBuilder_.getMessage();
+        }
+      }
+      public Builder setSubQueryMessage(StreamDataProtocol.SubQueryMessage value) {
+        if (subQueryMessageBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          subQueryMessage_ = value;
+          onChanged();
+        } else {
+          subQueryMessageBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder setSubQueryMessage(
+          StreamDataProtocol.SubQueryMessage.Builder builderForValue) {
+        if (subQueryMessageBuilder_ == null) {
+          subQueryMessage_ = builderForValue.build();
+          onChanged();
+        } else {
+          subQueryMessageBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder mergeSubQueryMessage(StreamDataProtocol.SubQueryMessage value) {
+        if (subQueryMessageBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              subQueryMessage_ != StreamDataProtocol.SubQueryMessage.getDefaultInstance()) {
+            subQueryMessage_ =
+              StreamDataProtocol.SubQueryMessage.newBuilder(subQueryMessage_).mergeFrom(value).buildPartial();
+          } else {
+            subQueryMessage_ = value;
+          }
+          onChanged();
+        } else {
+          subQueryMessageBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder clearSubQueryMessage() {
+        if (subQueryMessageBuilder_ == null) {
+          subQueryMessage_ = StreamDataProtocol.SubQueryMessage.getDefaultInstance();
+          onChanged();
+        } else {
+          subQueryMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      public StreamDataProtocol.SubQueryMessage.Builder getSubQueryMessageBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getSubQueryMessageFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.SubQueryMessageOrBuilder getSubQueryMessageOrBuilder() {
+        if (subQueryMessageBuilder_ != null) {
+          return subQueryMessageBuilder_.getMessageOrBuilder();
+        } else {
+          return subQueryMessage_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.SubQueryMessage, StreamDataProtocol.SubQueryMessage.Builder, StreamDataProtocol.SubQueryMessageOrBuilder> 
+          getSubQueryMessageFieldBuilder() {
+        if (subQueryMessageBuilder_ == null) {
+          subQueryMessageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.SubQueryMessage, StreamDataProtocol.SubQueryMessage.Builder, StreamDataProtocol.SubQueryMessageOrBuilder>(
+                  subQueryMessage_,
+                  getParentForChildren(),
+                  isClean());
+          subQueryMessage_ = null;
+        }
+        return subQueryMessageBuilder_;
+      }
+      
+      // optional .SubQueryResponseMessage subQueryResponseMessage = 3;
+      private StreamDataProtocol.SubQueryResponseMessage subQueryResponseMessage_ = StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.SubQueryResponseMessage, StreamDataProtocol.SubQueryResponseMessage.Builder, StreamDataProtocol.SubQueryResponseMessageOrBuilder> subQueryResponseMessageBuilder_;
+      public boolean hasSubQueryResponseMessage() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public StreamDataProtocol.SubQueryResponseMessage getSubQueryResponseMessage() {
+        if (subQueryResponseMessageBuilder_ == null) {
+          return subQueryResponseMessage_;
+        } else {
+          return subQueryResponseMessageBuilder_.getMessage();
+        }
+      }
+      public Builder setSubQueryResponseMessage(StreamDataProtocol.SubQueryResponseMessage value) {
+        if (subQueryResponseMessageBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          subQueryResponseMessage_ = value;
+          onChanged();
+        } else {
+          subQueryResponseMessageBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder setSubQueryResponseMessage(
+          StreamDataProtocol.SubQueryResponseMessage.Builder builderForValue) {
+        if (subQueryResponseMessageBuilder_ == null) {
+          subQueryResponseMessage_ = builderForValue.build();
+          onChanged();
+        } else {
+          subQueryResponseMessageBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder mergeSubQueryResponseMessage(StreamDataProtocol.SubQueryResponseMessage value) {
+        if (subQueryResponseMessageBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              subQueryResponseMessage_ != StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance()) {
+            subQueryResponseMessage_ =
+              StreamDataProtocol.SubQueryResponseMessage.newBuilder(subQueryResponseMessage_).mergeFrom(value).buildPartial();
+          } else {
+            subQueryResponseMessage_ = value;
+          }
+          onChanged();
+        } else {
+          subQueryResponseMessageBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      public Builder clearSubQueryResponseMessage() {
+        if (subQueryResponseMessageBuilder_ == null) {
+          subQueryResponseMessage_ = StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance();
+          onChanged();
+        } else {
+          subQueryResponseMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      public StreamDataProtocol.SubQueryResponseMessage.Builder getSubQueryResponseMessageBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getSubQueryResponseMessageFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.SubQueryResponseMessageOrBuilder getSubQueryResponseMessageOrBuilder() {
+        if (subQueryResponseMessageBuilder_ != null) {
+          return subQueryResponseMessageBuilder_.getMessageOrBuilder();
+        } else {
+          return subQueryResponseMessage_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.SubQueryResponseMessage, StreamDataProtocol.SubQueryResponseMessage.Builder, StreamDataProtocol.SubQueryResponseMessageOrBuilder> 
+          getSubQueryResponseMessageFieldBuilder() {
+        if (subQueryResponseMessageBuilder_ == null) {
+          subQueryResponseMessageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.SubQueryResponseMessage, StreamDataProtocol.SubQueryResponseMessage.Builder, StreamDataProtocol.SubQueryResponseMessageOrBuilder>(
+                  subQueryResponseMessage_,
+                  getParentForChildren(),
+                  isClean());
+          subQueryResponseMessage_ = null;
+        }
+        return subQueryResponseMessageBuilder_;
+      }
+      
+      // optional .UnsubscribeMessage unsubscribeMessage = 4;
+      private StreamDataProtocol.UnsubscribeMessage unsubscribeMessage_ = StreamDataProtocol.UnsubscribeMessage.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.UnsubscribeMessage, StreamDataProtocol.UnsubscribeMessage.Builder, StreamDataProtocol.UnsubscribeMessageOrBuilder> unsubscribeMessageBuilder_;
+      public boolean hasUnsubscribeMessage() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public StreamDataProtocol.UnsubscribeMessage getUnsubscribeMessage() {
+        if (unsubscribeMessageBuilder_ == null) {
+          return unsubscribeMessage_;
+        } else {
+          return unsubscribeMessageBuilder_.getMessage();
+        }
+      }
+      public Builder setUnsubscribeMessage(StreamDataProtocol.UnsubscribeMessage value) {
+        if (unsubscribeMessageBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          unsubscribeMessage_ = value;
+          onChanged();
+        } else {
+          unsubscribeMessageBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder setUnsubscribeMessage(
+          StreamDataProtocol.UnsubscribeMessage.Builder builderForValue) {
+        if (unsubscribeMessageBuilder_ == null) {
+          unsubscribeMessage_ = builderForValue.build();
+          onChanged();
+        } else {
+          unsubscribeMessageBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder mergeUnsubscribeMessage(StreamDataProtocol.UnsubscribeMessage value) {
+        if (unsubscribeMessageBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              unsubscribeMessage_ != StreamDataProtocol.UnsubscribeMessage.getDefaultInstance()) {
+            unsubscribeMessage_ =
+              StreamDataProtocol.UnsubscribeMessage.newBuilder(unsubscribeMessage_).mergeFrom(value).buildPartial();
+          } else {
+            unsubscribeMessage_ = value;
+          }
+          onChanged();
+        } else {
+          unsubscribeMessageBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder clearUnsubscribeMessage() {
+        if (unsubscribeMessageBuilder_ == null) {
+          unsubscribeMessage_ = StreamDataProtocol.UnsubscribeMessage.getDefaultInstance();
+          onChanged();
+        } else {
+          unsubscribeMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      public StreamDataProtocol.UnsubscribeMessage.Builder getUnsubscribeMessageBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getUnsubscribeMessageFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.UnsubscribeMessageOrBuilder getUnsubscribeMessageOrBuilder() {
+        if (unsubscribeMessageBuilder_ != null) {
+          return unsubscribeMessageBuilder_.getMessageOrBuilder();
+        } else {
+          return unsubscribeMessage_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.UnsubscribeMessage, StreamDataProtocol.UnsubscribeMessage.Builder, StreamDataProtocol.UnsubscribeMessageOrBuilder> 
+          getUnsubscribeMessageFieldBuilder() {
+        if (unsubscribeMessageBuilder_ == null) {
+          unsubscribeMessageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.UnsubscribeMessage, StreamDataProtocol.UnsubscribeMessage.Builder, StreamDataProtocol.UnsubscribeMessageOrBuilder>(
+                  unsubscribeMessage_,
+                  getParentForChildren(),
+                  isClean());
+          unsubscribeMessage_ = null;
+        }
+        return unsubscribeMessageBuilder_;
+      }
+      
+      // optional .UpdateMessage updateMessage = 5;
+      private StreamDataProtocol.UpdateMessage updateMessage_ = StreamDataProtocol.UpdateMessage.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.UpdateMessage, StreamDataProtocol.UpdateMessage.Builder, StreamDataProtocol.UpdateMessageOrBuilder> updateMessageBuilder_;
+      public boolean hasUpdateMessage() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      public StreamDataProtocol.UpdateMessage getUpdateMessage() {
+        if (updateMessageBuilder_ == null) {
+          return updateMessage_;
+        } else {
+          return updateMessageBuilder_.getMessage();
+        }
+      }
+      public Builder setUpdateMessage(StreamDataProtocol.UpdateMessage value) {
+        if (updateMessageBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          updateMessage_ = value;
+          onChanged();
+        } else {
+          updateMessageBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder setUpdateMessage(
+          StreamDataProtocol.UpdateMessage.Builder builderForValue) {
+        if (updateMessageBuilder_ == null) {
+          updateMessage_ = builderForValue.build();
+          onChanged();
+        } else {
+          updateMessageBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder mergeUpdateMessage(StreamDataProtocol.UpdateMessage value) {
+        if (updateMessageBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
+              updateMessage_ != StreamDataProtocol.UpdateMessage.getDefaultInstance()) {
+            updateMessage_ =
+              StreamDataProtocol.UpdateMessage.newBuilder(updateMessage_).mergeFrom(value).buildPartial();
+          } else {
+            updateMessage_ = value;
+          }
+          onChanged();
+        } else {
+          updateMessageBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      public Builder clearUpdateMessage() {
+        if (updateMessageBuilder_ == null) {
+          updateMessage_ = StreamDataProtocol.UpdateMessage.getDefaultInstance();
+          onChanged();
+        } else {
+          updateMessageBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      public StreamDataProtocol.UpdateMessage.Builder getUpdateMessageBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getUpdateMessageFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.UpdateMessageOrBuilder getUpdateMessageOrBuilder() {
+        if (updateMessageBuilder_ != null) {
+          return updateMessageBuilder_.getMessageOrBuilder();
+        } else {
+          return updateMessage_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.UpdateMessage, StreamDataProtocol.UpdateMessage.Builder, StreamDataProtocol.UpdateMessageOrBuilder> 
+          getUpdateMessageFieldBuilder() {
+        if (updateMessageBuilder_ == null) {
+          updateMessageBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.UpdateMessage, StreamDataProtocol.UpdateMessage.Builder, StreamDataProtocol.UpdateMessageOrBuilder>(
+                  updateMessage_,
+                  getParentForChildren(),
+                  isClean());
+          updateMessage_ = null;
+        }
+        return updateMessageBuilder_;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:Message)
+    }
+    
+    static {
+      defaultInstance = new Message(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:Message)
+  }
+  
+  public interface SubQueryMessageOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required string service = 1;
+    boolean hasService();
+    String getService();
+    
+    // required .StringMap queryMap = 2;
+    boolean hasQueryMap();
+    StreamDataProtocol.StringMap getQueryMap();
+    StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder();
+    
+    // required int32 tag = 3;
+    boolean hasTag();
+    int getTag();
+  }
+  public static final class SubQueryMessage extends
+      com.google.protobuf.GeneratedMessage
+      implements SubQueryMessageOrBuilder {
+    // Use SubQueryMessage.newBuilder() to construct.
+    private SubQueryMessage(Builder builder) {
+      super(builder);
+    }
+    private SubQueryMessage(boolean noInit) {}
+    
+    private static final SubQueryMessage defaultInstance;
+    public static SubQueryMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public SubQueryMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return StreamDataProtocol.internal_static_SubQueryMessage_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return StreamDataProtocol.internal_static_SubQueryMessage_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // required string service = 1;
+    public static final int SERVICE_FIELD_NUMBER = 1;
+    private java.lang.Object service_;
+    public boolean hasService() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public String getService() {
+      java.lang.Object ref = service_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          service_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getServiceBytes() {
+      java.lang.Object ref = service_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        service_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // required .StringMap queryMap = 2;
+    public static final int QUERYMAP_FIELD_NUMBER = 2;
+    private StreamDataProtocol.StringMap queryMap_;
+    public boolean hasQueryMap() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public StreamDataProtocol.StringMap getQueryMap() {
+      return queryMap_;
+    }
+    public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
+      return queryMap_;
+    }
+    
+    // required int32 tag = 3;
+    public static final int TAG_FIELD_NUMBER = 3;
+    private int tag_;
+    public boolean hasTag() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public int getTag() {
+      return tag_;
+    }
+    
+    private void initFields() {
+      service_ = "";
+      queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      tag_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasService()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasQueryMap()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasTag()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getQueryMap().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getServiceBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, queryMap_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, tag_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getServiceBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, queryMap_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, tag_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.SubQueryMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(StreamDataProtocol.SubQueryMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements StreamDataProtocol.SubQueryMessageOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return StreamDataProtocol.internal_static_SubQueryMessage_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return StreamDataProtocol.internal_static_SubQueryMessage_fieldAccessorTable;
+      }
+      
+      // Construct using StreamDataProtocol.SubQueryMessage.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getQueryMapFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        service_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (queryMapBuilder_ == null) {
+          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+        } else {
+          queryMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        tag_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return StreamDataProtocol.SubQueryMessage.getDescriptor();
+      }
+      
+      public StreamDataProtocol.SubQueryMessage getDefaultInstanceForType() {
+        return StreamDataProtocol.SubQueryMessage.getDefaultInstance();
+      }
+      
+      public StreamDataProtocol.SubQueryMessage build() {
+        StreamDataProtocol.SubQueryMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private StreamDataProtocol.SubQueryMessage buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        StreamDataProtocol.SubQueryMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public StreamDataProtocol.SubQueryMessage buildPartial() {
+        StreamDataProtocol.SubQueryMessage result = new StreamDataProtocol.SubQueryMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.service_ = service_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (queryMapBuilder_ == null) {
+          result.queryMap_ = queryMap_;
+        } else {
+          result.queryMap_ = queryMapBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.tag_ = tag_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof StreamDataProtocol.SubQueryMessage) {
+          return mergeFrom((StreamDataProtocol.SubQueryMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(StreamDataProtocol.SubQueryMessage other) {
+        if (other == StreamDataProtocol.SubQueryMessage.getDefaultInstance()) return this;
+        if (other.hasService()) {
+          setService(other.getService());
+        }
+        if (other.hasQueryMap()) {
+          mergeQueryMap(other.getQueryMap());
+        }
+        if (other.hasTag()) {
+          setTag(other.getTag());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasService()) {
+          
+          return false;
+        }
+        if (!hasQueryMap()) {
+          
+          return false;
+        }
+        if (!hasTag()) {
+          
+          return false;
+        }
+        if (!getQueryMap().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              service_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              StreamDataProtocol.StringMap.Builder subBuilder = StreamDataProtocol.StringMap.newBuilder();
+              if (hasQueryMap()) {
+                subBuilder.mergeFrom(getQueryMap());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setQueryMap(subBuilder.buildPartial());
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              tag_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required string service = 1;
       private java.lang.Object service_ = "";
       public boolean hasService() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
+        return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       public String getService() {
         java.lang.Object ref = service_;
@@ -485,122 +1526,1719 @@ public final class StreamDataProtocol {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         service_ = value;
         onChanged();
         return this;
       }
       public Builder clearService() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         service_ = getDefaultInstance().getService();
         onChanged();
         return this;
       }
       void setService(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
         service_ = value;
         onChanged();
       }
       
-      // optional .DataMap dataMap = 3;
-      private StreamDataProtocol.DataMap dataMap_ = StreamDataProtocol.DataMap.getDefaultInstance();
+      // required .StringMap queryMap = 2;
+      private StreamDataProtocol.StringMap queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> dataMapBuilder_;
-      public boolean hasDataMap() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> queryMapBuilder_;
+      public boolean hasQueryMap() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      public StreamDataProtocol.DataMap getDataMap() {
-        if (dataMapBuilder_ == null) {
-          return dataMap_;
+      public StreamDataProtocol.StringMap getQueryMap() {
+        if (queryMapBuilder_ == null) {
+          return queryMap_;
         } else {
-          return dataMapBuilder_.getMessage();
+          return queryMapBuilder_.getMessage();
         }
       }
-      public Builder setDataMap(StreamDataProtocol.DataMap value) {
-        if (dataMapBuilder_ == null) {
+      public Builder setQueryMap(StreamDataProtocol.StringMap value) {
+        if (queryMapBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          dataMap_ = value;
+          queryMap_ = value;
           onChanged();
         } else {
-          dataMapBuilder_.setMessage(value);
+          queryMapBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         return this;
       }
-      public Builder setDataMap(
-          StreamDataProtocol.DataMap.Builder builderForValue) {
-        if (dataMapBuilder_ == null) {
-          dataMap_ = builderForValue.build();
+      public Builder setQueryMap(
+          StreamDataProtocol.StringMap.Builder builderForValue) {
+        if (queryMapBuilder_ == null) {
+          queryMap_ = builderForValue.build();
           onChanged();
         } else {
-          dataMapBuilder_.setMessage(builderForValue.build());
+          queryMapBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         return this;
       }
-      public Builder mergeDataMap(StreamDataProtocol.DataMap value) {
-        if (dataMapBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004) &&
-              dataMap_ != StreamDataProtocol.DataMap.getDefaultInstance()) {
-            dataMap_ =
-              StreamDataProtocol.DataMap.newBuilder(dataMap_).mergeFrom(value).buildPartial();
+      public Builder mergeQueryMap(StreamDataProtocol.StringMap value) {
+        if (queryMapBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              queryMap_ != StreamDataProtocol.StringMap.getDefaultInstance()) {
+            queryMap_ =
+              StreamDataProtocol.StringMap.newBuilder(queryMap_).mergeFrom(value).buildPartial();
           } else {
-            dataMap_ = value;
+            queryMap_ = value;
           }
           onChanged();
         } else {
-          dataMapBuilder_.mergeFrom(value);
+          queryMapBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         return this;
       }
-      public Builder clearDataMap() {
-        if (dataMapBuilder_ == null) {
-          dataMap_ = StreamDataProtocol.DataMap.getDefaultInstance();
+      public Builder clearQueryMap() {
+        if (queryMapBuilder_ == null) {
+          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
           onChanged();
         } else {
-          dataMapBuilder_.clear();
+          queryMapBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
-      public StreamDataProtocol.DataMap.Builder getDataMapBuilder() {
-        bitField0_ |= 0x00000004;
+      public StreamDataProtocol.StringMap.Builder getQueryMapBuilder() {
+        bitField0_ |= 0x00000002;
         onChanged();
-        return getDataMapFieldBuilder().getBuilder();
+        return getQueryMapFieldBuilder().getBuilder();
       }
-      public StreamDataProtocol.DataMapOrBuilder getDataMapOrBuilder() {
-        if (dataMapBuilder_ != null) {
-          return dataMapBuilder_.getMessageOrBuilder();
+      public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
+        if (queryMapBuilder_ != null) {
+          return queryMapBuilder_.getMessageOrBuilder();
         } else {
-          return dataMap_;
+          return queryMap_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> 
+          getQueryMapFieldBuilder() {
+        if (queryMapBuilder_ == null) {
+          queryMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder>(
+                  queryMap_,
+                  getParentForChildren(),
+                  isClean());
+          queryMap_ = null;
+        }
+        return queryMapBuilder_;
+      }
+      
+      // required int32 tag = 3;
+      private int tag_ ;
+      public boolean hasTag() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public int getTag() {
+        return tag_;
+      }
+      public Builder setTag(int value) {
+        bitField0_ |= 0x00000004;
+        tag_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearTag() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        tag_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:SubQueryMessage)
+    }
+    
+    static {
+      defaultInstance = new SubQueryMessage(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:SubQueryMessage)
+  }
+  
+  public interface SubQueryResponseMessageOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required string service = 1;
+    boolean hasService();
+    String getService();
+    
+    // required int32 status = 2;
+    boolean hasStatus();
+    int getStatus();
+    
+    // required int32 tag = 3;
+    boolean hasTag();
+    int getTag();
+    
+    // optional .StringMap queryMap = 4;
+    boolean hasQueryMap();
+    StreamDataProtocol.StringMap getQueryMap();
+    StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder();
+    
+    // optional int32 reference = 5;
+    boolean hasReference();
+    int getReference();
+  }
+  public static final class SubQueryResponseMessage extends
+      com.google.protobuf.GeneratedMessage
+      implements SubQueryResponseMessageOrBuilder {
+    // Use SubQueryResponseMessage.newBuilder() to construct.
+    private SubQueryResponseMessage(Builder builder) {
+      super(builder);
+    }
+    private SubQueryResponseMessage(boolean noInit) {}
+    
+    private static final SubQueryResponseMessage defaultInstance;
+    public static SubQueryResponseMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public SubQueryResponseMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return StreamDataProtocol.internal_static_SubQueryResponseMessage_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return StreamDataProtocol.internal_static_SubQueryResponseMessage_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // required string service = 1;
+    public static final int SERVICE_FIELD_NUMBER = 1;
+    private java.lang.Object service_;
+    public boolean hasService() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public String getService() {
+      java.lang.Object ref = service_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+          service_ = s;
+        }
+        return s;
+      }
+    }
+    private com.google.protobuf.ByteString getServiceBytes() {
+      java.lang.Object ref = service_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+        service_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    
+    // required int32 status = 2;
+    public static final int STATUS_FIELD_NUMBER = 2;
+    private int status_;
+    public boolean hasStatus() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public int getStatus() {
+      return status_;
+    }
+    
+    // required int32 tag = 3;
+    public static final int TAG_FIELD_NUMBER = 3;
+    private int tag_;
+    public boolean hasTag() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public int getTag() {
+      return tag_;
+    }
+    
+    // optional .StringMap queryMap = 4;
+    public static final int QUERYMAP_FIELD_NUMBER = 4;
+    private StreamDataProtocol.StringMap queryMap_;
+    public boolean hasQueryMap() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public StreamDataProtocol.StringMap getQueryMap() {
+      return queryMap_;
+    }
+    public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
+      return queryMap_;
+    }
+    
+    // optional int32 reference = 5;
+    public static final int REFERENCE_FIELD_NUMBER = 5;
+    private int reference_;
+    public boolean hasReference() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    public int getReference() {
+      return reference_;
+    }
+    
+    private void initFields() {
+      service_ = "";
+      status_ = 0;
+      tag_ = 0;
+      queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      reference_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasService()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasStatus()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasTag()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (hasQueryMap()) {
+        if (!getQueryMap().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getServiceBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, status_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeInt32(3, tag_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(4, queryMap_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeInt32(5, reference_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getServiceBytes());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, status_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, tag_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, queryMap_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(5, reference_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.SubQueryResponseMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(StreamDataProtocol.SubQueryResponseMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements StreamDataProtocol.SubQueryResponseMessageOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return StreamDataProtocol.internal_static_SubQueryResponseMessage_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return StreamDataProtocol.internal_static_SubQueryResponseMessage_fieldAccessorTable;
+      }
+      
+      // Construct using StreamDataProtocol.SubQueryResponseMessage.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getQueryMapFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        service_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
+        status_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        tag_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        if (queryMapBuilder_ == null) {
+          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+        } else {
+          queryMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        reference_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return StreamDataProtocol.SubQueryResponseMessage.getDescriptor();
+      }
+      
+      public StreamDataProtocol.SubQueryResponseMessage getDefaultInstanceForType() {
+        return StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance();
+      }
+      
+      public StreamDataProtocol.SubQueryResponseMessage build() {
+        StreamDataProtocol.SubQueryResponseMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private StreamDataProtocol.SubQueryResponseMessage buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        StreamDataProtocol.SubQueryResponseMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public StreamDataProtocol.SubQueryResponseMessage buildPartial() {
+        StreamDataProtocol.SubQueryResponseMessage result = new StreamDataProtocol.SubQueryResponseMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.service_ = service_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.status_ = status_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.tag_ = tag_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (queryMapBuilder_ == null) {
+          result.queryMap_ = queryMap_;
+        } else {
+          result.queryMap_ = queryMapBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.reference_ = reference_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof StreamDataProtocol.SubQueryResponseMessage) {
+          return mergeFrom((StreamDataProtocol.SubQueryResponseMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(StreamDataProtocol.SubQueryResponseMessage other) {
+        if (other == StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance()) return this;
+        if (other.hasService()) {
+          setService(other.getService());
+        }
+        if (other.hasStatus()) {
+          setStatus(other.getStatus());
+        }
+        if (other.hasTag()) {
+          setTag(other.getTag());
+        }
+        if (other.hasQueryMap()) {
+          mergeQueryMap(other.getQueryMap());
+        }
+        if (other.hasReference()) {
+          setReference(other.getReference());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasService()) {
+          
+          return false;
+        }
+        if (!hasStatus()) {
+          
+          return false;
+        }
+        if (!hasTag()) {
+          
+          return false;
+        }
+        if (hasQueryMap()) {
+          if (!getQueryMap().isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              service_ = input.readBytes();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              status_ = input.readInt32();
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000004;
+              tag_ = input.readInt32();
+              break;
+            }
+            case 34: {
+              StreamDataProtocol.StringMap.Builder subBuilder = StreamDataProtocol.StringMap.newBuilder();
+              if (hasQueryMap()) {
+                subBuilder.mergeFrom(getQueryMap());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setQueryMap(subBuilder.buildPartial());
+              break;
+            }
+            case 40: {
+              bitField0_ |= 0x00000010;
+              reference_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required string service = 1;
+      private java.lang.Object service_ = "";
+      public boolean hasService() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public String getService() {
+        java.lang.Object ref = service_;
+        if (!(ref instanceof String)) {
+          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+          service_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      public Builder setService(String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        service_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearService() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        service_ = getDefaultInstance().getService();
+        onChanged();
+        return this;
+      }
+      void setService(com.google.protobuf.ByteString value) {
+        bitField0_ |= 0x00000001;
+        service_ = value;
+        onChanged();
+      }
+      
+      // required int32 status = 2;
+      private int status_ ;
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public int getStatus() {
+        return status_;
+      }
+      public Builder setStatus(int value) {
+        bitField0_ |= 0x00000002;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // required int32 tag = 3;
+      private int tag_ ;
+      public boolean hasTag() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public int getTag() {
+        return tag_;
+      }
+      public Builder setTag(int value) {
+        bitField0_ |= 0x00000004;
+        tag_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearTag() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        tag_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // optional .StringMap queryMap = 4;
+      private StreamDataProtocol.StringMap queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> queryMapBuilder_;
+      public boolean hasQueryMap() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public StreamDataProtocol.StringMap getQueryMap() {
+        if (queryMapBuilder_ == null) {
+          return queryMap_;
+        } else {
+          return queryMapBuilder_.getMessage();
+        }
+      }
+      public Builder setQueryMap(StreamDataProtocol.StringMap value) {
+        if (queryMapBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          queryMap_ = value;
+          onChanged();
+        } else {
+          queryMapBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder setQueryMap(
+          StreamDataProtocol.StringMap.Builder builderForValue) {
+        if (queryMapBuilder_ == null) {
+          queryMap_ = builderForValue.build();
+          onChanged();
+        } else {
+          queryMapBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder mergeQueryMap(StreamDataProtocol.StringMap value) {
+        if (queryMapBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              queryMap_ != StreamDataProtocol.StringMap.getDefaultInstance()) {
+            queryMap_ =
+              StreamDataProtocol.StringMap.newBuilder(queryMap_).mergeFrom(value).buildPartial();
+          } else {
+            queryMap_ = value;
+          }
+          onChanged();
+        } else {
+          queryMapBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder clearQueryMap() {
+        if (queryMapBuilder_ == null) {
+          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+          onChanged();
+        } else {
+          queryMapBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      public StreamDataProtocol.StringMap.Builder getQueryMapBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getQueryMapFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
+        if (queryMapBuilder_ != null) {
+          return queryMapBuilder_.getMessageOrBuilder();
+        } else {
+          return queryMap_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> 
+          getQueryMapFieldBuilder() {
+        if (queryMapBuilder_ == null) {
+          queryMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder>(
+                  queryMap_,
+                  getParentForChildren(),
+                  isClean());
+          queryMap_ = null;
+        }
+        return queryMapBuilder_;
+      }
+      
+      // optional int32 reference = 5;
+      private int reference_ ;
+      public boolean hasReference() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      public int getReference() {
+        return reference_;
+      }
+      public Builder setReference(int value) {
+        bitField0_ |= 0x00000010;
+        reference_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearReference() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        reference_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:SubQueryResponseMessage)
+    }
+    
+    static {
+      defaultInstance = new SubQueryResponseMessage(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:SubQueryResponseMessage)
+  }
+  
+  public interface UnsubscribeMessageOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required int32 reference = 1;
+    boolean hasReference();
+    int getReference();
+  }
+  public static final class UnsubscribeMessage extends
+      com.google.protobuf.GeneratedMessage
+      implements UnsubscribeMessageOrBuilder {
+    // Use UnsubscribeMessage.newBuilder() to construct.
+    private UnsubscribeMessage(Builder builder) {
+      super(builder);
+    }
+    private UnsubscribeMessage(boolean noInit) {}
+    
+    private static final UnsubscribeMessage defaultInstance;
+    public static UnsubscribeMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public UnsubscribeMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return StreamDataProtocol.internal_static_UnsubscribeMessage_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return StreamDataProtocol.internal_static_UnsubscribeMessage_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // required int32 reference = 1;
+    public static final int REFERENCE_FIELD_NUMBER = 1;
+    private int reference_;
+    public boolean hasReference() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public int getReference() {
+      return reference_;
+    }
+    
+    private void initFields() {
+      reference_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasReference()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, reference_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, reference_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.UnsubscribeMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(StreamDataProtocol.UnsubscribeMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements StreamDataProtocol.UnsubscribeMessageOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return StreamDataProtocol.internal_static_UnsubscribeMessage_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return StreamDataProtocol.internal_static_UnsubscribeMessage_fieldAccessorTable;
+      }
+      
+      // Construct using StreamDataProtocol.UnsubscribeMessage.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        reference_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return StreamDataProtocol.UnsubscribeMessage.getDescriptor();
+      }
+      
+      public StreamDataProtocol.UnsubscribeMessage getDefaultInstanceForType() {
+        return StreamDataProtocol.UnsubscribeMessage.getDefaultInstance();
+      }
+      
+      public StreamDataProtocol.UnsubscribeMessage build() {
+        StreamDataProtocol.UnsubscribeMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private StreamDataProtocol.UnsubscribeMessage buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        StreamDataProtocol.UnsubscribeMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public StreamDataProtocol.UnsubscribeMessage buildPartial() {
+        StreamDataProtocol.UnsubscribeMessage result = new StreamDataProtocol.UnsubscribeMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.reference_ = reference_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof StreamDataProtocol.UnsubscribeMessage) {
+          return mergeFrom((StreamDataProtocol.UnsubscribeMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(StreamDataProtocol.UnsubscribeMessage other) {
+        if (other == StreamDataProtocol.UnsubscribeMessage.getDefaultInstance()) return this;
+        if (other.hasReference()) {
+          setReference(other.getReference());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasReference()) {
+          
+          return false;
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              reference_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required int32 reference = 1;
+      private int reference_ ;
+      public boolean hasReference() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public int getReference() {
+        return reference_;
+      }
+      public Builder setReference(int value) {
+        bitField0_ |= 0x00000001;
+        reference_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearReference() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        reference_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:UnsubscribeMessage)
+    }
+    
+    static {
+      defaultInstance = new UnsubscribeMessage(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:UnsubscribeMessage)
+  }
+  
+  public interface UpdateMessageOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // required int32 type = 1;
+    boolean hasType();
+    int getType();
+    
+    // required .DataMap data = 2;
+    boolean hasData();
+    StreamDataProtocol.DataMap getData();
+    StreamDataProtocol.DataMapOrBuilder getDataOrBuilder();
+  }
+  public static final class UpdateMessage extends
+      com.google.protobuf.GeneratedMessage
+      implements UpdateMessageOrBuilder {
+    // Use UpdateMessage.newBuilder() to construct.
+    private UpdateMessage(Builder builder) {
+      super(builder);
+    }
+    private UpdateMessage(boolean noInit) {}
+    
+    private static final UpdateMessage defaultInstance;
+    public static UpdateMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public UpdateMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return StreamDataProtocol.internal_static_UpdateMessage_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return StreamDataProtocol.internal_static_UpdateMessage_fieldAccessorTable;
+    }
+    
+    private int bitField0_;
+    // required int32 type = 1;
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private int type_;
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public int getType() {
+      return type_;
+    }
+    
+    // required .DataMap data = 2;
+    public static final int DATA_FIELD_NUMBER = 2;
+    private StreamDataProtocol.DataMap data_;
+    public boolean hasData() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public StreamDataProtocol.DataMap getData() {
+      return data_;
+    }
+    public StreamDataProtocol.DataMapOrBuilder getDataOrBuilder() {
+      return data_;
+    }
+    
+    private void initFields() {
+      type_ = 0;
+      data_ = StreamDataProtocol.DataMap.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      if (!hasType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasData()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getData().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, type_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, data_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, type_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, data_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.UpdateMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.UpdateMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(StreamDataProtocol.UpdateMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements StreamDataProtocol.UpdateMessageOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return StreamDataProtocol.internal_static_UpdateMessage_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return StreamDataProtocol.internal_static_UpdateMessage_fieldAccessorTable;
+      }
+      
+      // Construct using StreamDataProtocol.UpdateMessage.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getDataFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        type_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (dataBuilder_ == null) {
+          data_ = StreamDataProtocol.DataMap.getDefaultInstance();
+        } else {
+          dataBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return StreamDataProtocol.UpdateMessage.getDescriptor();
+      }
+      
+      public StreamDataProtocol.UpdateMessage getDefaultInstanceForType() {
+        return StreamDataProtocol.UpdateMessage.getDefaultInstance();
+      }
+      
+      public StreamDataProtocol.UpdateMessage build() {
+        StreamDataProtocol.UpdateMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private StreamDataProtocol.UpdateMessage buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        StreamDataProtocol.UpdateMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public StreamDataProtocol.UpdateMessage buildPartial() {
+        StreamDataProtocol.UpdateMessage result = new StreamDataProtocol.UpdateMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (dataBuilder_ == null) {
+          result.data_ = data_;
+        } else {
+          result.data_ = dataBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof StreamDataProtocol.UpdateMessage) {
+          return mergeFrom((StreamDataProtocol.UpdateMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(StreamDataProtocol.UpdateMessage other) {
+        if (other == StreamDataProtocol.UpdateMessage.getDefaultInstance()) return this;
+        if (other.hasType()) {
+          setType(other.getType());
+        }
+        if (other.hasData()) {
+          mergeData(other.getData());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        if (!hasType()) {
+          
+          return false;
+        }
+        if (!hasData()) {
+          
+          return false;
+        }
+        if (!getData().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              type_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              StreamDataProtocol.DataMap.Builder subBuilder = StreamDataProtocol.DataMap.newBuilder();
+              if (hasData()) {
+                subBuilder.mergeFrom(getData());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setData(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // required int32 type = 1;
+      private int type_ ;
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public int getType() {
+        return type_;
+      }
+      public Builder setType(int value) {
+        bitField0_ |= 0x00000001;
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearType() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        type_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // required .DataMap data = 2;
+      private StreamDataProtocol.DataMap data_ = StreamDataProtocol.DataMap.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> dataBuilder_;
+      public boolean hasData() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public StreamDataProtocol.DataMap getData() {
+        if (dataBuilder_ == null) {
+          return data_;
+        } else {
+          return dataBuilder_.getMessage();
+        }
+      }
+      public Builder setData(StreamDataProtocol.DataMap value) {
+        if (dataBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          data_ = value;
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder setData(
+          StreamDataProtocol.DataMap.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          data_ = builderForValue.build();
+          onChanged();
+        } else {
+          dataBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder mergeData(StreamDataProtocol.DataMap value) {
+        if (dataBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              data_ != StreamDataProtocol.DataMap.getDefaultInstance()) {
+            data_ =
+              StreamDataProtocol.DataMap.newBuilder(data_).mergeFrom(value).buildPartial();
+          } else {
+            data_ = value;
+          }
+          onChanged();
+        } else {
+          dataBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder clearData() {
+        if (dataBuilder_ == null) {
+          data_ = StreamDataProtocol.DataMap.getDefaultInstance();
+          onChanged();
+        } else {
+          dataBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      public StreamDataProtocol.DataMap.Builder getDataBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getDataFieldBuilder().getBuilder();
+      }
+      public StreamDataProtocol.DataMapOrBuilder getDataOrBuilder() {
+        if (dataBuilder_ != null) {
+          return dataBuilder_.getMessageOrBuilder();
+        } else {
+          return data_;
         }
       }
       private com.google.protobuf.SingleFieldBuilder<
           StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> 
-          getDataMapFieldBuilder() {
-        if (dataMapBuilder_ == null) {
-          dataMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          getDataFieldBuilder() {
+        if (dataBuilder_ == null) {
+          dataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
               StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder>(
-                  dataMap_,
+                  data_,
                   getParentForChildren(),
                   isClean());
-          dataMap_ = null;
+          data_ = null;
         }
-        return dataMapBuilder_;
+        return dataBuilder_;
       }
       
-      // @@protoc_insertion_point(builder_scope:Message)
+      // @@protoc_insertion_point(builder_scope:UpdateMessage)
     }
     
     static {
-      defaultInstance = new Message(true);
+      defaultInstance = new UpdateMessage(true);
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:Message)
+    // @@protoc_insertion_point(class_scope:UpdateMessage)
   }
   
   public interface BDecimalOrBuilder
@@ -6176,11 +8814,594 @@ public final class StreamDataProtocol {
     // @@protoc_insertion_point(class_scope:DataMap)
   }
   
+  public interface StringMapOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+    
+    // repeated .StringEntry stringEntries = 1;
+    java.util.List<StreamDataProtocol.StringEntry> 
+        getStringEntriesList();
+    StreamDataProtocol.StringEntry getStringEntries(int index);
+    int getStringEntriesCount();
+    java.util.List<? extends StreamDataProtocol.StringEntryOrBuilder> 
+        getStringEntriesOrBuilderList();
+    StreamDataProtocol.StringEntryOrBuilder getStringEntriesOrBuilder(
+        int index);
+  }
+  public static final class StringMap extends
+      com.google.protobuf.GeneratedMessage
+      implements StringMapOrBuilder {
+    // Use StringMap.newBuilder() to construct.
+    private StringMap(Builder builder) {
+      super(builder);
+    }
+    private StringMap(boolean noInit) {}
+    
+    private static final StringMap defaultInstance;
+    public static StringMap getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public StringMap getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return StreamDataProtocol.internal_static_StringMap_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return StreamDataProtocol.internal_static_StringMap_fieldAccessorTable;
+    }
+    
+    // repeated .StringEntry stringEntries = 1;
+    public static final int STRINGENTRIES_FIELD_NUMBER = 1;
+    private java.util.List<StreamDataProtocol.StringEntry> stringEntries_;
+    public java.util.List<StreamDataProtocol.StringEntry> getStringEntriesList() {
+      return stringEntries_;
+    }
+    public java.util.List<? extends StreamDataProtocol.StringEntryOrBuilder> 
+        getStringEntriesOrBuilderList() {
+      return stringEntries_;
+    }
+    public int getStringEntriesCount() {
+      return stringEntries_.size();
+    }
+    public StreamDataProtocol.StringEntry getStringEntries(int index) {
+      return stringEntries_.get(index);
+    }
+    public StreamDataProtocol.StringEntryOrBuilder getStringEntriesOrBuilder(
+        int index) {
+      return stringEntries_.get(index);
+    }
+    
+    private void initFields() {
+      stringEntries_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+      
+      for (int i = 0; i < getStringEntriesCount(); i++) {
+        if (!getStringEntries(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < stringEntries_.size(); i++) {
+        output.writeMessage(1, stringEntries_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      for (int i = 0; i < stringEntries_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, stringEntries_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+    
+    public static StreamDataProtocol.StringMap parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.StringMap parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static StreamDataProtocol.StringMap parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static StreamDataProtocol.StringMap parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(StreamDataProtocol.StringMap prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements StreamDataProtocol.StringMapOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return StreamDataProtocol.internal_static_StringMap_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return StreamDataProtocol.internal_static_StringMap_fieldAccessorTable;
+      }
+      
+      // Construct using StreamDataProtocol.StringMap.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+      
+      private Builder(BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getStringEntriesFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+      
+      public Builder clear() {
+        super.clear();
+        if (stringEntriesBuilder_ == null) {
+          stringEntries_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          stringEntriesBuilder_.clear();
+        }
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return StreamDataProtocol.StringMap.getDescriptor();
+      }
+      
+      public StreamDataProtocol.StringMap getDefaultInstanceForType() {
+        return StreamDataProtocol.StringMap.getDefaultInstance();
+      }
+      
+      public StreamDataProtocol.StringMap build() {
+        StreamDataProtocol.StringMap result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+      
+      private StreamDataProtocol.StringMap buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        StreamDataProtocol.StringMap result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return result;
+      }
+      
+      public StreamDataProtocol.StringMap buildPartial() {
+        StreamDataProtocol.StringMap result = new StreamDataProtocol.StringMap(this);
+        int from_bitField0_ = bitField0_;
+        if (stringEntriesBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            stringEntries_ = java.util.Collections.unmodifiableList(stringEntries_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.stringEntries_ = stringEntries_;
+        } else {
+          result.stringEntries_ = stringEntriesBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof StreamDataProtocol.StringMap) {
+          return mergeFrom((StreamDataProtocol.StringMap)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(StreamDataProtocol.StringMap other) {
+        if (other == StreamDataProtocol.StringMap.getDefaultInstance()) return this;
+        if (stringEntriesBuilder_ == null) {
+          if (!other.stringEntries_.isEmpty()) {
+            if (stringEntries_.isEmpty()) {
+              stringEntries_ = other.stringEntries_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureStringEntriesIsMutable();
+              stringEntries_.addAll(other.stringEntries_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.stringEntries_.isEmpty()) {
+            if (stringEntriesBuilder_.isEmpty()) {
+              stringEntriesBuilder_.dispose();
+              stringEntriesBuilder_ = null;
+              stringEntries_ = other.stringEntries_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              stringEntriesBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getStringEntriesFieldBuilder() : null;
+            } else {
+              stringEntriesBuilder_.addAllMessages(other.stringEntries_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public final boolean isInitialized() {
+        for (int i = 0; i < getStringEntriesCount(); i++) {
+          if (!getStringEntries(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              onChanged();
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                onChanged();
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              StreamDataProtocol.StringEntry.Builder subBuilder = StreamDataProtocol.StringEntry.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addStringEntries(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      private int bitField0_;
+      
+      // repeated .StringEntry stringEntries = 1;
+      private java.util.List<StreamDataProtocol.StringEntry> stringEntries_ =
+        java.util.Collections.emptyList();
+      private void ensureStringEntriesIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          stringEntries_ = new java.util.ArrayList<StreamDataProtocol.StringEntry>(stringEntries_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      
+      private com.google.protobuf.RepeatedFieldBuilder<
+          StreamDataProtocol.StringEntry, StreamDataProtocol.StringEntry.Builder, StreamDataProtocol.StringEntryOrBuilder> stringEntriesBuilder_;
+      
+      public java.util.List<StreamDataProtocol.StringEntry> getStringEntriesList() {
+        if (stringEntriesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(stringEntries_);
+        } else {
+          return stringEntriesBuilder_.getMessageList();
+        }
+      }
+      public int getStringEntriesCount() {
+        if (stringEntriesBuilder_ == null) {
+          return stringEntries_.size();
+        } else {
+          return stringEntriesBuilder_.getCount();
+        }
+      }
+      public StreamDataProtocol.StringEntry getStringEntries(int index) {
+        if (stringEntriesBuilder_ == null) {
+          return stringEntries_.get(index);
+        } else {
+          return stringEntriesBuilder_.getMessage(index);
+        }
+      }
+      public Builder setStringEntries(
+          int index, StreamDataProtocol.StringEntry value) {
+        if (stringEntriesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStringEntriesIsMutable();
+          stringEntries_.set(index, value);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      public Builder setStringEntries(
+          int index, StreamDataProtocol.StringEntry.Builder builderForValue) {
+        if (stringEntriesBuilder_ == null) {
+          ensureStringEntriesIsMutable();
+          stringEntries_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          stringEntriesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addStringEntries(StreamDataProtocol.StringEntry value) {
+        if (stringEntriesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStringEntriesIsMutable();
+          stringEntries_.add(value);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      public Builder addStringEntries(
+          int index, StreamDataProtocol.StringEntry value) {
+        if (stringEntriesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureStringEntriesIsMutable();
+          stringEntries_.add(index, value);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      public Builder addStringEntries(
+          StreamDataProtocol.StringEntry.Builder builderForValue) {
+        if (stringEntriesBuilder_ == null) {
+          ensureStringEntriesIsMutable();
+          stringEntries_.add(builderForValue.build());
+          onChanged();
+        } else {
+          stringEntriesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addStringEntries(
+          int index, StreamDataProtocol.StringEntry.Builder builderForValue) {
+        if (stringEntriesBuilder_ == null) {
+          ensureStringEntriesIsMutable();
+          stringEntries_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          stringEntriesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      public Builder addAllStringEntries(
+          java.lang.Iterable<? extends StreamDataProtocol.StringEntry> values) {
+        if (stringEntriesBuilder_ == null) {
+          ensureStringEntriesIsMutable();
+          super.addAll(values, stringEntries_);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      public Builder clearStringEntries() {
+        if (stringEntriesBuilder_ == null) {
+          stringEntries_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.clear();
+        }
+        return this;
+      }
+      public Builder removeStringEntries(int index) {
+        if (stringEntriesBuilder_ == null) {
+          ensureStringEntriesIsMutable();
+          stringEntries_.remove(index);
+          onChanged();
+        } else {
+          stringEntriesBuilder_.remove(index);
+        }
+        return this;
+      }
+      public StreamDataProtocol.StringEntry.Builder getStringEntriesBuilder(
+          int index) {
+        return getStringEntriesFieldBuilder().getBuilder(index);
+      }
+      public StreamDataProtocol.StringEntryOrBuilder getStringEntriesOrBuilder(
+          int index) {
+        if (stringEntriesBuilder_ == null) {
+          return stringEntries_.get(index);  } else {
+          return stringEntriesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      public java.util.List<? extends StreamDataProtocol.StringEntryOrBuilder> 
+           getStringEntriesOrBuilderList() {
+        if (stringEntriesBuilder_ != null) {
+          return stringEntriesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(stringEntries_);
+        }
+      }
+      public StreamDataProtocol.StringEntry.Builder addStringEntriesBuilder() {
+        return getStringEntriesFieldBuilder().addBuilder(
+            StreamDataProtocol.StringEntry.getDefaultInstance());
+      }
+      public StreamDataProtocol.StringEntry.Builder addStringEntriesBuilder(
+          int index) {
+        return getStringEntriesFieldBuilder().addBuilder(
+            index, StreamDataProtocol.StringEntry.getDefaultInstance());
+      }
+      public java.util.List<StreamDataProtocol.StringEntry.Builder> 
+           getStringEntriesBuilderList() {
+        return getStringEntriesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          StreamDataProtocol.StringEntry, StreamDataProtocol.StringEntry.Builder, StreamDataProtocol.StringEntryOrBuilder> 
+          getStringEntriesFieldBuilder() {
+        if (stringEntriesBuilder_ == null) {
+          stringEntriesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              StreamDataProtocol.StringEntry, StreamDataProtocol.StringEntry.Builder, StreamDataProtocol.StringEntryOrBuilder>(
+                  stringEntries_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          stringEntries_ = null;
+        }
+        return stringEntriesBuilder_;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:StringMap)
+    }
+    
+    static {
+      defaultInstance = new StringMap(true);
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:StringMap)
+  }
+  
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_Message_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_Message_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_SubQueryMessage_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_SubQueryMessage_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_SubQueryResponseMessage_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_SubQueryResponseMessage_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_UnsubscribeMessage_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_UnsubscribeMessage_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_UpdateMessage_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_UpdateMessage_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_BDecimal_descriptor;
   private static
@@ -6226,6 +9447,11 @@ public final class StreamDataProtocol {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_DataMap_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_StringMap_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_StringMap_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -6235,23 +9461,39 @@ public final class StreamDataProtocol {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\030streamDataProtocol.proto\"C\n\007Message\022\014\n" +
-      "\004type\030\001 \002(\004\022\017\n\007service\030\002 \001(\t\022\031\n\007dataMap\030" +
-      "\003 \001(\0132\010.DataMap\"+\n\010BDecimal\022\r\n\005scale\030\001 \002" +
+      "\n\030streamDataProtocol.proto\"\311\002\n\007Message\022\033" +
+      "\n\004type\030\001 \002(\0162\r.Message.Type\022)\n\017subQueryM" +
+      "essage\030\002 \001(\0132\020.SubQueryMessage\0229\n\027subQue" +
+      "ryResponseMessage\030\003 \001(\0132\030.SubQueryRespon" +
+      "seMessage\022/\n\022unsubscribeMessage\030\004 \001(\0132\023." +
+      "UnsubscribeMessage\022%\n\rupdateMessage\030\005 \001(" +
+      "\0132\016.UpdateMessage\"c\n\004Type\022\023\n\017SubQueryMes" +
+      "sage\020\001\022\033\n\027SubQueryResponseMessage\020\002\022\026\n\022U" +
+      "nSubscribeMessage\020\003\022\021\n\rUpdateMessage\020\004\"M" +
+      "\n\017SubQueryMessage\022\017\n\007service\030\001 \002(\t\022\034\n\010qu",
+      "eryMap\030\002 \002(\0132\n.StringMap\022\013\n\003tag\030\003 \002(\005\"x\n" +
+      "\027SubQueryResponseMessage\022\017\n\007service\030\001 \002(" +
+      "\t\022\016\n\006status\030\002 \002(\005\022\013\n\003tag\030\003 \002(\005\022\034\n\010queryM" +
+      "ap\030\004 \001(\0132\n.StringMap\022\021\n\treference\030\005 \001(\005\"" +
+      "\'\n\022UnsubscribeMessage\022\021\n\treference\030\001 \002(\005" +
+      "\"5\n\rUpdateMessage\022\014\n\004type\030\001 \002(\005\022\026\n\004data\030" +
+      "\002 \002(\0132\010.DataMap\"+\n\010BDecimal\022\r\n\005scale\030\001 \002" +
       "(\005\022\020\n\010intBytes\030\002 \002(\014\"\031\n\010BInteger\022\r\n\005valu" +
       "e\030\001 \002(\014\"*\n\013StringEntry\022\r\n\005field\030\001 \002(\t\022\014\n" +
-      "\004data\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n\005field\030\001 \002" +
+      "\004data\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n\005field\030\001 \002",
       "(\t\022\014\n\004data\030\002 \002(\010\"(\n\tLongEntry\022\r\n\005field\030\001" +
       " \002(\t\022\014\n\004data\030\002 \002(\004\"A\n\017BigDecimalEntry\022\r\n" +
       "\005field\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n\010intBytes\030" +
-      "\003 \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 \002(\t\"5\n\014Has",
+      "\003 \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 \002(\t\"5\n\014Has" +
       "hMapEntry\022\r\n\005field\030\001 \002(\t\022\026\n\004data\030\002 \002(\0132\010" +
       ".DataMap\"\340\001\n\007DataMap\022#\n\rstringEntries\030\002 " +
       "\003(\0132\014.StringEntry\022\037\n\013longEntries\030\003 \003(\0132\n" +
       ".LongEntry\022#\n\tbDEntries\030\004 \003(\0132\020.BigDecim" +
       "alEntry\022\"\n\013boolEntries\030\005 \003(\0132\r.BooleanEn" +
-      "try\022\037\n\013nullEntries\030\006 \003(\0132\n.NullEntry\022%\n\016" +
-      "hashMapEntries\030\007 \003(\0132\r.HashMapEntry"
+      "try\022\037\n\013nullEntries\030\006 \003(\0132\n.NullEntry\022%\n\016",
+      "hashMapEntries\030\007 \003(\0132\r.HashMapEntry\"0\n\tS" +
+      "tringMap\022#\n\rstringEntries\030\001 \003(\0132\014.String" +
+      "Entry"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -6263,11 +9505,43 @@ public final class StreamDataProtocol {
           internal_static_Message_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Message_descriptor,
-              new java.lang.String[] { "Type", "Service", "DataMap", },
+              new java.lang.String[] { "Type", "SubQueryMessage", "SubQueryResponseMessage", "UnsubscribeMessage", "UpdateMessage", },
               StreamDataProtocol.Message.class,
               StreamDataProtocol.Message.Builder.class);
-          internal_static_BDecimal_descriptor =
+          internal_static_SubQueryMessage_descriptor =
             getDescriptor().getMessageTypes().get(1);
+          internal_static_SubQueryMessage_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_SubQueryMessage_descriptor,
+              new java.lang.String[] { "Service", "QueryMap", "Tag", },
+              StreamDataProtocol.SubQueryMessage.class,
+              StreamDataProtocol.SubQueryMessage.Builder.class);
+          internal_static_SubQueryResponseMessage_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_SubQueryResponseMessage_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_SubQueryResponseMessage_descriptor,
+              new java.lang.String[] { "Service", "Status", "Tag", "QueryMap", "Reference", },
+              StreamDataProtocol.SubQueryResponseMessage.class,
+              StreamDataProtocol.SubQueryResponseMessage.Builder.class);
+          internal_static_UnsubscribeMessage_descriptor =
+            getDescriptor().getMessageTypes().get(3);
+          internal_static_UnsubscribeMessage_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_UnsubscribeMessage_descriptor,
+              new java.lang.String[] { "Reference", },
+              StreamDataProtocol.UnsubscribeMessage.class,
+              StreamDataProtocol.UnsubscribeMessage.Builder.class);
+          internal_static_UpdateMessage_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_UpdateMessage_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_UpdateMessage_descriptor,
+              new java.lang.String[] { "Type", "Data", },
+              StreamDataProtocol.UpdateMessage.class,
+              StreamDataProtocol.UpdateMessage.Builder.class);
+          internal_static_BDecimal_descriptor =
+            getDescriptor().getMessageTypes().get(5);
           internal_static_BDecimal_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_BDecimal_descriptor,
@@ -6275,7 +9549,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.BDecimal.class,
               StreamDataProtocol.BDecimal.Builder.class);
           internal_static_BInteger_descriptor =
-            getDescriptor().getMessageTypes().get(2);
+            getDescriptor().getMessageTypes().get(6);
           internal_static_BInteger_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_BInteger_descriptor,
@@ -6283,7 +9557,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.BInteger.class,
               StreamDataProtocol.BInteger.Builder.class);
           internal_static_StringEntry_descriptor =
-            getDescriptor().getMessageTypes().get(3);
+            getDescriptor().getMessageTypes().get(7);
           internal_static_StringEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_StringEntry_descriptor,
@@ -6291,7 +9565,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.StringEntry.class,
               StreamDataProtocol.StringEntry.Builder.class);
           internal_static_BooleanEntry_descriptor =
-            getDescriptor().getMessageTypes().get(4);
+            getDescriptor().getMessageTypes().get(8);
           internal_static_BooleanEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_BooleanEntry_descriptor,
@@ -6299,7 +9573,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.BooleanEntry.class,
               StreamDataProtocol.BooleanEntry.Builder.class);
           internal_static_LongEntry_descriptor =
-            getDescriptor().getMessageTypes().get(5);
+            getDescriptor().getMessageTypes().get(9);
           internal_static_LongEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_LongEntry_descriptor,
@@ -6307,7 +9581,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.LongEntry.class,
               StreamDataProtocol.LongEntry.Builder.class);
           internal_static_BigDecimalEntry_descriptor =
-            getDescriptor().getMessageTypes().get(6);
+            getDescriptor().getMessageTypes().get(10);
           internal_static_BigDecimalEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_BigDecimalEntry_descriptor,
@@ -6315,7 +9589,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.BigDecimalEntry.class,
               StreamDataProtocol.BigDecimalEntry.Builder.class);
           internal_static_NullEntry_descriptor =
-            getDescriptor().getMessageTypes().get(7);
+            getDescriptor().getMessageTypes().get(11);
           internal_static_NullEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_NullEntry_descriptor,
@@ -6323,7 +9597,7 @@ public final class StreamDataProtocol {
               StreamDataProtocol.NullEntry.class,
               StreamDataProtocol.NullEntry.Builder.class);
           internal_static_HashMapEntry_descriptor =
-            getDescriptor().getMessageTypes().get(8);
+            getDescriptor().getMessageTypes().get(12);
           internal_static_HashMapEntry_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_HashMapEntry_descriptor,
@@ -6331,13 +9605,21 @@ public final class StreamDataProtocol {
               StreamDataProtocol.HashMapEntry.class,
               StreamDataProtocol.HashMapEntry.Builder.class);
           internal_static_DataMap_descriptor =
-            getDescriptor().getMessageTypes().get(9);
+            getDescriptor().getMessageTypes().get(13);
           internal_static_DataMap_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_DataMap_descriptor,
               new java.lang.String[] { "StringEntries", "LongEntries", "BDEntries", "BoolEntries", "NullEntries", "HashMapEntries", },
               StreamDataProtocol.DataMap.class,
               StreamDataProtocol.DataMap.Builder.class);
+          internal_static_StringMap_descriptor =
+            getDescriptor().getMessageTypes().get(14);
+          internal_static_StringMap_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_StringMap_descriptor,
+              new java.lang.String[] { "StringEntries", },
+              StreamDataProtocol.StringMap.class,
+              StreamDataProtocol.StringMap.Builder.class);
           return null;
         }
       };

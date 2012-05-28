@@ -1,9 +1,6 @@
 package org.juxtapose.streamline.util.net;
 
-import java.math.BigInteger;
-import java.util.Formatter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -11,28 +8,70 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.juxtapose.streamline.experimental.protocol.message.SubQuery;
+import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.executor.Executable;
+import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.protocol.message.PostMarshaller;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
+import org.juxtapose.streamline.protocol.message.SubQuery;
+import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.util.IDataRequestSubscriber;
+import org.juxtapose.streamline.util.IPublishedData;
 
-public class ServerConnectorHandler extends SimpleChannelUpstreamHandler 
-{	  
+/**
+ * @author Pontus Jörgne
+ * May 27, 2012
+ * Copyright (c) Pontus Jörgne. All rights reserved
+ */
+public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements IDataRequestSubscriber
+{	
+	final ISTM stm;
+	
+	final static Long tag = new Long( 0 ); 
+	
+	public ServerConnectorHandler( ISTM inSTM )
+	{
+		stm = inSTM;
+	}
+	
     @Override
-    public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception 
+    public final void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception 
     {
         super.handleUpstream(ctx, e);
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) 
+    public final void messageReceived(ChannelHandlerContext ctx, MessageEvent e) 
     {
-        // Calculate the cumulative factorial and send it to the client.
-        if (e.getMessage() instanceof SubQuery) {
-        	System.out.println("got query");
-        } else 
-        {
-        
-        }
-        
+    	Message message = (Message)e.getMessage();
+    	if( message.getType() == Message.Type.SubQueryMessage )
+    	{
+    		SubQueryMessage subMess = message.getSubQueryMessage();
+    		String service = subMess.getService();
+    		Map<String, String> queryMap = PostMarshaller.parseQueryMap( subMess );
+    		int tag = subMess.getTag();
+    		
+    		stm.getDataKey( service, this, (long)tag, queryMap );
+    	}
+    	else
+    	{
+    		stm.logError( "Unknown message recieved: "+e.getMessage().getClass() );
+    	}
     }
+    
+    public final void postSubQuery( final SubQuery inQuery )
+    {
+    	stm.execute( new Executable() {
+			
+			@Override
+			public void run() 
+			{
+				stm.getDataKey( inQuery.service, ServerConnectorHandler.this, tag, inQuery.queryMap );
+			}
+		}, IExecutor.LOW );
+    }
+   
 
     @Override
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
@@ -45,4 +84,23 @@ public class ServerConnectorHandler extends SimpleChannelUpstreamHandler
     {
         e.getChannel().close();
     }
+
+	@Override
+	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate ) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deliverKey( IDataKey inDataKey, Long inTag ) 
+	{
+		System.out.println( inDataKey );
+		// TODO Auto-generated method stub		
+	}
+
+	@Override
+	public void queryNotAvailible( Long inTag ) {
+		// TODO Auto-generated method stub
+		
+	}
 }

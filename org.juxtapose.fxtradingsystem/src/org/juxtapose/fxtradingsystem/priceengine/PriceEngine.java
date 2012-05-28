@@ -1,6 +1,6 @@
 package org.juxtapose.fxtradingsystem.priceengine;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
@@ -34,7 +34,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery )
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 		if( type == null )

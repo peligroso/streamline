@@ -5,6 +5,8 @@ import java.util.Map;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 
 /**
  * @author Pontus Jörgne
@@ -18,22 +20,26 @@ public class PreMarshaller
 	 * @param inQuery
 	 * @return
 	 */
-	public static Message createSubQuery( String inService, Map<String, String> inQuery )
+	public static Message createSubQuery( String inService, int inTag, Map<String, String> inQuery )
 	{
-		Message.Builder builder = Message.newBuilder();
+		SubQueryMessage.Builder builder = SubQueryMessage.newBuilder();
 		builder.setService( inService );
-		builder.setType( MessageConstants.SUB_QUERY );
+		builder.setTag( inTag );
 		
-		DataMap.Builder dataBuilder = DataMap.newBuilder();
+		StringMap.Builder dataBuilder = StringMap.newBuilder();
 		
 		for( Map.Entry<String, String> keyVal : inQuery.entrySet() )
 		{
 			addStringValue( dataBuilder, keyVal.getKey(), keyVal.getValue() );
 		}
 		
-		builder.setDataMap( dataBuilder.build() );
+		builder.setQueryMap( dataBuilder.build() );
+		
+		Message.Builder messBuilder = Message.newBuilder();
+		messBuilder.setSubQueryMessage( builder.build() );
+		messBuilder.setType( Message.Type.SubQueryMessage );
 			
-		return builder.build();
+		return messBuilder.build();
 	}
 	
 	/**
@@ -42,6 +48,15 @@ public class PreMarshaller
 	 * @param inValue
 	 */
 	public static void addStringValue( DataMap.Builder inData, String inField, String inValue )
+	{
+		StringEntry.Builder strEntryBuilder = StringEntry.newBuilder();
+		strEntryBuilder.setData( inValue );
+		strEntryBuilder.setField( inField );
+		
+		inData.addStringEntries( strEntryBuilder.build() );
+	}
+	
+	public static void addStringValue( StringMap.Builder inData, String inField, String inValue )
 	{
 		StringEntry.Builder strEntryBuilder = StringEntry.newBuilder();
 		strEntryBuilder.setData( inValue );

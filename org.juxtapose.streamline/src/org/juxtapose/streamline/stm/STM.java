@@ -5,6 +5,7 @@ import static org.juxtapose.streamline.util.DataConstants.FIELD_QUERY_KEY;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -52,8 +53,8 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 		keyToData.put( KeyConstants.PRODUCER_SERVICE_KEY.getKey(), createEmptyData(Status.OK, this, this));
 		registerProducer( this, Status.OK );
 		
-//		connector = new ServerConnector( 8085 );
-//		connector.run();
+		connector = new ServerConnector( this, 8085 );
+		connector.run();
 	}
 	
 	/**
@@ -106,7 +107,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @see org.juxtapose.streamline.util.producer.IDataProducerService#getKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
 		String val = inQuery.get( FIELD_QUERY_KEY );
 		
@@ -120,7 +121,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.exp.ISTM#getDataKey(java.lang.Integer, java.util.HashMap)
 	 */
-	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
+	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
 		IDataProducerService producerService = idToProducerService.get( inProducerService );
 		if( producerService == null )

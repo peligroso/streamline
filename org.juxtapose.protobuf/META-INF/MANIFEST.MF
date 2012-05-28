@@ -4,3 +4,4 @@ Bundle-Name: Protobuf
 Bundle-SymbolicName: org.juxtapose.protobuf
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: com.google.protobuf

@@ -1,7 +1,7 @@
 package org.juxtapose.fxtradingsystem.ordermanager;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -274,7 +274,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 	
 	@Override
-	public void getDataKey(IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery)
+	public void getDataKey(IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
 		inSubscriber.queryNotAvailible( inTag );
 	}

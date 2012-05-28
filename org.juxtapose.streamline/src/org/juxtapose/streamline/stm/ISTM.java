@@ -1,6 +1,7 @@
 package org.juxtapose.streamline.stm;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.IDataProducer;
@@ -17,7 +18,7 @@ public interface ISTM extends IExecutor
 	public void subscribeToData( IDataKey inDataKey, IDataSubscriber inSubscriber );
 	public void unsubscribeToData( IDataKey inDataKey, IDataSubscriber inSubscriber );
 	public void commit( STMTransaction inTransaction );
-	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery);
+	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery);
 	public void logInfo( String inMessage );
 	public void logError( String inMessage );
 	public void logError( String inMessage, Throwable inThrowable );

@@ -1,6 +1,6 @@
 package org.juxtapose.fxtradingsystem.marketdata;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
@@ -10,7 +10,6 @@ import org.juxtapose.streamline.producer.IDataProducer;
 import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IDataSubscriber;
 import org.juxtapose.streamline.util.IPublishedData;
 
 /**
@@ -25,7 +24,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(org.juxtapose.streamline.util.IDataSubscriber, java.lang.Long, java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, HashMap<String, String> inQuery )
+	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 

@@ -16,7 +16,8 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.juxtapose.streamline.experimental.protocol.message.SubQuery;
+import org.juxtapose.streamline.protocol.message.PreMarshaller;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 
 public class ClientConnectorHandler extends SimpleChannelUpstreamHandler 
 {
@@ -68,9 +69,10 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		query.put("CCY1", "EUR");
 		query.put("CCY2", "SEK");
 		query.put("INST", "SP");
+		query.put("T", "PRICE");
 		
-		SubQuery sq = new SubQuery("PE", query);
+		Message mess = PreMarshaller.createSubQuery( "PE", 1, query );
 		
-		channel.write(sq);
+		channel.write(mess);
 	}
 }
