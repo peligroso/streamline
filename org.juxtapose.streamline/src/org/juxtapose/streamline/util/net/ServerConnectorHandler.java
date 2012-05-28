@@ -14,7 +14,6 @@ import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
-import org.juxtapose.streamline.protocol.message.SubQuery;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.IDataRequestSubscriber;
 import org.juxtapose.streamline.util.IPublishedData;
@@ -52,7 +51,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		Map<String, String> queryMap = PostMarshaller.parseQueryMap( subMess );
     		int tag = subMess.getTag();
     		
-    		stm.getDataKey( service, this, (long)tag, queryMap );
+    		postSubQuery( service, (long)tag, queryMap );
     	}
     	else
     	{
@@ -60,14 +59,14 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     	}
     }
     
-    public final void postSubQuery( final SubQuery inQuery )
+    public final void postSubQuery( final String inService, final long inTag, final Map<String, String> inQuery )
     {
     	stm.execute( new Executable() {
 			
 			@Override
 			public void run() 
 			{
-				stm.getDataKey( inQuery.service, ServerConnectorHandler.this, tag, inQuery.queryMap );
+				stm.getDataKey( inService, ServerConnectorHandler.this, inTag, inQuery );
 			}
 		}, IExecutor.LOW );
     }
