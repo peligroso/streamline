@@ -13,6 +13,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.NullEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
@@ -59,6 +60,11 @@ public class PreMarshaller
 		return messBuilder.build();
 	}
 	
+	/**
+	 * @param inRef
+	 * @param inDataMap
+	 * @return
+	 */
 	public static Message createUpdateMessage( int inRef, IPersistentMap<String, DataType<?>> inDataMap)
 	{
 		UpdateMessage.Builder builder = UpdateMessage.newBuilder();
@@ -76,6 +82,24 @@ public class PreMarshaller
 		
 		return messBuilder.build();
 		
+	}
+	
+	/**
+	 * @param inTag
+	 * @param inRef
+	 * @return
+	 */
+	public static Message createSubResponse( Long inTag, int inRef )
+	{
+		SubQueryResponseMessage.Builder builder = SubQueryResponseMessage.newBuilder();
+		builder.setReference( inRef );
+		builder.setTag( inTag.intValue() );
+		
+		Message.Builder messBuilder = Message.newBuilder();
+		messBuilder.setSubQueryResponseMessage( builder.build() );
+		messBuilder.setType( Message.Type.SubQueryResponseMessage );
+		
+		return messBuilder.build();
 	}
 	
 	public static void parseMapValues( IPersistentMap<String, DataType<?>> inDataMap, DataMap.Builder inBuilder )

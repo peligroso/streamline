@@ -1,7 +1,10 @@
 package org.juxtapose.streamline.util.net;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -12,6 +15,7 @@ import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
+import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.stm.ISTM;
@@ -28,6 +32,10 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	final ISTM stm;
 	
 	final static Long tag = new Long( 0 ); 
+	
+	ConcurrentHashMap<Long, Channel> tagToChannel = new ConcurrentHashMap<Long, Channel>();
+	ConcurrentHashMap<Integer, IDataKey> referenceToKey = new ConcurrentHashMap<Integer, IDataKey>();
+	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
 	
 	public ServerConnectorHandler( ISTM inSTM )
 	{
@@ -93,8 +101,18 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	@Override
 	public void deliverKey( IDataKey inDataKey, Long inTag ) 
 	{
-		System.out.println( inDataKey );
-		// TODO Auto-generated method stub		
+		Channel ch  = tagToChannel.get( inTag );
+		
+		if( ch == null )
+		{
+			stm.logError( "No channel was found for tag "+inTag );
+			return;
+		}
+		int ref = referenceIncrement.incrementAndGet();
+		referenceToKey.put( ref, inDataKey );
+		Message mess = PreMarshaller.createSubResponse( inTag, ref );
+		
+		ch.write( mess );
 	}
 
 	@Override

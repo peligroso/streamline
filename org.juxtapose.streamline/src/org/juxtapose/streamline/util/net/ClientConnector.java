@@ -33,10 +33,10 @@ public class ClientConnector {
 		Channel channel = connectFuture.awaitUninterruptibly().getChannel();
 
 		// Get the handler instance to retrieve the answer.
-		ClientConnectorHandler handler = (ClientConnectorHandler) channel.getPipeline().getLast();
+//		ClientConnectorHandler handler = (ClientConnectorHandler) channel.getPipeline().getLast();
 
 		// Shut down all thread pools to exit.
-		bootstrap.releaseExternalResources();
+//		bootstrap.releaseExternalResources();
 	}
 	
 
