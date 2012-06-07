@@ -14,12 +14,17 @@ public class StickyHashDisruptorExecutor extends Executor implements IExecutor {
 	
 	public StickyHashDisruptorExecutor( int inHighTPCorePoolSize, int inHighTPBlockingCorePoolSize, int inLowTPCorePoolSize, int inLowTPBlockingCorePoolSize )
 	{
+		this( inHighTPCorePoolSize, inHighTPBlockingCorePoolSize, inLowTPCorePoolSize, inLowTPBlockingCorePoolSize, true );
+	}
+	
+	public StickyHashDisruptorExecutor( int inHighTPCorePoolSize, int inHighTPBlockingCorePoolSize, int inLowTPCorePoolSize, int inLowTPBlockingCorePoolSize, boolean inTurboBoost )
+	{
 		super(inHighTPCorePoolSize, inHighTPBlockingCorePoolSize, inLowTPCorePoolSize, inLowTPBlockingCorePoolSize);
 		
-		highTP_ringBuffer = new StickyHashRingBuffer( inHighTPCorePoolSize, highThroughputExecutor );
-		lowTP_ringBuffer = new StickyHashRingBuffer( inHighTPBlockingCorePoolSize, lowThroughputExecutor );
-		blockingHTP_ringBuffer = new StickyHashRingBuffer( inLowTPCorePoolSize, highThroughputBlockingExecutor );
-		blockingLTP_ringBuffer = new StickyHashRingBuffer( inLowTPBlockingCorePoolSize, lowThroughputBlockingExecutor );
+		highTP_ringBuffer = new StickyHashRingBuffer( inHighTPCorePoolSize, highThroughputExecutor, inTurboBoost );
+		lowTP_ringBuffer = new StickyHashRingBuffer( inHighTPBlockingCorePoolSize, lowThroughputExecutor, false );
+		blockingHTP_ringBuffer = new StickyHashRingBuffer( inLowTPCorePoolSize, highThroughputBlockingExecutor, false );
+		blockingLTP_ringBuffer = new StickyHashRingBuffer( inLowTPBlockingCorePoolSize, lowThroughputBlockingExecutor, false );
 	}
 	
 	

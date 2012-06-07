@@ -3,9 +3,11 @@ package org.juxtapose.streamline.producer.executor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.MultiThreadedClaimStrategy;
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 
@@ -22,9 +24,11 @@ public class StickyHashRingBuffer
 	/**
 	 * @param inEventHandlers
 	 */
-	public StickyHashRingBuffer( int inEventHandlers, Executor inExecutor )
+	public StickyHashRingBuffer( int inEventHandlers, Executor inExecutor, boolean inTurboBoost )
 	{
-		Disruptor<RunnableEvent> disruptor = new Disruptor<RunnableEvent>(RunnableEvent.EVENT_FACTORY, new ScheduledThreadPoolExecutor( inEventHandlers ), new MultiThreadedClaimStrategy( RING_SIZE ), new YieldingWaitStrategy());
+		WaitStrategy waitStrategy = inTurboBoost ? new BusySpinWaitStrategy() : new YieldingWaitStrategy();
+		
+		Disruptor<RunnableEvent> disruptor = new Disruptor<RunnableEvent>(RunnableEvent.EVENT_FACTORY, new ScheduledThreadPoolExecutor( inEventHandlers ), new MultiThreadedClaimStrategy( RING_SIZE ), waitStrategy);
 		EventHandler<RunnableEvent>[] eventHandlers = new RunnableEventHandler[inEventHandlers];
 		
 		for( int i = 0; i < inEventHandlers; i++ )
