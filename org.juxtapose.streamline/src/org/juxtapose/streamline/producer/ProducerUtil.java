@@ -21,7 +21,7 @@ public class ProducerUtil
 	 * @param inKeyValues
 	 * @return
 	 */
-	public static IDataKey createDataKey( String inServiceKey, String inType, String[] inKeys, String[] inValues )
+	public static ISTMEntryKey createDataKey( String inServiceKey, String inType, String[] inKeys, String[] inValues )
 	{
 		if( inKeys.length != inValues.length )
 			throw new IllegalArgumentException("Key-value pairs must be even ");
@@ -46,17 +46,17 @@ public class ProducerUtil
 			sb.append( value );
 		}
 		
-		return new DataKey( inServiceKey, inType, map, sb.toString() ); 
+		return new STMEntryKey( inServiceKey, inType, map, sb.toString() ); 
 	}
 	
 	/**
 	 * @param inSingleValue
 	 * @return
 	 */
-	public static IDataKey createDataKey( String inServiceKey, String inType, String inSingleValue )
+	public static ISTMEntryKey createDataKey( String inServiceKey, String inType, String inSingleValue )
 	{
 		String key = inServiceKey+SERVICE_KEY_DELIM+inType+SERVICE_KEY_DELIM+FIELD_SINGLE_VALUE_DATA_KEY+EQUALS+inSingleValue;
 		
-		return new DataKey( inServiceKey, inType, inSingleValue, key ); 
+		return new STMEntryKey( inServiceKey, inType, inSingleValue, key ); 
 	}
 }

@@ -7,8 +7,8 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.stm.TemporaryController;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -18,20 +18,20 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
  * Jan 8, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public abstract class DataProducer extends TemporaryController implements IDataProducer, IDataSubscriber
+public abstract class STMEntryProducer extends TemporaryController implements ISTMEntryProducer, ISTMEntrySubscriber
 {
 	private final HashMap<String, TemporaryController> dependencies = new HashMap<String, TemporaryController>();
 	private final HashMap<String, ReferenceLink> keyToReferensLinks = new HashMap<String, ReferenceLink>();
 	
 	
-	protected final IDataKey dataKey;
+	protected final ISTMEntryKey dataKey;
 	protected final ISTM stm;
 
 	/**
 	 * @param inKey
 	 * @param inSTM
 	 */
-	public DataProducer( IDataKey inKey, ISTM inSTM )
+	public STMEntryProducer( ISTMEntryKey inKey, ISTM inSTM )
 	{
 		dataKey = inKey;
 		stm = inSTM;
@@ -125,7 +125,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @see org.juxtapose.streamline.producer.IDataProducer#referencedDataUpdated(java.lang.Integer, org.juxtapose.streamline.util.IPublishedData)
 	 * TODO Can this method be package private to ensure always called from ReferenceLink
 	 */
-	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
+	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData )
 	{
 		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
 		{
@@ -138,7 +138,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 					//Reference has been removed in publishedDataObject
 					return;
 				}
-				IDataKey key = (IDataKey)dataAtKey.get();
+				ISTMEntryKey key = (ISTMEntryKey)dataAtKey.get();
 				if( !key.equals( inLink.getRef().get() ) )
 				{
 					//Reference has been replaced by another reference
@@ -161,7 +161,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inTransaction
 	 * To be overridden by subclasses that to continue the work on a transaction after the referenced Data has been updated
 	 */
-	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
+	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData, STMTransaction inTransaction )
 	{
 		
 	}
@@ -172,14 +172,14 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	 * @param inData
 	 * To be overridden by subclass that needs to take action after referenced Data has been updated and transaction completed
 	 */
-	protected void postReferenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData )
+	protected void postReferenceDataCall( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData )
 	{
 		
 	}
 	
 	protected void setStatus( final Status inStatus )
 	{
-		stm.commit( new STMTransaction( dataKey, DataProducer.this, 0, 0 )
+		stm.commit( new STMTransaction( dataKey, STMEntryProducer.this, 0, 0 )
 		{
 			@Override
 			public void execute()
@@ -192,7 +192,7 @@ public abstract class DataProducer extends TemporaryController implements IDataP
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.util.IDataSubscriber#updateData(org.juxtapose.streamline.producer.IDataKey, org.juxtapose.streamline.util.IPublishedData, boolean)
 	 */
-	public void updateData( IDataKey inKey, final IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
 	{
 		
 	}

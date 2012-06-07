@@ -1,10 +1,10 @@
 package org.juxtapose.streamline.stm;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.producer.IDataProducerService;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryProducerService;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 
 /**
@@ -18,16 +18,16 @@ import org.juxtapose.streamline.util.Status;
 public class NonBlockingSTM extends STM
 {
 	
-	public void subscribeToData( IDataKey inDataKey, IDataSubscriber inSubscriber )
+	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
 	{
-		IDataProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
 		if( producerService == null )
 		{
 			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
 			return;
 		}
 		
-		IPublishedData existingData = keyToData.get( inDataKey.getKey() );
+		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
 		
 		boolean set = false;
 		do
@@ -35,8 +35,8 @@ public class NonBlockingSTM extends STM
 			if( existingData == null )
 			{
 				//First subscriber
-				IDataProducer producer = producerService.getDataProducer( inDataKey );
-				IPublishedData newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
+				ISTMEntryProducer producer = producerService.getDataProducer( inDataKey );
+				ISTMEntry newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
 				
 				existingData = keyToData.putIfAbsent( inDataKey.getKey(), newData );
 				set = (existingData ==  null);
@@ -49,7 +49,7 @@ public class NonBlockingSTM extends STM
 			}
 			else
 			{
-				IPublishedData newData = existingData.addSubscriber( inSubscriber );
+				ISTMEntry newData = existingData.addSubscriber( inSubscriber );
 				set = keyToData.replace( inDataKey.getKey(), existingData, newData );
 				
 				if( !set )
@@ -66,16 +66,16 @@ public class NonBlockingSTM extends STM
 	 * @param inDataKey
 	 * @param inSubscriber
 	 */
-	public void unsubscribeToData( IDataKey inDataKey, IDataSubscriber inSubscriber )
+	public void unsubscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
 	{
-		IDataProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
 		if( producerService == null )
 		{
 			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
 			return;
 		}
 		
-		IPublishedData existingData = keyToData.get( inDataKey.getKey() );
+		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
 		
 		boolean set = false;
 		do
@@ -87,7 +87,7 @@ public class NonBlockingSTM extends STM
 			}
 			else
 			{
-				IPublishedData newData = existingData.removeSubscriber( inSubscriber );
+				ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
 				if( newData.hasSubscribers() )
 				{
 					set = keyToData.replace( inDataKey.getKey(), existingData, newData );
@@ -113,8 +113,8 @@ public class NonBlockingSTM extends STM
 	{
 		String dataKey = inTransaction.getDataKey().getKey();
 
-		IPublishedData existingData;
-		IPublishedData newData;
+		ISTMEntry existingData;
+		ISTMEntry newData;
 
 		try
 		{

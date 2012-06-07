@@ -5,12 +5,12 @@ import java.util.Map;
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants;
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 /**
  * @author Pontus Jörgne
@@ -24,7 +24,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(org.juxtapose.streamline.util.IDataSubscriber, java.lang.Long, java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 
@@ -41,7 +41,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 				inSubscriber.queryNotAvailible( inTag );
 			}
 
-			IDataKey key = ProducerUtil.createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new String[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
+			ISTMEntryKey key = ProducerUtil.createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new String[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
 			inSubscriber.deliverKey( key, inTag );
 		}
 		else
@@ -51,13 +51,13 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	}
 
 	@Override
-	public IDataProducer getDataProducer(IDataKey inDataKey)
+	public ISTMEntryProducer getDataProducer(ISTMEntryKey inDataKey)
 	{
 		return new MarketDataProducer( inDataKey, stm );
 	}
 
 	@Override
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		// TODO Auto-generated method stub
 

@@ -1,15 +1,15 @@
 package org.juxtapose.streamline.stm;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 
-public class DataProducerDependencyController extends TemporaryController implements IDataSubscriber
+public class DataProducerDependencyController extends TemporaryController implements ISTMEntrySubscriber
 {
-	protected IDataKey key;
+	protected ISTMEntryKey key;
 	protected final ISTM stm;
-	protected final IDataProducer parentProducer;
+	protected final ISTMEntryProducer parentProducer;
 	
 	/**
 	 * @param inParent
@@ -17,7 +17,7 @@ public class DataProducerDependencyController extends TemporaryController implem
 	 * @param inHashKey
 	 * @param inRef
 	 */
-	public DataProducerDependencyController( IDataProducer inProducer, ISTM inSTM, IDataKey inKey )
+	public DataProducerDependencyController( ISTMEntryProducer inProducer, ISTM inSTM, ISTMEntryKey inKey )
 	{
 		stm = inSTM;
 		key = inKey;
@@ -30,7 +30,7 @@ public class DataProducerDependencyController extends TemporaryController implem
 	}
 	
 	@Override
-	public void updateData(IDataKey inKey, final IPublishedData inData, boolean inFirstUpdate)
+	public void updateData(ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate)
 	{
 		parentProducer.updateData( inKey, inData, inFirstUpdate );
 	}

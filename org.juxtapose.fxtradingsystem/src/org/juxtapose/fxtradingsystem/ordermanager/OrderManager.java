@@ -7,16 +7,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.producer.IDataProducerService;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.DataConstants;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
@@ -32,7 +32,7 @@ import org.juxtapose.streamline.util.subscriber.ISequencedDataSubscriber;
  * Feb 26, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class OrderManager extends DataProducerService implements IOrderManager, IDataProducerService, ISequencedDataSubscriber
+public class OrderManager extends DataProducerService implements IOrderManager, ISTMEntryProducerService, ISequencedDataSubscriber
 {
 	volatile String priceKey = null;
 	
@@ -46,7 +46,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	
 
 	@Override
-	public IDataProducer getDataProducer(IDataKey inDataKey)
+	public ISTMEntryProducer getDataProducer(ISTMEntryKey inDataKey)
 	{
 		if( FXDataConstants.STATE_TYPE_RFQ.equals( inDataKey.getType() ))
 		{
@@ -67,7 +67,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 
 	@Override
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
 		{
@@ -97,13 +97,13 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	@Override
 	public void dataUpdated(DataSequencer inSequencer)
 	{
-		IPublishedData data = inSequencer.get();
+		ISTMEntry data = inSequencer.get();
 		
 		processData( data, inSequencer.getDataKey() );
 		
 	}
 	
-	private void processData( IPublishedData inData, IDataKey inKey)
+	private void processData( ISTMEntry inData, ISTMEntryKey inKey)
 	{
 		Status status = inData.getStatus();
 		if( status == Status.OK )
@@ -197,7 +197,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				
 				String id = Long.toString( rfqID );
 				
-				IDataKey key;
+				ISTMEntryKey key;
 				RFQProducer producer;
 				
 				if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SPOT ))
@@ -274,7 +274,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 	
 	@Override
-	public void getDataKey(IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey(ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
 		inSubscriber.queryNotAvailible( inTag );
 	}

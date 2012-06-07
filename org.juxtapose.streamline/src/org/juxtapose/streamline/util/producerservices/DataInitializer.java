@@ -2,10 +2,10 @@ package org.juxtapose.streamline.util.producerservices;
 
 import java.util.HashSet;
 
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 
 /**
@@ -17,9 +17,9 @@ import org.juxtapose.streamline.util.Status;
  * Running during startup in single thread context and does not need sync.
  * DataInitializer should only be used to initialize services.
  */
-public class DataInitializer implements IDataSubscriber
+public class DataInitializer implements ISTMEntrySubscriber
 {
-	private final HashSet<IDataKey> keys = new HashSet<IDataKey>();
+	private final HashSet<ISTMEntryKey> keys = new HashSet<ISTMEntryKey>();
 	private final ISTM stm;
 	private volatile boolean allOK = false;
 	private final IDataInitializerListener listener;
@@ -30,31 +30,31 @@ public class DataInitializer implements IDataSubscriber
 		listener = inListener;
 	}
 	
-	public DataInitializer( ISTM inSTM, IDataInitializerListener inListener, IDataKey... inKeys )
+	public DataInitializer( ISTM inSTM, IDataInitializerListener inListener, ISTMEntryKey... inKeys )
 	{
 		stm = inSTM;
 		listener = inListener;
 		
-		for( IDataKey key : inKeys )
+		for( ISTMEntryKey key : inKeys )
 		{
 			addDataKey( key );
 		}
 	}
 	
-	public void addDataKey( IDataKey inKey )
+	public void addDataKey( ISTMEntryKey inKey )
 	{
 		keys.add( inKey );
 	}
 	
 	public void init()
 	{
-		for( IDataKey key : keys )
+		for( ISTMEntryKey key : keys )
 		{
 			stm.subscribeToData( key, this );
 		}
 	}
 	@Override
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		if( allOK )
 			return;

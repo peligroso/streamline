@@ -1,10 +1,10 @@
 package org.juxtapose.streamline.experimental.protocol.message;
 
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 public class SubscriptionEvent extends Message 
 {
 	long ref;
-	IPublishedData m_data;
+	ISTMEntry m_data;
 	boolean fullUpdate;
 }

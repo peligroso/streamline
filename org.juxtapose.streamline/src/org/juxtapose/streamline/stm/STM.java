@@ -10,14 +10,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.producer.IDataProducerService;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeString;
@@ -32,11 +32,11 @@ import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
  *Software Transactional Memory
  *
  */
-public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber, IDataProducer
+public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySubscriber, ISTMEntryProducer
 {
-	protected final ConcurrentHashMap<String, IPublishedData> keyToData = new ConcurrentHashMap<String, IPublishedData>();	
+	protected final ConcurrentHashMap<String, ISTMEntry> keyToData = new ConcurrentHashMap<String, ISTMEntry>();	
 	//Services that create producers to data id is service ID
-	protected final ConcurrentHashMap<String, IDataProducerService> idToProducerService = new ConcurrentHashMap<String, IDataProducerService>();
+	protected final ConcurrentHashMap<String, ISTMEntryProducerService> idToProducerService = new ConcurrentHashMap<String, ISTMEntryProducerService>();
 	
 	private IExecutor executor;
 	
@@ -61,7 +61,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @param inProducerService
 	 * @param initState
 	 */
-	public void registerProducer( final IDataProducerService inProducerService, final Status initState )
+	public void registerProducer( final ISTMEntryProducerService inProducerService, final Status initState )
 	{
 		String id = inProducerService.getServiceId();
 		idToProducerService.put( id, inProducerService );
@@ -80,7 +80,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @param inProducerService
 	 * @param initState
 	 */
-	public void updateProducerStatus( final IDataProducerService inProducerService, final Status initState )
+	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status initState )
 	{
 		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
 		{
@@ -107,7 +107,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @see org.juxtapose.streamline.util.producer.IDataProducerService#getKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
 		String val = inQuery.get( FIELD_QUERY_KEY );
 		
@@ -121,9 +121,9 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.exp.ISTM#getDataKey(java.lang.Integer, java.util.HashMap)
 	 */
-	public void getDataKey(String inProducerService, IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
 	{
-		IDataProducerService producerService = idToProducerService.get( inProducerService );
+		ISTMEntryProducerService producerService = idToProducerService.get( inProducerService );
 		if( producerService == null )
 		{
 			logError( "Producer "+inProducerService+" could not be found ");
@@ -133,12 +133,12 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	}
 	
 	@Override
-	public IDataProducer getDataProducer(IDataKey inDataKey)
+	public ISTMEntryProducer getDataProducer(ISTMEntryKey inDataKey)
 	{
 		return this;
 	}
 	
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		
 	}
@@ -166,7 +166,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @param inSubscriber
 	 * @return
 	 */
-	public IPublishedData createEmptyData( Status inStatus, IDataProducer inProducer, IDataSubscriber inSubscriber )
+	public ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber )
 	{
 		if( dataFactory == null )
 		{
@@ -181,7 +181,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	 * @param inProducer
 	 * @return
 	 */
-	protected IPublishedData createEmptyData( Status inStatus, IDataProducer inProducer )
+	protected ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer )
 	{
 		if( dataFactory == null )
 		{
@@ -222,7 +222,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 		System.err.println( inMessage );
 	}
 	
-	public IPublishedData getData( String inKey )
+	public ISTMEntry getData( String inKey )
 	{
 		return keyToData.get( inKey );
 	}
@@ -251,7 +251,7 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 		executor.scheduleExecution( inExecutable, inPrio, inTime, inTimeUnit );
 	}
 	
-	public void deliverKey( IDataKey inDataKey, Long inTag )
+	public void deliverKey( ISTMEntryKey inDataKey, Long inTag )
 	{
 		
 	}
@@ -271,5 +271,5 @@ public abstract class STM implements ISTM, IDataProducerService, IDataSubscriber
 	public void addDataReferences( String inFieldKey, ReferenceLink inLink ){}
 	public ReferenceLink removeReferenceLink( String inField ){ return null; }
 	public void disposeReferenceLinks( List< String > inReferenceFields ){}
-	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData ){}
+	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData ){}
 }

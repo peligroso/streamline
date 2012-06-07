@@ -1,7 +1,7 @@
 package org.juxtapose.fxtradingsystem.marketdata;
 
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.producer.executor.StickyRunnable;
@@ -17,7 +17,7 @@ import org.juxtapose.streamline.util.data.DataTypeLong;
  * Jan 22, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class MarketDataProducer extends DataProducer implements IMarketDataSubscriber
+public class MarketDataProducer extends STMEntryProducer implements IMarketDataSubscriber
 {
 	final String source;
 	final String ccy1;
@@ -28,7 +28,7 @@ public class MarketDataProducer extends DataProducer implements IMarketDataSubsc
 	 * @param inKey
 	 * @param inSTM
 	 */
-	public MarketDataProducer( IDataKey inKey, ISTM inSTM )
+	public MarketDataProducer( ISTMEntryKey inKey, ISTM inSTM )
 	{
 		super( inKey, inSTM );
 		

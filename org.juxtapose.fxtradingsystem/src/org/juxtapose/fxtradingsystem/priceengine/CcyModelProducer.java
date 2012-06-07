@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.juxtapose.streamline.producer.DataProducer;
+import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -19,7 +19,7 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
  * 17 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class CcyModelProducer extends DataProducer
+public class CcyModelProducer extends STMEntryProducer
 {
 	/**
 	 * @param inSTM
@@ -74,14 +74,14 @@ public class CcyModelProducer extends DataProducer
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.producer.IDataProducer#referencedDataUpdated(java.lang.Integer, org.juxtapose.streamline.util.IPublishedData)
 	 */
-	public void postReferenceDataCall( String inFieldKey, ReferenceLink inLink, IPublishedData inData )
+	public void postReferenceDataCall( String inFieldKey, ReferenceLink inLink, ISTMEntry inData )
 	{
 		checkStatus();
 	}
 	
 	public void checkStatus()
 	{
-		IPublishedData data = stm.getData( dataKey.getKey() );
+		ISTMEntry data = stm.getData( dataKey.getKey() );
 		if( data != null )
 		{
 			if( data.getStatus() == Status.INITIALIZING )
@@ -92,7 +92,7 @@ public class CcyModelProducer extends DataProducer
 				{
 					Entry<String, DataType<?>> entry = iterator.next();
 					
-					IPublishedData ref = ((DataTypeRef)entry.getValue()).getReferenceData();
+					ISTMEntry ref = ((DataTypeRef)entry.getValue()).getReferenceData();
 					
 					if( ref != null )
 					{

@@ -6,28 +6,28 @@ import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants
 import java.util.HashMap;
 
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
-public class FwdPriceProducer extends DataProducer implements IDataRequestSubscriber
+public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
 	long spotTag = 0;
 	long swapTag = 1; 
 	
-	IDataKey spotDataKey;
-	IDataKey swapDataKey;
+	ISTMEntryKey spotDataKey;
+	ISTMEntryKey swapDataKey;
 	
 	final String ccy1;
 	final String ccy2;
 	final String period;
 	
-	public FwdPriceProducer( IDataKey inKey, String inCcy1, String inCcy2, String inPeriod, ISTM inSTM )
+	public FwdPriceProducer( ISTMEntryKey inKey, String inCcy1, String inCcy2, String inPeriod, ISTM inSTM )
 	{
 		super( inKey, inSTM );
 		ccy1 = inCcy1;
@@ -52,14 +52,14 @@ public class FwdPriceProducer extends DataProducer implements IDataRequestSubscr
 	}
 
 	@Override
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deliverKey(IDataKey inDataKey, Long inTag)
+	public void deliverKey(ISTMEntryKey inDataKey, Long inTag)
 	{
 		if( inTag.equals( spotTag ) )
 		{

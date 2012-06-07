@@ -4,8 +4,8 @@ import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants
 import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants.STATE_USD;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
@@ -19,7 +19,7 @@ import org.juxtapose.streamline.util.data.DataTypeString;
  * Dec 11, 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class CcyProducer extends DataProducer
+public class CcyProducer extends STMEntryProducer
 {
 	final String ccy;
 	
@@ -27,7 +27,7 @@ public class CcyProducer extends DataProducer
 	 * @param inSTM
 	 * @param inCcy
 	 */
-	public CcyProducer(ISTM inSTM, IDataKey inKey, String inCcy )
+	public CcyProducer(ISTM inSTM, ISTMEntryKey inKey, String inCcy )
 	{
 		super( inKey, inSTM );
 		ccy = inCcy;

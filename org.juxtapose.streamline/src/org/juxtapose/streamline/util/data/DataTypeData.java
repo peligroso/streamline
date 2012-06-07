@@ -1,10 +1,10 @@
 package org.juxtapose.streamline.util.data;
 
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntry;
 
-public class DataTypeData extends DataType<IPublishedData>
+public class DataTypeData extends DataType<ISTMEntry>
 {
-	DataTypeData(IPublishedData inData)
+	DataTypeData(ISTMEntry inData)
 	{
 		super(inData);
 	}

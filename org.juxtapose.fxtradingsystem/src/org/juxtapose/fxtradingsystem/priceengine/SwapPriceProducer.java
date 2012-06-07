@@ -11,13 +11,13 @@ import java.util.HashMap;
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.DataConstants;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeLong;
@@ -27,19 +27,19 @@ import org.juxtapose.streamline.util.data.DataTypeLong;
  * 6 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class SwapPriceProducer  extends DataProducer implements IDataRequestSubscriber
+public class SwapPriceProducer  extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
 	final long reutersTag = 0;
 	final long bloombergTag = 1;
 	
-	IDataKey reutersDataKey;
-	IDataKey bloombergDataKey;
+	ISTMEntryKey reutersDataKey;
+	ISTMEntryKey bloombergDataKey;
 	
 	final String ccy1;
 	final String ccy2;
 	final String period;
 	
-	public SwapPriceProducer(IDataKey inKey, String inCcy1, String inCcy2, String inPeriod, ISTM inSTM)
+	public SwapPriceProducer(ISTMEntryKey inKey, String inCcy1, String inCcy2, String inPeriod, ISTM inSTM)
 	{
 		super( inKey, inSTM );
 		ccy1 = inCcy1;
@@ -67,7 +67,7 @@ public class SwapPriceProducer  extends DataProducer implements IDataRequestSubs
 	}
 	
 	@Override
-	public void deliverKey(IDataKey inDataKey, Long inTag)
+	public void deliverKey(ISTMEntryKey inDataKey, Long inTag)
 	{
 		if( inTag == reutersTag )
 		{
@@ -83,7 +83,7 @@ public class SwapPriceProducer  extends DataProducer implements IDataRequestSubs
 	}
 
 	@Override
-	public void updateData( IDataKey inKey, final IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
 	{
 		if( reutersDataKey == null || bloombergDataKey == null )
 			return;
@@ -96,8 +96,8 @@ public class SwapPriceProducer  extends DataProducer implements IDataRequestSubs
 				public void execute()
 				{
 					
-					IPublishedData reutData = stm.getData( reutersDataKey.getKey() );
-					IPublishedData bloomData = stm.getData( bloombergDataKey.getKey() );
+					ISTMEntry reutData = stm.getData( reutersDataKey.getKey() );
+					ISTMEntry bloomData = stm.getData( bloombergDataKey.getKey() );
 					
 					if( reutData == null || bloomData == null )
 					{

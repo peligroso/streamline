@@ -1,6 +1,6 @@
 package org.juxtapose.streamline.producer;
 
-public interface IDataKey
+public interface ISTMEntryKey
 {
 	public String getKey( );
 	public String getValue( String inKey );

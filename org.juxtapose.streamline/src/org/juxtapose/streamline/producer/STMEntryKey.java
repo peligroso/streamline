@@ -9,7 +9,7 @@ import org.juxtapose.streamline.util.DataConstants;
  * 7 aug 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class DataKey implements IDataKey
+public class STMEntryKey implements ISTMEntryKey
 {
 	private final HashMap<String, String> keyMap;
 	private final String producerServiceKey;
@@ -23,7 +23,7 @@ public class DataKey implements IDataKey
 	 * @param inKey
 	 * DataKey are created via ProducerUtil
 	 */
-	protected DataKey( String inProducerServiceKey, String inType, HashMap<String, String> inMap, String inKey )
+	protected STMEntryKey( String inProducerServiceKey, String inType, HashMap<String, String> inMap, String inKey )
 	{
 		producerServiceKey = inProducerServiceKey;
 		keyMap = inMap;
@@ -38,7 +38,7 @@ public class DataKey implements IDataKey
 	 * @param inSingleValue
 	 * @param inKey
 	 */
-	protected DataKey( String inProducerServiceKey, String inType, String inSingleValue, String inKey )
+	protected STMEntryKey( String inProducerServiceKey, String inType, String inSingleValue, String inKey )
 	{
 		producerServiceKey = inProducerServiceKey;
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -79,10 +79,10 @@ public class DataKey implements IDataKey
 		if( inKey == this )
 			return true;
 		
-		if( ! (inKey instanceof IDataKey) )
+		if( ! (inKey instanceof ISTMEntryKey) )
 			return false;
 		
-		return key.equals( ((IDataKey)inKey ).getKey() );
+		return key.equals( ((ISTMEntryKey)inKey ).getKey() );
 	}
 	
 	/* (non-Javadoc)

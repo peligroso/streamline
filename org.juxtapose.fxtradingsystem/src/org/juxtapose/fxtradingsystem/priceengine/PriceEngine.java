@@ -4,12 +4,12 @@ import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 
@@ -34,7 +34,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( IDataRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 		if( type == null )
@@ -64,7 +64,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * May return null on invalid key
 	 */
 	@Override
-	public IDataProducer getDataProducer(IDataKey inDataKey)
+	public ISTMEntryProducer getDataProducer(ISTMEntryKey inDataKey)
 	{
 		String type = inDataKey.getType();
 		
@@ -100,7 +100,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.util.IDataSubscriber#updateData(java.lang.String, org.juxtapose.streamline.util.IPublishedData, boolean)
 	 */
 	@Override
-	public void updateData( IDataKey iKey, IPublishedData inData, boolean inFirstUpdate)
+	public void updateData( ISTMEntryKey iKey, ISTMEntry inData, boolean inFirstUpdate)
 	{
 		DataType<?> dataValue = inFirstUpdate ? inData.getValue( FXProducerServiceConstants.ORDER_MANAGER ) : inData.getValue( FXProducerServiceConstants.ORDER_MANAGER );
 		if( dataValue != null )

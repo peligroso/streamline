@@ -11,7 +11,7 @@ import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
@@ -19,15 +19,15 @@ import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 /**
  * @author Pontus Jörgne
  * May 27, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements IDataRequestSubscriber
+public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements ISTMEntryRequestSubscriber
 {	
 	final ISTM stm;
 	
@@ -93,13 +93,13 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     }
 
 	@Override
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate ) {
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deliverKey( IDataKey inDataKey, Long inTag ) 
+	public void deliverKey( ISTMEntryKey inDataKey, Long inTag ) 
 	{
 		Channel ch  = tagToChannel.get( inTag );
 		

@@ -1,7 +1,7 @@
 package org.juxtapose.streamline.stm;
 
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 /**
  * @author Pontus Jörgne
@@ -20,12 +20,12 @@ public class STMUtil {
 	 * @param inTransaction
 	 * @return
 	 */
-	public static boolean validateProducerToData( IPublishedData inData, STMTransaction inTransaction )
+	public static boolean validateProducerToData( ISTMEntry inData, STMTransaction inTransaction )
 	{
-		IDataProducer dataProd = inData.getProducer();
+		ISTMEntryProducer dataProd = inData.getProducer();
 		if( dataProd != null )
 		{
-			IDataProducer transactionProducer = inTransaction.producedBy();
+			ISTMEntryProducer transactionProducer = inTransaction.producedBy();
 			if( transactionProducer != null && transactionProducer == dataProd )
 				return true;
 			else

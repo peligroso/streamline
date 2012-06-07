@@ -1,8 +1,8 @@
 package org.juxtapose.streamline.stm;
 
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 
 /**
@@ -12,6 +12,6 @@ import org.juxtapose.streamline.util.Status;
  */
 public interface IPublishedDataFactory
 {
-	public IPublishedData createData( Status inStatus, IDataProducer inProducer );
-	public IPublishedData createData( Status inStatus, IDataProducer inProducer, IDataSubscriber inSubscriber );
+	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer );
+	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );
 }

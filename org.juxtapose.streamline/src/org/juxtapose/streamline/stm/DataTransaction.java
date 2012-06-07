@@ -1,13 +1,13 @@
 package org.juxtapose.streamline.stm;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 public abstract class DataTransaction extends STMTransaction
 {
 
-	public DataTransaction( IDataKey inDataKey, IDataProducer inProducer )
+	public DataTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer )
 	{
 		super( inDataKey, inProducer, 0, 0 );
 	}

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -30,7 +30,7 @@ import com.trifork.clj_ds.IPersistentMap;
  */
 public abstract class STMTransaction
 {
-	private final IDataKey m_dataKey;	
+	private final ISTMEntryKey m_dataKey;	
 	private IPersistentMap<String, DataType<?>> m_stateInstruction;
 	
 	private final Set<String> m_deltaState = new HashSet<String>();
@@ -38,7 +38,7 @@ public abstract class STMTransaction
 	private final Map<String, DataTypeRef> addedDataReferences;
 	private final List<String> removedDataReferences;
 	
-	private IDataProducer m_producer = null;
+	private ISTMEntryProducer m_producer = null;
 	
 	private Status status;
 	
@@ -50,14 +50,14 @@ public abstract class STMTransaction
 	/**
 	 * @param inDataKey
 	 */
-	public STMTransaction( IDataKey inDataKey, int inAddedRefenrence, int inRemovedReferences ) 
+	public STMTransaction( ISTMEntryKey inDataKey, int inAddedRefenrence, int inRemovedReferences ) 
 	{
 		m_dataKey = inDataKey;
 		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
 		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
 	}
 	
-	public STMTransaction( IDataKey inDataKey ) 
+	public STMTransaction( ISTMEntryKey inDataKey ) 
 	{
 		m_dataKey = inDataKey;
 		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
@@ -68,7 +68,7 @@ public abstract class STMTransaction
 	 * @param inDataKey
 	 * @param inProducer
 	 */
-	public STMTransaction( IDataKey inDataKey, IDataProducer inProducer, int inAddedRefenrence, int inRemovedReferences ) 
+	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, int inAddedRefenrence, int inRemovedReferences ) 
 	{
 		m_dataKey = inDataKey;
 		m_producer = inProducer;
@@ -81,7 +81,7 @@ public abstract class STMTransaction
 	 * @param inDataKey
 	 * @param inProducer
 	 */
-	public STMTransaction( IDataKey inDataKey, IDataProducer inProducer ) 
+	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer ) 
 	{
 		m_dataKey = inDataKey;
 		m_producer = inProducer;
@@ -187,12 +187,12 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	protected IDataKey getDataKey()
+	protected ISTMEntryKey getDataKey()
 	{
 		return m_dataKey;
 	}
 	
-	public IDataProducer producedBy()
+	public ISTMEntryProducer producedBy()
 	{
 		return m_producer;
 	}

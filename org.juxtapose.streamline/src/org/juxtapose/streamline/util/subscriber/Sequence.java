@@ -1,6 +1,6 @@
 package org.juxtapose.streamline.util.subscriber;
 
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 public class Sequence
 {
@@ -9,7 +9,7 @@ public class Sequence
 	static int TYPE_OBJ = 3;
 	
 	final Long id;
-	final IPublishedData object;
+	final ISTMEntry object;
 	final int type;
 	
 	static Sequence INIT_SEQUENCE = new Sequence( -1l, null, Sequence.TYPE_INIT);
@@ -19,7 +19,7 @@ public class Sequence
 	 * @param inData
 	 * @param inType
 	 */
-	Sequence( Long inId, IPublishedData inData, int inType )
+	Sequence( Long inId, ISTMEntry inData, int inType )
 	{
 		id = inId;
 		object = inData;

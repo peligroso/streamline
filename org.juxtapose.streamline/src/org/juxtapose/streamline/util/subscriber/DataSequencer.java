@@ -3,10 +3,10 @@ package org.juxtapose.streamline.util.subscriber;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 
 /**
  * @author Pontus Jörgne
@@ -17,21 +17,21 @@ import org.juxtapose.streamline.util.IPublishedData;
  * otherwise the update is put on a queue to wait until all previous updates have been processed. 
  * This implementation could be extended to use the Disruptor ringbuffer.
  */
-public class DataSequencer implements IDataSubscriber
+public class DataSequencer implements ISTMEntrySubscriber
 {
 	ConcurrentHashMap<Long, Sequence> queue = new ConcurrentHashMap<Long, Sequence>();
 	AtomicReference<Sequence> polePosition = new AtomicReference<Sequence>(Sequence.INIT_SEQUENCE);
 
 	final ISequencedDataSubscriber subscriber;
 	final ISTM stm;
-	final IDataKey key;
+	final ISTMEntryKey key;
 
 	/**
 	 * @param inSubscriber
 	 * @param inSTM
 	 * @param inKey
 	 */
-	public DataSequencer( ISequencedDataSubscriber inSubscriber, ISTM inSTM, IDataKey inKey )
+	public DataSequencer( ISequencedDataSubscriber inSubscriber, ISTM inSTM, ISTMEntryKey inKey )
 	{
 		subscriber = inSubscriber;
 		stm = inSTM;
@@ -88,7 +88,7 @@ public class DataSequencer implements IDataSubscriber
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.util.IDataSubscriber#updateData(java.lang.String, org.juxtapose.streamline.util.IPublishedData, boolean)
 	 */
-	public void updateData( IDataKey inKey, IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
 	{
 		Sequence syncObj = new Sequence( inData.getSequenceID(), inData, Sequence.TYPE_OBJ);
 
@@ -124,7 +124,7 @@ public class DataSequencer implements IDataSubscriber
 	 /**
 	 * @return
 	 */
-	public IPublishedData get()
+	public ISTMEntry get()
 	 {
 		 Sequence ret = polePosition.get();
 		 Sequence inBetweenSequence = new Sequence( ret.id+1, null, Sequence.TYPE_NO_OBJ );
@@ -133,7 +133,7 @@ public class DataSequencer implements IDataSubscriber
 		 return ret.object;
 	 }
 	
-	public IDataKey getDataKey()
+	public ISTMEntryKey getDataKey()
 	{
 		return key;
 	}

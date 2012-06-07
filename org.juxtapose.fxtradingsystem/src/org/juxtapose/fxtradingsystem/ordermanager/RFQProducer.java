@@ -5,19 +5,19 @@ import java.util.HashMap;
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineUtil;
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
-public class RFQProducer extends DataProducer implements IDataRequestSubscriber
+public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
 	final static long priceTag = 0;
 	final String ccy1;
@@ -25,7 +25,7 @@ public class RFQProducer extends DataProducer implements IDataRequestSubscriber
 	final String nearPeriod;
 	final String farPeriod;
 	
-	public RFQProducer( IDataKey inKey, ISTM inSTM, String inCcy1, String inCcy2, String inNearPeriod, String inFarPeriod )
+	public RFQProducer( ISTMEntryKey inKey, ISTM inSTM, String inCcy1, String inCcy2, String inNearPeriod, String inFarPeriod )
 	{
 		super( inKey, inSTM );
 		ccy1 = inCcy1;
@@ -65,7 +65,7 @@ public class RFQProducer extends DataProducer implements IDataRequestSubscriber
 	}
 
 	@Override
-	public void deliverKey( final IDataKey inDataKey, Long inTag)
+	public void deliverKey( final ISTMEntryKey inDataKey, Long inTag)
 	{
 		if( inTag.equals( priceTag ))
 		{
@@ -88,7 +88,7 @@ public class RFQProducer extends DataProducer implements IDataRequestSubscriber
 		return;
 	}
 	
-	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final IPublishedData inData, STMTransaction inTransaction )
+	protected void referenceDataCall( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData, STMTransaction inTransaction )
 	{
 		if( inFieldKey == FXDataConstants.FIELD_PRICE )
 		{

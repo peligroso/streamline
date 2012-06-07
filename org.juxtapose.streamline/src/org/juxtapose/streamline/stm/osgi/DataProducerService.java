@@ -1,11 +1,11 @@
 package org.juxtapose.streamline.stm.osgi;
 
-import org.juxtapose.streamline.producer.IDataProducerService;
+import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.IDataSubscriber;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
@@ -17,7 +17,7 @@ import org.osgi.service.component.ComponentContext;
  * 3 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public abstract class DataProducerService implements IDataProducerService, IDataSubscriber, IDataInitializerListener
+public abstract class DataProducerService implements ISTMEntryProducerService, ISTMEntrySubscriber, IDataInitializerListener
 {
 	protected ISTM stm;
 	

@@ -6,11 +6,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.juxtapose.streamline.producer.IDataKey;
-import org.juxtapose.streamline.producer.IDataProducer;
-import org.juxtapose.streamline.producer.IDataProducerService;
-import org.juxtapose.streamline.util.IDataSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryProducerService;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -78,9 +78,9 @@ public class BlockingSTM extends STM
 	 */
 	public void commit( STMTransaction inTransaction )
 	{	
-		IDataKey dataKey = inTransaction.getDataKey();
+		ISTMEntryKey dataKey = inTransaction.getDataKey();
 		
-		IPublishedData newData = null;
+		ISTMEntry newData = null;
 		
 		ReferenceLink[] addedLinks = null;
 		ReferenceLink[] removedLinks = null;
@@ -90,7 +90,7 @@ public class BlockingSTM extends STM
 		
 		try
 		{
-			IPublishedData existingData = keyToData.get( dataKey.getKey() );
+			ISTMEntry existingData = keyToData.get( dataKey.getKey() );
 			if( existingData == null )
 			{
 				//data has been removed due to lack of interest, transaction is discarded
@@ -131,7 +131,7 @@ public class BlockingSTM extends STM
 
 				if( dataReferences == null || !dataReferences.isEmpty() )
 				{
-					IDataProducer producer = newData.getProducer();
+					ISTMEntryProducer producer = newData.getProducer();
 					if( producer == null )
 						logError( "Tried to add reference to data with null producer" );
 					else
@@ -155,7 +155,7 @@ public class BlockingSTM extends STM
 
 				if( removedReferences != null && !removedReferences.isEmpty() )
 				{
-					IDataProducer producer = newData.getProducer();
+					ISTMEntryProducer producer = newData.getProducer();
 					if( producer == null )
 						logError( "Tried to remove reference from data with null producer" );
 					else
@@ -177,7 +177,7 @@ public class BlockingSTM extends STM
 			
 			if( inTransaction instanceof DependencyTransaction )
 			{
-				IDataProducer producer = newData.getProducer();
+				ISTMEntryProducer producer = newData.getProducer();
 				if( producer == null )
 				{
 					logError( "Tried to add dependency to data with null producer" );
@@ -236,7 +236,7 @@ public class BlockingSTM extends STM
 	 * @param inProducer
 	 * @return
 	 */
-	private TemporaryController[] prepareDependencies( DependencyTransaction inTransaction, IDataProducer inProducer )
+	private TemporaryController[] prepareDependencies( DependencyTransaction inTransaction, ISTMEntryProducer inProducer )
 	{
 		Map< String, TemporaryController > dependencies = inTransaction.getAddedDependencies();
 		for( String key : dependencies.keySet() )
@@ -262,7 +262,7 @@ public class BlockingSTM extends STM
 	 * @param inTransaction
 	 * @param inProducer
 	 */
-	private void executeDependencies( DependencyTransaction inTransaction, IDataProducer inProducer, TemporaryController[] inRemovedDependencies )
+	private void executeDependencies( DependencyTransaction inTransaction, ISTMEntryProducer inProducer, TemporaryController[] inRemovedDependencies )
 	{
 		Map< String, TemporaryController > dependencies = inTransaction.getAddedDependencies();
 		for( TemporaryController controller : dependencies.values() )
@@ -279,9 +279,9 @@ public class BlockingSTM extends STM
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.impl.STM#subscribe(org.juxtapose.streamline.util.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
 	 */
-	public void subscribeToData( IDataKey inDataKey, IDataSubscriber inSubscriber )
+	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
 	{
-		IDataProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
 		if( producerService == null )
 		{
 			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
@@ -290,11 +290,11 @@ public class BlockingSTM extends STM
 		
 		lock( inDataKey.getKey() );
 		
-		IPublishedData existingData = keyToData.get( inDataKey.getKey() );
+		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
 		
-		IDataProducer producer = null;
+		ISTMEntryProducer producer = null;
 		
-		IPublishedData newData = null;
+		ISTMEntry newData = null;
 		
 		if( existingData == null )
 		{
@@ -326,9 +326,9 @@ public class BlockingSTM extends STM
 	 * @see org.juxtapose.streamline.stm.exp.ISTM#unsubscribeToData(org.juxtapose.streamline.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
 	 */
 	@Override
-	public void unsubscribeToData(IDataKey inDataKey, IDataSubscriber inSubscriber)
+	public void unsubscribeToData(ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber)
 	{
-		IDataProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
 		if( producerService == null )
 		{
 			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
@@ -337,9 +337,9 @@ public class BlockingSTM extends STM
 		
 		lock( inDataKey.getKey() );
 		
-		IPublishedData existingData = keyToData.get( inDataKey.getKey() );
+		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
 		
-		IDataProducer producer = null;
+		ISTMEntryProducer producer = null;
 		
 		if( existingData == null )
 		{
@@ -348,7 +348,7 @@ public class BlockingSTM extends STM
 		}
 		else
 		{
-			IPublishedData newData = existingData.removeSubscriber( inSubscriber );
+			ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
 			if( newData.hasSubscribers() )
 			{
 				keyToData.replace( inDataKey.getKey(), newData );

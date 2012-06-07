@@ -12,16 +12,16 @@ import java.util.Random;
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
-import org.juxtapose.streamline.producer.DataProducer;
-import org.juxtapose.streamline.producer.IDataKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.DataProducerDependencyController;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.DependencyTransaction;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.DataConstants;
-import org.juxtapose.streamline.util.IDataRequestSubscriber;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeLong;
@@ -32,7 +32,7 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
  * 6 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public final class SpotPriceProducer extends DataProducer implements IDataRequestSubscriber
+public final class SpotPriceProducer extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
 	final String ccy1;
 	final String ccy2;
@@ -40,8 +40,8 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 	final long reutersTag = 0;
 	final long bloombergTag = 1;
 	
-	IDataKey reutersDataKey;
-	IDataKey bloombergDataKey;
+	ISTMEntryKey reutersDataKey;
+	ISTMEntryKey bloombergDataKey;
 
 	/**
 	 * @param inKey
@@ -49,7 +49,7 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 	 * @param inCcy2
 	 * @param inSTM
 	 */
-	public SpotPriceProducer( IDataKey inKey, String inCcy1, String inCcy2, ISTM inSTM )
+	public SpotPriceProducer( ISTMEntryKey inKey, String inCcy1, String inCcy2, ISTM inSTM )
 	{
 		super( inKey, inSTM );
 		ccy1 = inCcy1;
@@ -110,7 +110,7 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 
 
 	@Override
-	public void updateData( IDataKey inKey, final IPublishedData inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
 	{
 		if( reutersDataKey == null || bloombergDataKey == null )
 			return;
@@ -123,8 +123,8 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 				public void execute()
 				{
 					DataTypeRef ref = (DataTypeRef)get( PriceEngineDataConstants.FIELD_STATIC_DATA );
-					IPublishedData reutData = stm.getData( reutersDataKey.getKey() );
-					IPublishedData bloomData = stm.getData( bloombergDataKey.getKey() );
+					ISTMEntry reutData = stm.getData( reutersDataKey.getKey() );
+					ISTMEntry bloomData = stm.getData( bloombergDataKey.getKey() );
 
 					if( reutData == null || bloomData == null || ref == null )
 					{
@@ -165,7 +165,7 @@ public final class SpotPriceProducer extends DataProducer implements IDataReques
 	}
 
 	@Override
-	public void deliverKey(IDataKey inDataKey, Long inTag)
+	public void deliverKey(ISTMEntryKey inDataKey, Long inTag)
 	{
 		if( inTag == reutersTag )
 		{

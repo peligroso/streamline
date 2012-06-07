@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.streamline.util.IPublishedData;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 
@@ -48,7 +48,7 @@ public class PriceEngineUtil
 	 * @param inData
 	 * @return
 	 */
-	public static BigDecimal[] getBidAskFromData( IPublishedData inData )
+	public static BigDecimal[] getBidAskFromData( ISTMEntry inData )
 	{
 		if( inData == null )
 			return null;
@@ -69,7 +69,7 @@ public class PriceEngineUtil
 	 * @param inData
 	 * @return
 	 */
-	public static Long getDecimals( IPublishedData inData )
+	public static Long getDecimals( ISTMEntry inData )
 	{
 		if( inData == null )
 			return null;
