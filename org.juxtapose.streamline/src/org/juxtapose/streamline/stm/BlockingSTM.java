@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
+import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
@@ -188,7 +189,6 @@ public class BlockingSTM extends STM
 			
 		}catch( Throwable t )
 		{
-			t.printStackTrace();
 			logError( t.getStackTrace().toString() );
 		}
 		finally
@@ -276,6 +276,60 @@ public class BlockingSTM extends STM
 		}
 	}
 	
+	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
+	{
+		lock( inDataKey.getKey() );
+		
+		ISTMEntryProducer producer = null;
+		int newPriority = 0;
+		
+		try
+		{
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
+			{
+				//All Subscribers has left the building
+				return;
+			}
+			
+			ISTMEntry newEntry = existingData.changeSubscriberPriority( inSubscriber, inSubscriber.getPriority() );
+			
+			if( newEntry == null )
+			{
+				//Subscriber has left the entry
+				return;
+			}
+			
+			if( existingData.getPriority() == newEntry.getPriority() )
+			{
+				//No side effects
+				return;
+			}
+			
+			newPriority = newEntry.getPriority();
+			producer = newEntry.getProducer();
+			
+			/**
+			 * Ok, normally we would just to state changing inside a transaction, 
+			 * but in this case we need to reach out into the producer and ongoing into its dependencies to update the priority.
+			 * Even though we are reaching far beyond our domain and possible across multiple locks in the STM it might be thought of as a long
+			 * run of state changes. setPriority should just switch a variable and cascade it no.
+			 */
+			producer.setPriority( newPriority );
+
+		}
+		catch( Throwable t )
+		{
+			logError( t.getStackTrace().toString() );
+		}
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.impl.STM#subscribe(org.juxtapose.streamline.util.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
 	 */
@@ -288,34 +342,48 @@ public class BlockingSTM extends STM
 			return;
 		}
 		
-		lock( inDataKey.getKey() );
-		
-		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
-		
 		ISTMEntryProducer producer = null;
-		
 		ISTMEntry newData = null;
 		
-		if( existingData == null )
+		lock( inDataKey.getKey() );
+		
+		try
 		{
-			//First subscriber
-			producer = producerService.getDataProducer( inDataKey );
-			
-			//REVISIT Potentially we should not notify subscribers for certain newDatas and just wait for the initial update instead.
-			newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
-			
-			keyToData.put( inDataKey.getKey(), newData );
-		}
-		else
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
+			{
+				//First subscriber
+				producer = producerService.getDataProducer( inDataKey );
+
+				//REVISIT Potentially we should not notify subscribers for certain newDatas and just wait for the initial update instead.
+				newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
+				keyToData.put( inDataKey.getKey(), newData );
+
+				if( inSubscriber.getPriority() == IExecutor.HIGH )
+					producer.setPriority( IExecutor.HIGH );
+			}
+			else
+			{
+				newData = existingData.addSubscriber( inSubscriber );
+				keyToData.put( inDataKey.getKey(), newData );
+
+				if( newData.getPriority() != existingData.getPriority() )
+					newData.getProducer().setPriority( newData.getPriority() );
+			}
+
+		}catch( Throwable t )
 		{
-			newData = existingData.addSubscriber( inSubscriber );
-			keyToData.put( inDataKey.getKey(), newData );
+			logError( t.getStackTrace().toString() );
 		}
-		
-		unlock( inDataKey.getKey() );
-		
-		inSubscriber.updateData( inDataKey, newData, true );
-		
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+
+		if( newData != null )
+			inSubscriber.updateData( inDataKey, newData, true );
+
 		if( producer != null )
 			producer.init();
 	}
@@ -335,33 +403,42 @@ public class BlockingSTM extends STM
 			return;
 		}
 		
-		lock( inDataKey.getKey() );
-		
-		ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
-		
 		ISTMEntryProducer producer = null;
 		
-		if( existingData == null )
+		lock( inDataKey.getKey() );
+		
+		try
 		{
-			logError( "Key: "+inDataKey+", Data has already been removed which is unconditional since an existing subscriber is requesting to unsubscribe"  );
-			return;
-		}
-		else
-		{
-			ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
-			if( newData.hasSubscribers() )
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
 			{
-				keyToData.replace( inDataKey.getKey(), newData );
+				logError( "Key: "+inDataKey+", Data has already been removed which is unconditional since an existing subscriber is requesting to unsubscribe"  );
+				return;
 			}
 			else
 			{
-				keyToData.remove( inDataKey.getKey() );
-				producer = existingData.getProducer();
+				ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
+				if( newData.hasSubscribers() )
+				{
+					keyToData.replace( inDataKey.getKey(), newData );
+				}
+				else
+				{
+					keyToData.remove( inDataKey.getKey() );
+					producer = existingData.getProducer();
+				}
 			}
+
+		}catch( Throwable t )
+		{
+			logError( t.getStackTrace().toString() );
 		}
-		
-		unlock( inDataKey.getKey() );
-		
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+
 		if( producer != null )
 			producer.dispose();
 		

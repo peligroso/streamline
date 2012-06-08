@@ -3,6 +3,7 @@ package org.juxtapose.streamline.producer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
@@ -26,13 +27,27 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	
 	protected final ISTMEntryKey dataKey;
 	protected final ISTM stm;
-
+	
 	/**
 	 * @param inKey
 	 * @param inSTM
 	 */
 	public STMEntryProducer( ISTMEntryKey inKey, ISTM inSTM )
 	{
+		super( IExecutor.LOW );
+		dataKey = inKey;
+		stm = inSTM;
+	}
+	
+	
+	/**
+	 * @param inKey
+	 * @param inSTM
+	 * @param inPriority
+	 */
+	public STMEntryProducer( ISTMEntryKey inKey, ISTM inSTM, int inPriority )
+	{
+		super( inPriority );
 		dataKey = inKey;
 		stm = inSTM;
 	}
@@ -196,5 +211,21 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	{
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.stm.TemporaryController#priorityUpdated(int)
+	 */
+	public void priorityUpdated( int inPriority )
+	{
+		for( TemporaryController tc : dependencies.values() )
+		{
+			tc.setPriority( inPriority );
+		}
+		for( ReferenceLink rl : keyToReferensLinks.values() )
+		{
+			rl.setPriority( inPriority );
+		}
+	}
+	
 	
 }

@@ -58,7 +58,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 			{
 				doInit();
 			}
-		}, IExecutor.HIGH );
+		}, IExecutor.LOW );
 	}
 	
 	public DataInitializer createDataInitializer( )
@@ -74,4 +74,9 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 
 	@Override
 	public abstract String getServiceId();
+	
+	public int getPriority()
+	{
+		return IExecutor.LOW;
+	}
 }

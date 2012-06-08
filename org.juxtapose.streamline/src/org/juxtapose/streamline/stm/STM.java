@@ -3,7 +3,6 @@ package org.juxtapose.streamline.stm;
 import static org.juxtapose.streamline.stm.STMUtil.PRODUCER_SERVICES;
 import static org.juxtapose.streamline.util.DataConstants.FIELD_QUERY_KEY;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,9 +14,9 @@ import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
-import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeString;
@@ -272,4 +271,14 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	public ReferenceLink removeReferenceLink( String inField ){ return null; }
 	public void disposeReferenceLinks( List< String > inReferenceFields ){}
 	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData ){}
+	
+	public int getPriority()
+	{
+		return IExecutor.LOW;
+	}
+	
+	public void setPriority( int inPriority )
+	{
+		
+	}
 }

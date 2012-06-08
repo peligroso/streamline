@@ -26,4 +26,7 @@ public interface ISTMEntry {
 	public long getSequenceID();
 	public boolean isCompleteVersion();
 	public Set<String> getDeltaSet();
+	public int getHighPriosubscriberCount();
+	public ISTMEntry changeSubscriberPriority( ISTMEntrySubscriber inSubscriber, int inNewPriority );
+	public int getPriority();
 }

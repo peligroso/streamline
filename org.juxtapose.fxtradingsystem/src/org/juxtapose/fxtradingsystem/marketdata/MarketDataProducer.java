@@ -55,53 +55,6 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 		}
 	}
 	
-//	public void startListener( )throws Exception
-//	{
-//		Hashtable<String, String> properties = new Hashtable<String, String>();
-//		properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.exolab.jms.jndi.InitialContextFactory");
-//		properties.put(Context.PROVIDER_URL, "tcp://localhost:3035/");
-//
-//
-//		Context context = new InitialContext(properties);
-//
-//		ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
-//
-//		Connection connection = factory.createConnection();
-//
-//		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-//
-//		Destination destination = (Destination) context.lookup(QPMessage.SENDER_PREFIX+source);
-//		MessageConsumer receiver = session.createConsumer(destination);
-//		receiver.setMessageListener(new MessageListener() {
-//			public void onMessage(Message message) {
-//				try
-//				{
-//					String textMess = ((TextMessage)message).getText();
-//					final QPMessage mess = new QPMessage( textMess );
-//					
-//					if( mess.type.equals( QPMessage.QUOTE ) )
-//					{
-//						if( ccy1.equals(  mess.ccy1 ) && ccy2.equals( mess.ccy2 ) && period.equals( mess.period ))
-//						{
-//							stm.execute( new Runnable() {
-//								public void run()
-//								{
-//									parseQuote( mess );
-//								}
-//							}, IExecutor.HIGH );
-//						}
-//					}
-//
-//				}catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//
-//		// start the connection to enable message delivery
-//		connection.start();
-//	}
 	
 	public void startSubscription( ) throws Exception
 	{
@@ -145,7 +98,7 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 				parseQuote( inMessage );
 			}
 			
-		}, IExecutor.HIGH );
+		}, getPriority() );
 		
 	}
 	

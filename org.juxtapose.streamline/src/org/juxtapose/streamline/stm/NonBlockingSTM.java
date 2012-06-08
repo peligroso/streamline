@@ -151,5 +151,12 @@ public class NonBlockingSTM extends STM
 		
 	}
 
+	@Override
+	public void updateSubscriberPriority(ISTMEntryKey inDataKey,
+			ISTMEntrySubscriber inSubscriber) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

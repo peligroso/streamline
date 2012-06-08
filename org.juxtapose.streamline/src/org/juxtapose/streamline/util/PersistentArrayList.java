@@ -16,7 +16,7 @@ public class PersistentArrayList<T>
 	public PersistentArrayList()
 	{
 		arr = (T[])new Object[DEFAULT_SIZE];
-		size = DEFAULT_SIZE;
+		size = 0;
 	}
 	
 	public PersistentArrayList( T[] inArr )

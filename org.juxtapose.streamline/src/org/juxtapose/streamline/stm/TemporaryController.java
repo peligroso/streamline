@@ -14,8 +14,18 @@ public abstract class TemporaryController
 	private boolean initiated = false;
 	private boolean disposed = false;
 	
-	public ReentrantLock startStopLock = new ReentrantLock();
+	/**
+	 * No need for fair looking since the lock will only be requested twice, and if there is a race condition the effect will be kind of the same.
+	 * Either it is started and immediately stopped or it will never start at all.
+	 */
+	public ReentrantLock startStopLock = new ReentrantLock( );
 
+	protected volatile int priority;
+	
+	public TemporaryController( int inPriority )
+	{
+		priority = inPriority;
+	}
 	/**
 	 * 
 	 */
@@ -26,7 +36,7 @@ public abstract class TemporaryController
 		{
 			if( initiated )
 			{
-				throw new IllegalAccessError();
+				throw new IllegalAccessError("Tried to start an already started TemporaryController");
 			}
 			if( disposed )
 			{
@@ -72,4 +82,24 @@ public abstract class TemporaryController
 	{
 		return disposed;
 	}
+	
+	public void setPriority( int inPriority )
+	{
+		if( inPriority == priority )
+			return;
+		
+		priority = inPriority;
+		priorityUpdated( priority );
+	}
+	
+	public int getPriority( )
+	{
+		return priority;
+	}
+	
+	/**
+	 * @param inPriority
+	 * Method is always called as a consequence of setPriority
+	 */
+	protected abstract void priorityUpdated( int inPriority );
 }

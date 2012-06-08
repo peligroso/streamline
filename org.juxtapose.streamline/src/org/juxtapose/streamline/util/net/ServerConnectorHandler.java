@@ -34,7 +34,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	final static Long tag = new Long( 0 ); 
 	
 	ConcurrentHashMap<Long, Channel> tagToChannel = new ConcurrentHashMap<Long, Channel>();
-	ConcurrentHashMap<Integer, IDataKey> referenceToKey = new ConcurrentHashMap<Integer, IDataKey>();
+	ConcurrentHashMap<Integer, ISTMEntryKey> referenceToKey = new ConcurrentHashMap<Integer, ISTMEntryKey>();
 	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
 	
 	public ServerConnectorHandler( ISTM inSTM )
@@ -119,5 +119,11 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	public void queryNotAvailible( Long inTag ) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getPriority() 
+	{
+		return IExecutor.LOW;
 	}
 }

@@ -25,17 +25,19 @@ public class DataSequencer implements ISTMEntrySubscriber
 	final ISequencedDataSubscriber subscriber;
 	final ISTM stm;
 	final ISTMEntryKey key;
+	final int priority;
 
 	/**
 	 * @param inSubscriber
 	 * @param inSTM
 	 * @param inKey
 	 */
-	public DataSequencer( ISequencedDataSubscriber inSubscriber, ISTM inSTM, ISTMEntryKey inKey )
+	public DataSequencer( ISequencedDataSubscriber inSubscriber, ISTM inSTM, ISTMEntryKey inKey, int inPriority )
 	{
 		subscriber = inSubscriber;
 		stm = inSTM;
 		key = inKey;
+		priority = inPriority;
 		
 	}
 	
@@ -136,6 +138,12 @@ public class DataSequencer implements ISTMEntrySubscriber
 	public ISTMEntryKey getDataKey()
 	{
 		return key;
+	}
+
+	@Override
+	public int getPriority() 
+	{
+		return priority;
 	}
 
 }

@@ -3,6 +3,7 @@ package org.juxtapose.streamline.stm;
 import java.util.HashSet;
 
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
@@ -27,9 +28,10 @@ public class STMEntryFactory implements IPublishedDataFactory
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer )
 	{
 		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create();
-		PersistentArrayList<ISTMEntrySubscriber> subscribers = new PersistentArrayList<ISTMEntrySubscriber>();
+		PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
+		PersistentArrayList<ISTMEntrySubscriber> highPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
 		
-		return new STMEntry( dataMap, new HashSet<String>(), subscribers, inProducer, inStatus, 0l, true );
+		return new STMEntry( dataMap, new HashSet<String>(), lowPrioSubscribers, highPrioSubscribers, inProducer, inStatus, 0l, true );
 	}
 	
 	/* (non-Javadoc)
@@ -38,8 +40,18 @@ public class STMEntryFactory implements IPublishedDataFactory
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber )
 	{
 		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create( );
-		PersistentArrayList<ISTMEntrySubscriber> subscribers = new PersistentArrayList<ISTMEntrySubscriber>( new ISTMEntrySubscriber[]{inSubscriber});
 		
-		return new STMEntry( dataMap, new HashSet<String>(), subscribers, inProducer, inStatus, 0l, true );
+		PersistentArrayList<ISTMEntrySubscriber> emptySubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
+		
+		if( inSubscriber.getPriority() == IExecutor.HIGH )
+		{
+			PersistentArrayList<ISTMEntrySubscriber> highPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>( new ISTMEntrySubscriber[]{inSubscriber});			
+			return new STMEntry( dataMap, new HashSet<String>(), emptySubscribers, highPrioSubscribers, inProducer, inStatus, 0l, true );
+		}
+		else
+		{
+			PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>( new ISTMEntrySubscriber[]{inSubscriber});			
+			return new STMEntry( dataMap, new HashSet<String>(), lowPrioSubscribers, emptySubscribers, inProducer, inStatus, 0l, true );
+		}
 	}
 }

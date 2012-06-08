@@ -230,7 +230,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 					return;
 				}
 			
-				DataSequencer seq = new DataSequencer( OrderManager.this, stm, key );
+				DataSequencer seq = new DataSequencer( OrderManager.this, stm, key, IExecutor.HIGH );
 				
 				RFQContext ctx = new RFQContext( seq, producer, System.nanoTime() );
 				idToRFQProducer.put( rfqID, ctx );

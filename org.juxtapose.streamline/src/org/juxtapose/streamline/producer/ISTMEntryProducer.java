@@ -23,4 +23,7 @@ public interface ISTMEntryProducer extends ISTMEntrySubscriber
 	
 	public void addDependency( String inKey, TemporaryController inController );
 	public TemporaryController removeDependency( String inDataKey );
+
+	public void setPriority( int inPriority );
+	public int getPriority( );
 }

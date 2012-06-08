@@ -25,7 +25,7 @@ public class ReferenceLink extends DataProducerDependencyController implements I
 	 * @param inHashKey
 	 * @param inRef
 	 */
-	public ReferenceLink( ISTMEntryProducer inProducer, ISTM inSTM, String inFieldKey, DataTypeRef inRef )
+	protected ReferenceLink( ISTMEntryProducer inProducer, ISTM inSTM, String inFieldKey, DataTypeRef inRef )
 	{
 		super( inProducer, inSTM, inRef.get() );
 		fieldKey = inFieldKey;
@@ -46,6 +46,11 @@ public class ReferenceLink extends DataProducerDependencyController implements I
 	public DataTypeRef getRef()
 	{
 		return ref;
+	}
+	
+	public void priorityUpdated( int inPriority )
+	{
+		stm.updateSubscriberPriority( ref.get(), this );
 	}
 			
 }

@@ -4,5 +4,5 @@
    <service>
       <provide interface="org.juxtapose.streamline.stm.ISTM"/>
    </service>
-   <property name="PROP_DATA_FACTORY_CLASS" type="String" value="org.juxtapose.streamline.stm.PublishedDataFactory"/>
+   <property name="PROP_DATA_FACTORY_CLASS" type="String" value="org.juxtapose.streamline.stm.STMEntryFactory"/>
 </scr:component>

@@ -19,6 +19,7 @@ public class DataProducerDependencyController extends TemporaryController implem
 	 */
 	public DataProducerDependencyController( ISTMEntryProducer inProducer, ISTM inSTM, ISTMEntryKey inKey )
 	{
+		super( inProducer.getPriority() );
 		stm = inSTM;
 		key = inKey;
 		parentProducer = inProducer;
@@ -39,4 +40,12 @@ public class DataProducerDependencyController extends TemporaryController implem
 	{
 		stm.unsubscribeToData( key, this );
 	}
+
+	@Override
+	protected void priorityUpdated(int inPriority) 
+	{
+		stm.updateSubscriberPriority( key, this );
+	}
+	
+	
 }

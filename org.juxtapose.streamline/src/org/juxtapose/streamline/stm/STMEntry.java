@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
@@ -30,7 +31,8 @@ final class STMEntry implements ISTMEntry
 	final IPersistentMap<String, DataType<?>> dataMap;
 	final Set<String> deltaSet;
 	
-	final PersistentArrayList<ISTMEntrySubscriber> subscribers;
+	final PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers;
+	final PersistentArrayList<ISTMEntrySubscriber> highPrioSubscribers;
 	
 	
 	final ISTMEntryProducer producer;
@@ -48,11 +50,12 @@ final class STMEntry implements ISTMEntry
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	protected STMEntry( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inSubscribers, ISTMEntryProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
+	protected STMEntry( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inLowPrioSubscribers, PersistentArrayList<ISTMEntrySubscriber> inHighPrioSubscribers, ISTMEntryProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
-		subscribers = inSubscribers;
+		lowPrioSubscribers = inLowPrioSubscribers;
+		highPrioSubscribers = inHighPrioSubscribers;
 		producer = inProducer;
 		status = inStatus;
 		sequenceID = inSequenceID;
@@ -61,9 +64,15 @@ final class STMEntry implements ISTMEntry
 	
 	public void updateSubscribers( ISTMEntryKey inKey )
 	{
-		for( int i = 0; i < subscribers.size(); i++ )
+		for( int i = 0; i < highPrioSubscribers.size(); i++ )
 		{
-			ISTMEntrySubscriber subscriber = subscribers.get( i );
+			ISTMEntrySubscriber subscriber = highPrioSubscribers.get( i );
+			subscriber.updateData( inKey, this, false );
+		}
+		
+		for( int i = 0; i < lowPrioSubscribers.size(); i++ )
+		{
+			ISTMEntrySubscriber subscriber = lowPrioSubscribers.get( i );
 			subscriber.updateData( inKey, this, false );
 		}
 	}
@@ -74,8 +83,17 @@ final class STMEntry implements ISTMEntry
 	 */
 	public ISTMEntry addSubscriber( ISTMEntrySubscriber inSubscriber )
 	{
-		PersistentArrayList<ISTMEntrySubscriber> newSub = subscribers.add( inSubscriber );
-		return new STMEntry( dataMap, deltaSet, newSub, producer, status, sequenceID, completeVersion );
+		if( inSubscriber.getPriority() == IExecutor.HIGH )
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.add( inSubscriber );
+			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, status, sequenceID, completeVersion );
+		}
+		else
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newSub = lowPrioSubscribers.add( inSubscriber );
+			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, status, sequenceID, completeVersion );
+
+		}
 	}
 	
 	/**
@@ -84,9 +102,17 @@ final class STMEntry implements ISTMEntry
 	 */
 	public ISTMEntry removeSubscriber( ISTMEntrySubscriber inSubscriber )
 	{ 
-		PersistentArrayList<ISTMEntrySubscriber> newSub = subscribers.remove( inSubscriber );
-		
-		return new STMEntry( dataMap, deltaSet, newSub, producer, status, sequenceID, completeVersion );
+		if( inSubscriber.getPriority() == IExecutor.HIGH )
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.remove( inSubscriber );
+			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, status, sequenceID, completeVersion );
+		}
+		else
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.add( inSubscriber );
+			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, status, sequenceID, completeVersion );
+
+		}
 	}
 	
 	/**
@@ -94,7 +120,7 @@ final class STMEntry implements ISTMEntry
 	 */
 	public boolean hasSubscribers()
 	{
-		return subscribers.size() > 0;
+		return lowPrioSubscribers.size() > 0 || highPrioSubscribers.size() > 0;
 	}
 	
 	/**
@@ -112,7 +138,7 @@ final class STMEntry implements ISTMEntry
 		else
 			newMap = dataMap.assoc( inKey, inValue );
 		
-		return new STMEntry( newMap, deltaSet, subscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( newMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
 	}
 	
 	/**
@@ -139,7 +165,7 @@ final class STMEntry implements ISTMEntry
 			}
 		}
 		
-		return new STMEntry( newDataMap, deltaSet, subscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( newDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
 	}
 	
 	/**
@@ -148,7 +174,7 @@ final class STMEntry implements ISTMEntry
 	 */
 	public ISTMEntry setDataMap( IPersistentMap<String, DataType<?>> inDataMap )
 	{
-		return new STMEntry( inDataMap, deltaSet, subscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( inDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
 	}
 	
 	/**
@@ -157,7 +183,7 @@ final class STMEntry implements ISTMEntry
 	 */
 	public ISTMEntry setUpdatedData( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDelta, Status inStatus, boolean inCompleteUpdate )
 	{
-		return new STMEntry( inDataMap, inDelta, subscribers, producer, inStatus, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
+		return new STMEntry( inDataMap, inDelta, lowPrioSubscribers, highPrioSubscribers, producer, inStatus, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
 	}
 	
 	public boolean isCompleteVersion()
@@ -210,6 +236,51 @@ final class STMEntry implements ISTMEntry
 	public long getSequenceID()
 	{
 		return sequenceID;
+	}
+	
+	public int getHighPriosubscriberCount()
+	{
+		return highPrioSubscribers.size();
+	}
+	
+	public int getPriority()
+	{
+		return highPrioSubscribers.size() > 0 ? IExecutor.HIGH : IExecutor.LOW;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.ISTMEntry#changeSubscriberPriority(org.juxtapose.streamline.util.ISTMEntrySubscriber, int)
+	 * this method will return null if the subscriber is not contained within the anticipated list.
+	 */
+	@Override
+	public ISTMEntry changeSubscriberPriority( ISTMEntrySubscriber inSubscriber, int inNewPriority ) 
+	{
+		if( inNewPriority == IExecutor.HIGH )
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newLowPrioSubscribers = lowPrioSubscribers.remove( inSubscriber );
+			if( newLowPrioSubscribers == lowPrioSubscribers )
+			{
+				return null;
+			}
+			PersistentArrayList<ISTMEntrySubscriber> newHighPrioSubscribers = highPrioSubscribers.add( inSubscriber );
+			
+			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, status, sequenceID, completeVersion );
+		}
+		else if( inNewPriority == IExecutor.LOW )
+		{
+			PersistentArrayList<ISTMEntrySubscriber> newHighPrioSubscribers = highPrioSubscribers.remove( inSubscriber );
+			if( newHighPrioSubscribers == highPrioSubscribers )
+			{
+				return null;
+			}
+			PersistentArrayList<ISTMEntrySubscriber> newLowPrioSubscribers = lowPrioSubscribers.add( inSubscriber );
+			
+			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, status, sequenceID, completeVersion );
+		}
+		else 
+		{
+			return this;
+		}
 	}
 	
 }
