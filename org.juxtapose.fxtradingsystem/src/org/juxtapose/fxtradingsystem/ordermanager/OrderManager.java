@@ -44,6 +44,8 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	
 	ConcurrentHashMap<Long, RFQContext> idToRFQProducer = new ConcurrentHashMap<Long, RFQContext>(512);
 	
+	boolean priceFromLiquidity = false;
+	
 
 	@Override
 	public ISTMEntryProducer getDataProducer(ISTMEntryKey inDataKey)
@@ -99,7 +101,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	{
 		ISTMEntry data = inSequencer.get();
 		
-		processData( data, inSequencer.getDataKey() );
+		processLiquidityData( data, inSequencer.getDataKey() );
 		
 	}
 	
@@ -165,11 +167,11 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 //				}, IExecutor.LOW );
 			}
 			
-			RFQMessage message = new RFQMessage( RFQMessage.TYPE_PRICING, ccy1.get(), ccy2.get(), id,  bid.get().doubleValue(), ask.get().doubleValue(), firstTakeTime, updateProcessingTime, sequence );
+//			RFQMessage message = new RFQMessage( RFQMessage.TYPE_PRICING, ccy1.get(), ccy2.get(), id,  bid.get().doubleValue(), ask.get().doubleValue(), firstTakeTime, updateProcessingTime, sequence );
 			
 //			long start = System.nanoTime();
 			
-			connector.updateRFQ( message );
+//			connector.updateRFQ( message );
 			
 //			long end = System.nanoTime();
 //			
@@ -183,6 +185,53 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 		}
 	}
 	
+	private void processLiquidityData( ISTMEntry inData, ISTMEntryKey inKey )
+	{
+		Status status = inData.getStatus();
+		if( status == Status.OK )
+		{
+			String idStr = inKey.getValue( FXDataConstants.FIELD_ID );
+			
+			final Long id = Long.parseLong( idStr );
+			final DataTypeBigDecimal bid = (DataTypeBigDecimal)inData.getValue( FXDataConstants.FIELD_BID );
+			final DataTypeBigDecimal ask = (DataTypeBigDecimal)inData.getValue( FXDataConstants.FIELD_ASK );
+			
+			final DataTypeString ccy1 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY1 );
+			final DataTypeString ccy2 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY2 );
+			
+			Long tou = (Long)inData.getValue( DataConstants.FIELD_TIMESTAMP ).get();
+			
+			final long sequence = inData.getSequenceID();
+
+			long now = System.nanoTime();
+			
+			final long updateProcessingTime = now-tou;
+			
+			final Long firstTakeTime;
+			DataTypeBoolean firstTake = (DataTypeBoolean)inData.getValue( FXDataConstants.FIELD_FIRST_UPDATE );
+			if( firstTake != null && firstTake.get() )
+			{
+				RFQContext context = idToRFQProducer.get( id );
+
+				if( context != null )
+				{
+					firstTakeTime = now - context.startTime;
+				}
+				else
+					firstTakeTime = null;
+			}
+			else
+				firstTakeTime = null;
+			
+			
+			RFQMessage message = new RFQMessage( RFQMessage.TYPE_PRICING, ccy1.get(), ccy2.get(), id,  bid.get().doubleValue(), ask.get().doubleValue(), firstTakeTime, updateProcessingTime, sequence, BigDecimal.ONE );
+			
+			
+			connector.updateRFQ( message );
+			
+		}
+	}
+
 	/**
 	 * @param inMessage
 	 */
@@ -198,7 +247,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				String id = Long.toString( rfqID );
 				
 				ISTMEntryKey key;
-				RFQProducer producer;
+				RFQLiquidityProducer producer;
 				
 				if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SPOT ))
 				{
@@ -206,7 +255,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 						new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2}, 
 						new String[]{id, inMessage.ccy1, inMessage.ccy2 } );
 					
-					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, null, null );
+					producer = new RFQLiquidityProducer( key, stm, inMessage.ccy1, inMessage.ccy2, null, null, inMessage.amt );
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_FWD ))
 				{
@@ -214,7 +263,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate } );
 					
-					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, null );
+					producer = new RFQLiquidityProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, null, inMessage.amt );
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SWAP ))
 				{
@@ -222,7 +271,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP, FXDataConstants.FIELD_FAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate } );
 					
-					producer = new RFQProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate );
+					producer = new RFQLiquidityProducer( key, stm, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate, inMessage.amt );
 				}
 				else
 				{
@@ -274,7 +323,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 	
 	@Override
-	public void getDataKey(ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey(ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery)
 	{
 		inSubscriber.queryNotAvailible( inTag );
 	}

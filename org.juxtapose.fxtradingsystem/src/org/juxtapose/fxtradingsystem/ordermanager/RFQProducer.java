@@ -1,5 +1,6 @@
 package org.juxtapose.fxtradingsystem.ordermanager;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 import org.juxtapose.fxtradingsystem.FXDataConstants;
@@ -24,14 +25,16 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	final String ccy2;
 	final String nearPeriod;
 	final String farPeriod;
+	final BigDecimal amt;
 	
-	public RFQProducer( ISTMEntryKey inKey, ISTM inSTM, String inCcy1, String inCcy2, String inNearPeriod, String inFarPeriod )
+	public RFQProducer( ISTMEntryKey inKey, ISTM inSTM, String inCcy1, String inCcy2, String inNearPeriod, String inFarPeriod, BigDecimal inAmt )
 	{
 		super( inKey, inSTM );
 		ccy1 = inCcy1;
 		ccy2 = inCcy2;
 		nearPeriod = inNearPeriod;
 		farPeriod = inFarPeriod;
+		amt = inAmt;
 	}
 
 	@Override
@@ -65,7 +68,7 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	}
 
 	@Override
-	public void deliverKey( final ISTMEntryKey inDataKey, Long inTag)
+	public void deliverKey( final ISTMEntryKey inDataKey, Object inTag)
 	{
 		if( inTag.equals( priceTag ))
 		{
@@ -81,7 +84,7 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	}
 
 	@Override
-	public void queryNotAvailible(Long inTag)
+	public void queryNotAvailible(Object inTag)
 	{
 		setStatus( Status.NA );
 		stm.logError( "could not retrieve datakey from price engine" );

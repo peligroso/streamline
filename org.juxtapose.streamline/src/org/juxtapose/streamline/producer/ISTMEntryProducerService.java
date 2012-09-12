@@ -11,7 +11,7 @@ public interface ISTMEntryProducerService
 	 * @param inQuery query for key
 	 * @return datakey or null if no datakey can be created from query
 	 */
-	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery );
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery );
 	public ISTMEntryProducer getDataProducer( ISTMEntryKey inDataKey );
 
 }

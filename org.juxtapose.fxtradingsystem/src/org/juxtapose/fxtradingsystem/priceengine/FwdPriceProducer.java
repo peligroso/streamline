@@ -59,7 +59,7 @@ public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryReque
 	}
 
 	@Override
-	public void deliverKey(ISTMEntryKey inDataKey, Long inTag)
+	public void deliverKey(ISTMEntryKey inDataKey, Object inTag)
 	{
 		if( inTag.equals( spotTag ) )
 		{
@@ -86,7 +86,7 @@ public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryReque
 	
 
 	@Override
-	public void queryNotAvailible(Long inTag)
+	public void queryNotAvailible(Object inTag)
 	{
 		setStatus( Status.ERROR );
 		stm.logError( "could not retrieve datakey from market data" );

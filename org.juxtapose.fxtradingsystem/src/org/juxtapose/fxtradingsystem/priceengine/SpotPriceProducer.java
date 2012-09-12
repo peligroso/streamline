@@ -165,13 +165,13 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 	}
 
 	@Override
-	public void deliverKey(ISTMEntryKey inDataKey, Long inTag)
+	public void deliverKey(ISTMEntryKey inDataKey, Object inTag)
 	{
-		if( inTag == reutersTag )
+		if( inTag.equals( reutersTag ) )
 		{
 			reutersDataKey = inDataKey;
 		}
-		else if( inTag == bloombergTag )
+		else if( inTag.equals( bloombergTag ) )
 		{
 			bloombergDataKey = inDataKey;
 		}
@@ -192,7 +192,7 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 	}
 
 	@Override
-	public void queryNotAvailible(Long inTag)
+	public void queryNotAvailible(Object inTag)
 	{
 		setStatus( Status.NA );
 		stm.logError( "could not retrieve datakey from market data" );

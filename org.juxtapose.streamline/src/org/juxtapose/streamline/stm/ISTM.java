@@ -17,7 +17,7 @@ public interface ISTM extends IExecutor
 	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void unsubscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void commit( STMTransaction inTransaction );
-	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery);
+	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery);
 	public void logInfo( String inMessage );
 	public void logError( String inMessage );
 	public void logError( String inMessage, Throwable inThrowable );

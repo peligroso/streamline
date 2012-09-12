@@ -15,6 +15,7 @@ public class FXDataConstants extends DataConstants
 	public static final String FIELD_BASE_CCY = "C1";
 	public static final String FIELD_QUOTE_CCY = "C2";
 	public static final String FIELD_STATIC_DATA = "STIC_D";
+	public static final String FIELD_SOURCE = "SC";
 	
 	public static final String FIELD_EUR = "EUR";
 	public static final String FIELD_USD = "USD";
@@ -63,4 +64,9 @@ public class FXDataConstants extends DataConstants
 	
 	public static final String STATE_TYPE_RFQ = "RFQ";
 	
+	public static final String STATE_SOURCE_REUTERS = "REUTERS";
+	public static final String STATE_SOURCE_BLOOMBERG = "BLOOMBERG";
+	public static final String STATE_SOURCE_UBS = "UBS";
+	public static final String STATE_SOURCE_GOLDMAN = "GOLDMAN";
+	public static final String STATE_SOURCE_WILDCARD = "*";
 }

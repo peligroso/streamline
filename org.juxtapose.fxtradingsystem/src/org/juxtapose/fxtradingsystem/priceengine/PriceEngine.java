@@ -35,7 +35,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 		if( type == null )

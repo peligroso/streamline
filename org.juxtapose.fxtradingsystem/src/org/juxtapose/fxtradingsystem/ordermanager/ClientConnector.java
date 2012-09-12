@@ -1,5 +1,6 @@
 package org.juxtapose.fxtradingsystem.ordermanager;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -26,14 +27,16 @@ public class ClientConnector
 	
 	long lastRFQTime = 0;
 	
-	long maxTimeBetweenRFQ = 5l * 1000000l;
+	long maxTimeBetweenRFQ = 100l * 1000000l;
 	
 	int maxRFQs = 3500;
 	int warmup = 2000;
 	
-	int avgPriceUpdates = 5;
+	int avgPriceUpdates = 10;
 	
-	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
+//	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
+	
+	String[][] instruments = new String[][]{{"SEK", "NOK"}};
 	
 	Map<Long, Long> updateToCount = new TreeMap<Long, Long>();
 	Map<Long, Long> firstTakeToCount = new TreeMap<Long, Long>();
@@ -130,7 +133,7 @@ public class ClientConnector
 
 					if( inCommingMess.sequence == avgPriceUpdates )//rand.nextInt( avgPriceUpdates ) == 1 )
 					{
-						RFQMessage dr = new RFQMessage( RFQMessage.TYPE_DR, inCommingMess.ccy1, inCommingMess.ccy2, inCommingMess.tag, inCommingMess.bidPrice, inCommingMess.askPrice, null, null, 0 );
+						RFQMessage dr = new RFQMessage( RFQMessage.TYPE_DR, inCommingMess.ccy1, inCommingMess.ccy2, inCommingMess.tag, inCommingMess.bidPrice, inCommingMess.askPrice, null, null, 0, BigDecimal.ONE );
 						manager.sendDR( dr );
 						
 						if( inCommingMess.tag == maxRFQs -1 )
@@ -215,7 +218,7 @@ public class ClientConnector
 	{
 		lastRFQTime = System.nanoTime();
 		String[] instrument = instruments[ rand.nextInt( instruments.length ) ];
-		RFQMessage rfq = new RFQMessage( instrument[0], instrument[1], FXDataConstants.STATE_INSTRUMENT_SPOT, null, null, tag++ );
+		RFQMessage rfq = new RFQMessage( instrument[0], instrument[1], FXDataConstants.STATE_INSTRUMENT_SPOT, null, null, tag++, new BigDecimal( 7000000 ) );
 		manager.sendRFQ( rfq );
 	}
 	

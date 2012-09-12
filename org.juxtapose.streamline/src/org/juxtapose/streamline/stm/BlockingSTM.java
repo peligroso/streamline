@@ -189,7 +189,7 @@ public class BlockingSTM extends STM
 			
 		}catch( Throwable t )
 		{
-			logError( t.getStackTrace().toString() );
+			logError( t.getMessage(), t );
 		}
 		finally
 		{
@@ -315,6 +315,9 @@ public class BlockingSTM extends STM
 			 * but in this case we need to reach out into the producer and ongoing into its dependencies to update the priority.
 			 * Even though we are reaching far beyond our domain and possible across multiple locks in the STM it might be thought of as a long
 			 * run of state changes. setPriority should just switch a variable and cascade it no.
+			 * 
+			 * -On second though not so sure, this could cause deadlocks if other parts of the system uses nestled locking, like updates.
+			 * Isn't is better to just send an unsynchronized call to the producer and let him sync his own subscriber list?? 
 			 */
 			producer.setPriority( newPriority );
 

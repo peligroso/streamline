@@ -16,31 +16,35 @@ public class LockTest
 	 * One thread counts to 5 million with CAS = 500 ms. This is 100 ns per iteration or (300 clock cycles).
 	 * Two thread counts to 5 million with CAS = 979 ms. This is 195 ns per iteration or (587 clock cycles).
 	 * One thread counts to 5 million with volatile = 357 ms. This is 71 ns per iteration or (214 clock cycles).
+	 * Two thread counts to 5 million with volatile = 1231 ms. This is 246 ns per iteration or (738 clock cycles).
 	 * One thread counts to 5 million with contextswitch = 14221 ms. This is 2844 ns per iteration or (8532 clock cycles).
 	 * Two thread counts to 5 million with contextswitch = 10221 ms. This is 2044 ns per iteration or (6132 clock cycles).
+	 * 
+	 * Since it is always slower do do two threads it seams that there is some sort of validation/invalidation flag that is being considered when 
+	 * memory barriers decide on weather or not to do a memory flush.
 	 * **/
 	static long startTime;
-	static long counter = 0l;
+	static volatile long counter = 0l;
 	static Object mutex = new Object();
 	
 	static ExecutorService execService = new ThreadPoolExecutor( 1, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(5048576) );
 	public static void main( String[] args )
 	{
-//		Thread t1 = getUpdateThread();
-//		Thread t2 = getUpdateThread();
+		Thread t1 = getUpdateThread();
+		Thread t2 = getUpdateThread();
 		startTime = System.nanoTime();
-//		t1.start();
-//		t2.start();
+		t1.start();
+		t2.start();
 		
-		while( counter < 5000000 )
-		{
-			synchronized( mutex )
-			{
-				counter++;
-			}
-		}
-		
-		finish();
+//		while( counter < 5000000 )
+//		{
+//			synchronized( mutex )
+//			{
+//				counter++;
+//			}
+//		}
+//		
+//		finish();
 	}
 	
 	public static Thread getUpdateThread()
@@ -56,18 +60,18 @@ public class LockTest
 //				}
 				while( true )
 				{
-					post( new Runnable()
-					{
-						@Override
-						public void run()
-						{
-//							System.out.println("executing "+counter);
+//					post( new Runnable()
+//					{
+//						@Override
+//						public void run()
+//						{
+////							System.out.println("executing "+counter);
 							counter++;
 							if( counter == 5000000 )
 								finish();
 							
-						}
-					});
+//						}
+//					});
 //					synchronized (mutex)
 //					{
 //					}

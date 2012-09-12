@@ -1,5 +1,7 @@
 package org.juxtapose.fxtradingsystem.ordermanager;
 
+import java.math.BigDecimal;
+
 public class RFQMessage
 {
 	public static final int TYPE_NEW_REQUEST = 0;
@@ -23,7 +25,9 @@ public class RFQMessage
 	
 	public final long sequence;
 	
-	public RFQMessage( String inCcy1, String inCcy2, String inOrderType, String inNearDate, String inFarDate, long inTag )
+	public final BigDecimal amt; 
+	
+	public RFQMessage( String inCcy1, String inCcy2, String inOrderType, String inNearDate, String inFarDate, long inTag, BigDecimal inAmt )
 	{
 		messageType = TYPE_NEW_REQUEST;
 		
@@ -43,9 +47,11 @@ public class RFQMessage
 		updateTime = null;
 		
 		sequence = 0;
+		
+		amt = inAmt;
 	}
 	
-	public RFQMessage( int inMessageType, String inCcy1, String inCcy2, long inTag, Double inBidPrice, Double inAskPrice, Long inFirstTakeTime, Long inUpdateTime, long inSequence )
+	public RFQMessage( int inMessageType, String inCcy1, String inCcy2, long inTag, Double inBidPrice, Double inAskPrice, Long inFirstTakeTime, Long inUpdateTime, long inSequence, BigDecimal inAmt )
 	{
 		messageType = inMessageType;
 		
@@ -65,6 +71,8 @@ public class RFQMessage
 		updateTime = inUpdateTime;
 		
 		sequence = inSequence;
+		
+		amt = inAmt;
 	}
 	
 }

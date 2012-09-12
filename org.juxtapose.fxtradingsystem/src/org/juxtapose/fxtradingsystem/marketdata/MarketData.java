@@ -24,7 +24,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 	 * @see org.juxtapose.streamline.producer.IDataProducerService#getDataKey(org.juxtapose.streamline.util.IDataSubscriber, java.lang.Long, java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery )
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery )
 	{
 		String type = inQuery.get( PriceEngineDataConstants.FIELD_TYPE );
 

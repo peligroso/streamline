@@ -4,8 +4,9 @@ import org.juxtapose.fxtradingsystem.FXDataConstants;
 
 public class PriceEngineDataConstants extends FXDataConstants
 {
-	public static final String STATE_TYPE_CCYMODEL = "CCY_MODEL";
-	public static final String STATE_TYPE_PRICE = "PRICE";
+	public static final String STATE_TYPE_CCYMODEL = "CMOD";
+	public static final String STATE_TYPE_PRICE = "P";
+	public static final String STATE_TYPE_LIQUIDITY = "L";
 	public static final String STATE_TYPE_CCY = "CCY";
 	
 	public static final String STATE_EUR = "EUR";

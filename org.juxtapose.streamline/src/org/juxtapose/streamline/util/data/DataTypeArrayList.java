@@ -7,9 +7,9 @@ import org.juxtapose.streamline.util.PersistentArrayList;
  * May 11, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class DataTypeArrayList extends DataType<PersistentArrayList<DataType<?>>> {
+public class DataTypeArrayList extends DataType<PersistentArrayList<? extends DataType<?>>> {
 
-	DataTypeArrayList(PersistentArrayList<DataType<?>> inValue) {
+	public DataTypeArrayList(PersistentArrayList<? extends DataType<?>> inValue) {
 		super(inValue);
 	}
 

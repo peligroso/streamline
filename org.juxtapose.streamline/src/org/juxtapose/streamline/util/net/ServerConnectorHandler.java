@@ -99,7 +99,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	}
 
 	@Override
-	public void deliverKey( ISTMEntryKey inDataKey, Long inTag ) 
+	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
 	{
 		Channel ch  = tagToChannel.get( inTag );
 		
@@ -110,13 +110,13 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		}
 		int ref = referenceIncrement.incrementAndGet();
 		referenceToKey.put( ref, inDataKey );
-		Message mess = PreMarshaller.createSubResponse( inTag, ref );
+//		Message mess = PreMarshaller.createSubResponse( inTag, ref );
 		
-		ch.write( mess );
+//		ch.write( mess );
 	}
 
 	@Override
-	public void queryNotAvailible( Long inTag ) {
+	public void queryNotAvailible( Object inTag ) {
 		// TODO Auto-generated method stub
 		
 	}

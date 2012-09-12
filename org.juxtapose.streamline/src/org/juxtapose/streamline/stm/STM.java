@@ -106,7 +106,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 * @see org.juxtapose.streamline.util.producer.IDataProducerService#getKey(java.util.HashMap)
 	 */
 	@Override
-	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery)
 	{
 		String val = inQuery.get( FIELD_QUERY_KEY );
 		
@@ -120,7 +120,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.exp.ISTM#getDataKey(java.lang.Integer, java.util.HashMap)
 	 */
-	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Long inTag, Map<String, String> inQuery)
+	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery)
 	{
 		ISTMEntryProducerService producerService = idToProducerService.get( inProducerService );
 		if( producerService == null )
