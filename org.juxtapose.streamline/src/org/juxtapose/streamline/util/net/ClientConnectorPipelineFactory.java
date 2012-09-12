@@ -9,9 +9,17 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol;
+import org.juxtapose.streamline.stm.ISTM;
 
 public class ClientConnectorPipelineFactory implements ChannelPipelineFactory
 {
+	private final ISTM stm;
+	
+	public ClientConnectorPipelineFactory( ISTM inSTM )
+	{
+		stm = inSTM;
+	}
+	
 	@Override
 	public ChannelPipeline getPipeline() throws Exception 
 	{
@@ -25,7 +33,7 @@ public class ClientConnectorPipelineFactory implements ChannelPipelineFactory
 		pipeline.addLast("protobufEncoder", new ProtobufEncoder());
 
 		// and then business logic.
-		pipeline.addLast("handler", new ClientConnectorHandler());
+		pipeline.addLast("handler", new ClientConnectorHandler( stm ));
 
 		return pipeline;
 	}

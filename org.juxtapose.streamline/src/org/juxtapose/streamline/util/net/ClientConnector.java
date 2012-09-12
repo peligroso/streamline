@@ -7,16 +7,19 @@ import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.juxtapose.streamline.stm.ISTM;
 
 public class ClientConnector {
 
 	private final String host;
 	private final int port;
-
-	public ClientConnector(String host, int port ) 
+	private final ISTM stm;
+	
+	public ClientConnector(String host, int port, ISTM inSTM ) 
 	{
 		this.host = host;
 		this.port = port;
+		stm = inSTM;
 	}
 	
 	public void run() {
@@ -24,7 +27,7 @@ public class ClientConnector {
 		ClientBootstrap bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory( Executors.newCachedThreadPool(),Executors.newCachedThreadPool()));
 
 		// Set up the event pipeline factory.
-		bootstrap.setPipelineFactory(new ClientConnectorPipelineFactory());
+		bootstrap.setPipelineFactory(new ClientConnectorPipelineFactory( stm ));
 
 		// Make a new connection.
 		ChannelFuture connectFuture = bootstrap.connect(new InetSocketAddress(host, port));
@@ -39,20 +42,4 @@ public class ClientConnector {
 //		bootstrap.releaseExternalResources();
 	}
 	
-
-	public static void main(String[] args) throws Exception {
-		// Print usage if no argument is specified.
-//		if (args.length != 3) {
-//			System.err.println(
-//					"Usage: " + FactorialClient.class.getSimpleName() +
-//			" <host> <port> <count>");
-//			return;
-//		}
-
-		// Parse options.
-		String host = "localhost";//args[0];
-		int port = 8085;//Integer.parseInt(args[1]);
-
-		new ClientConnector(host, port).run();
-	}
 }

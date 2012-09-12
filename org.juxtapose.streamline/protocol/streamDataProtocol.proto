@@ -45,6 +45,14 @@ message UpdateMessage
 	required DataMap data = 2;
 }
 
+message DataKey
+{
+	required string service = 1;
+	required string type = 2;
+	repeated StringEntry stringEntries = 3;
+}
+
+
 message BDecimal 
 {
   required int32 scale = 1;

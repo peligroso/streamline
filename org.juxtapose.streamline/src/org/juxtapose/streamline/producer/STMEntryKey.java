@@ -1,6 +1,7 @@
 package org.juxtapose.streamline.producer;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.juxtapose.streamline.util.DataConstants;
 
@@ -69,6 +70,10 @@ public class STMEntryKey implements ISTMEntryKey
 		return keyMap.get( inKey );
 	}
 	
+	public Set<String> getKeys()
+	{
+		return keyMap.keySet();
+	}
 	
 	/**
 	 * @param inKey

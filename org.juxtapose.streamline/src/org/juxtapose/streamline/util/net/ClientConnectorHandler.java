@@ -12,14 +12,16 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
+import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.Status;
 
 public class ClientConnectorHandler extends SimpleChannelUpstreamHandler 
 {
+	private final ISTM stm;
 	
-	public ClientConnectorHandler() 
+	public ClientConnectorHandler( ISTM inSTM ) 
 	{
-		
+		stm = inSTM;
 	}
 
 	@Override

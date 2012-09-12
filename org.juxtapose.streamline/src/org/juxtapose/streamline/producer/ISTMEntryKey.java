@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.producer;
 
+import java.util.Set;
+
 public interface ISTMEntryKey
 {
 	public String getKey( );
@@ -7,4 +9,5 @@ public interface ISTMEntryKey
 	public String getService();
 	public String getType( );
 	public String getSingleValue();
+	public Set<String> getKeys();
 }
