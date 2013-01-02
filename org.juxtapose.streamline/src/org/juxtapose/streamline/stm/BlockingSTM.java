@@ -354,6 +354,8 @@ public class BlockingSTM extends STM
 		
 		ISTMEntryProducer producer = null;
 		ISTMEntry newData = null;
+		int newPriority = -1;
+		HashSet<TemporaryController> dependencies = null;
 		
 		lock( inDataKey.getKey() );
 		
@@ -377,9 +379,13 @@ public class BlockingSTM extends STM
 			{
 				newData = existingData.addSubscriber( inSubscriber );
 				keyToData.put( inDataKey.getKey(), newData );
-
-				if( newData.getPriority() != existingData.getPriority() )
-					newData.getProducer().setPriority( newData.getPriority() );
+				
+				if( newData.getPriority() != existingData.getPriority() && existingData.getPriority() != IExecutor.HIGH )
+				{
+					newPriority = newData.getPriority();
+					newData.getProducer().setPriority( newPriority );
+					dependencies = newData.getProducer().getDependencyControllers();
+				}
 			}
 
 		}catch( Throwable t )
@@ -390,7 +396,15 @@ public class BlockingSTM extends STM
 		{
 			unlock( inDataKey.getKey() );
 		}
-
+		
+		if( dependencies != null )
+		{
+			for( TemporaryController tc : dependencies )
+			{
+				tc.setPriority( newPriority );
+			}
+		}
+		
 		if( newData != null )
 			inSubscriber.updateData( inDataKey, newData, true );
 

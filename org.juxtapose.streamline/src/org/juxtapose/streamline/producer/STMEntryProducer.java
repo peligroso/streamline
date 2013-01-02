@@ -218,14 +218,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	 */
 	public void priorityUpdated( int inPriority )
 	{
-		for( TemporaryController tc : dependencies.values() )
-		{
-			tc.setPriority( inPriority );
-		}
-		for( ReferenceLink rl : keyToReferensLinks.values() )
-		{
-			rl.setPriority( inPriority );
-		}
+		
 	}
 	
 	public HashSet<TemporaryController> getDependencyControllers()
