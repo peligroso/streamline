@@ -3,6 +3,7 @@ package org.juxtapose.streamline.stm;
 import static org.juxtapose.streamline.stm.STMUtil.PRODUCER_SERVICES;
 import static org.juxtapose.streamline.util.DataConstants.FIELD_QUERY_KEY;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -293,5 +294,17 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	public void setPriority( int inPriority )
 	{
 		
+	}
+	
+	@Override
+	public boolean isDisposed() 
+	{
+		return false;
+	}
+
+	@Override
+	public HashSet<TemporaryController> getDependencyControllers() 
+	{
+		return null;
 	}
 }

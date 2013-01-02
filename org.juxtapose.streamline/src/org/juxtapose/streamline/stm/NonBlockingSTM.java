@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.stm;
 
+import java.util.HashSet;
+
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
@@ -152,9 +154,8 @@ public class NonBlockingSTM extends STM
 	}
 
 	@Override
-	public void updateSubscriberPriority(ISTMEntryKey inDataKey,
-			ISTMEntrySubscriber inSubscriber) {
-		// TODO Auto-generated method stub
+	public void updateSubscriberPriority( ISTMEntryKey inDataKey,ISTMEntrySubscriber inSubscriber ) 
+	{
 		
 	}
 

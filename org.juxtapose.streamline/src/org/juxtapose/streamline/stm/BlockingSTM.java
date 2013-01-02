@@ -467,16 +467,4 @@ public class BlockingSTM extends STM
 			producer.dispose();
 		
 	}
-
-	@Override
-	public boolean isDisposed() 
-	{
-		return false;
-	}
-
-	@Override
-	public HashSet<TemporaryController> getDependencyControllers() 
-	{
-		return null;
-	}
 }

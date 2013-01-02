@@ -78,7 +78,7 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 				putValue( MarketDataConstants.FIELD_BID, new DataTypeBigDecimal( inQuote.bid ));
 				putValue( MarketDataConstants.FIELD_ASK, new DataTypeBigDecimal( inQuote.ask ));
 				
-				Long timeStamp = System.nanoTime();
+				Long timeStamp = inQuote.timestamp;
 				
 				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( timeStamp ));
 				
