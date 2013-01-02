@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.producer;
 
+import java.util.HashSet;
+
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.TemporaryController;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
@@ -16,6 +18,7 @@ public interface ISTMEntryProducer extends ISTMEntrySubscriber
 {
 	public void init();
 	public void dispose();
+	public boolean isDisposed();
 	
 	public void addDataReferences( String inFieldKey, ReferenceLink inLink );
 	public ReferenceLink removeReferenceLink( String inField );
@@ -26,4 +29,6 @@ public interface ISTMEntryProducer extends ISTMEntrySubscriber
 
 	public void setPriority( int inPriority );
 	public int getPriority( );
+	
+	public HashSet<TemporaryController> getDependencyControllers();
 }

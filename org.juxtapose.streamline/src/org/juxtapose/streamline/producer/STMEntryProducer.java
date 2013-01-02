@@ -1,6 +1,7 @@
 package org.juxtapose.streamline.producer;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.juxtapose.streamline.producer.executor.IExecutor;
@@ -225,6 +226,22 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 		{
 			rl.setPriority( inPriority );
 		}
+	}
+	
+	public HashSet<TemporaryController> getDependencyControllers()
+	{
+		HashSet<TemporaryController> hs = new HashSet<TemporaryController>();
+		
+		for( TemporaryController tc : dependencies.values() )
+		{
+			hs.add( tc );
+		}
+		for( ReferenceLink rl : keyToReferensLinks.values() )
+		{
+			hs.add( rl );
+		}
+		
+		return hs;
 	}
 	
 	

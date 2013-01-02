@@ -1,5 +1,6 @@
 package org.juxtapose.streamline.stm;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -283,6 +284,8 @@ public class BlockingSTM extends STM
 		ISTMEntryProducer producer = null;
 		int newPriority = 0;
 		
+		HashSet<TemporaryController> dependencies = null;
+		
 		try
 		{
 			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
@@ -310,17 +313,13 @@ public class BlockingSTM extends STM
 			newPriority = newEntry.getPriority();
 			producer = newEntry.getProducer();
 			
-			/**
-			 * Ok, normally we would just to state changing inside a transaction, 
-			 * but in this case we need to reach out into the producer and ongoing into its dependencies to update the priority.
-			 * Even though we are reaching far beyond our domain and possible across multiple locks in the STM it might be thought of as a long
-			 * run of state changes. setPriority should just switch a variable and cascade it no.
-			 * 
-			 * -On second though not so sure, this could cause deadlocks if other parts of the system uses nestled locking, like updates.
-			 * Isn't is better to just send an unsynchronized call to the producer and let him sync his own subscriber list?? 
-			 */
-			producer.setPriority( newPriority );
-
+			if( producer == null || producer.isDisposed() )
+			{
+				//producer is disposed
+				return;
+			}
+			
+			dependencies = producer.getDependencyControllers();
 		}
 		catch( Throwable t )
 		{
@@ -329,6 +328,14 @@ public class BlockingSTM extends STM
 		finally
 		{
 			unlock( inDataKey.getKey() );
+		}
+		
+		if( dependencies != null )
+		{
+			for( TemporaryController tc : dependencies )
+			{
+				tc.setPriority( newPriority );
+			}
 		}
 		
 	}
@@ -445,5 +452,17 @@ public class BlockingSTM extends STM
 		if( producer != null )
 			producer.dispose();
 		
+	}
+
+	@Override
+	public boolean isDisposed() 
+	{
+		return false;
+	}
+
+	@Override
+	public HashSet<TemporaryController> getDependencyControllers() 
+	{
+		return null;
 	}
 }
