@@ -89,6 +89,9 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	
 	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
 	{
+		if( inData.getStatus() == Status.ON_REQUEST )
+			return;
+		
 		stm.commit( new STMTransaction( dataKey, RFQLiquidityProducer.this )
 		{
 			@Override

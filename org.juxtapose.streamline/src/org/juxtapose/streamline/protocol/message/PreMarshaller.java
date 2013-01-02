@@ -3,7 +3,6 @@ package org.juxtapose.streamline.protocol.message;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.juxtapose.streamline.producer.IDataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;

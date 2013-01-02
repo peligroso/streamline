@@ -27,12 +27,12 @@ public class ClientConnector
 	
 	long lastRFQTime = 0;
 	
-	long maxTimeBetweenRFQ = 100l * 1000000l;
+	long maxTimeBetweenRFQ = 10l * 1000000l;
 	
 	int maxRFQs = 3500;
 	int warmup = 2000;
 	
-	int avgPriceUpdates = 10;
+	int avgPriceUpdates = 20;
 	
 //	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
 	

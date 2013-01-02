@@ -1,6 +1,9 @@
 package org.juxtapose.fxtradingsystem;
 
+import java.math.BigDecimal;
+
 import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 
 public class FXDataConstants extends DataConstants
 {
@@ -69,4 +72,24 @@ public class FXDataConstants extends DataConstants
 	public static final String STATE_SOURCE_UBS = "UBS";
 	public static final String STATE_SOURCE_GOLDMAN = "GOLDMAN";
 	public static final String STATE_SOURCE_WILDCARD = "*";
+	
+	public static final DataTypeBigDecimal CODE_REUTERS = new DataTypeBigDecimal( BigDecimal.ONE );
+	public static final DataTypeBigDecimal CODE_BLOOMBERG = new DataTypeBigDecimal( new BigDecimal(2) );
+	public static final DataTypeBigDecimal CODE_UBS = new DataTypeBigDecimal( new BigDecimal(3) );
+	public static final DataTypeBigDecimal CODE_GOLDMAN = new DataTypeBigDecimal( new BigDecimal(4) );
+	
+	public static DataTypeBigDecimal getSourceCode( String inSourceName )
+	{
+		if( STATE_SOURCE_REUTERS.equals( inSourceName ) )
+			return CODE_REUTERS;
+		if( STATE_SOURCE_BLOOMBERG.equals( inSourceName ) )
+			return CODE_BLOOMBERG;
+		if( STATE_SOURCE_UBS.equals( inSourceName ) )
+			return CODE_UBS;
+		if( STATE_SOURCE_GOLDMAN.equals( inSourceName ) )
+			return CODE_GOLDMAN;
+		
+		return null;
+		
+	}
 }

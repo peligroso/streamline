@@ -1,6 +1,6 @@
 package org.juxtapose.streamline.util;
 
-import static org.juxtapose.streamline.util.producerservices.ProducerServiceConstants.STM_SERVICE_KEY;
+import static org.juxtapose.streamline.util.producerservices.ProducerServiceConstants.*;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ProducerUtil;

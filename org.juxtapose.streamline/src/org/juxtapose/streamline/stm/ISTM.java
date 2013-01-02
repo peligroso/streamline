@@ -14,6 +14,7 @@ import org.juxtapose.streamline.util.Status;
 public interface ISTM extends IExecutor
 {
 	public void registerProducer( final ISTMEntryProducerService inProducerService, final Status initState );
+	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status newStatus );
 	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void unsubscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void commit( STMTransaction inTransaction );

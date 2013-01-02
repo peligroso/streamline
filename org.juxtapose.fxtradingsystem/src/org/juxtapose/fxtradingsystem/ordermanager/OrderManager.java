@@ -24,6 +24,7 @@ import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeString;
+import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 import org.juxtapose.streamline.util.subscriber.DataSequencer;
 import org.juxtapose.streamline.util.subscriber.ISequencedDataSubscriber;
 

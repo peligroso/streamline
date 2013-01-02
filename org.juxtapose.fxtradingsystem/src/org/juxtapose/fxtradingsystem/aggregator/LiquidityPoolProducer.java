@@ -3,12 +3,11 @@ package org.juxtapose.fxtradingsystem.aggregator;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.juxtapose.fxtradingsystem.BigDecimals;
 import org.juxtapose.fxtradingsystem.FXDataConstants;
 import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.IMarketDataSubscriber;
@@ -16,7 +15,6 @@ import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataSource;
 import org.juxtapose.fxtradingsystem.marketdata.QPMessage;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants;
-import org.juxtapose.fxtradingsystem.priceengine.SpotPriceProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.executor.Executable;
@@ -28,7 +26,6 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeLong;
@@ -141,7 +138,7 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	private final void createMessageFromQuote( final QPMessage inMessage, DataTransaction inTransaction )
 	{
 		PersistentArrayList<DataTypeArrayList> bidSide = createSide( inMessage.bid, true );	
-		PersistentArrayList<DataTypeArrayList> askSide = createSide( inMessage.ask, true );
+		PersistentArrayList<DataTypeArrayList> askSide = createSide( inMessage.ask, false );
 		
 		inTransaction.putValue( MarketDataConstants.FIELD_BID, new DataTypeArrayList(bidSide) );
 		inTransaction.putValue( MarketDataConstants.FIELD_ASK, new DataTypeArrayList(askSide) );
@@ -152,18 +149,18 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	{
 		PersistentArrayList<DataTypeArrayList> side = new PersistentArrayList<DataTypeArrayList>(); 
 		
+		BigDecimal pips = BigDecimals.getInt( 10000 ).get();
+		
 		for( int i = 1; i < 5; i++ )
 		{
 			PersistentArrayList<DataTypeBigDecimal> entry = new PersistentArrayList<DataTypeBigDecimal>();
 			
 			BigDecimal bid = new BigDecimal( inQuote ).setScale( 4, RoundingMode.HALF_UP );
 			
-			BigDecimal adjust = (new BigDecimal(0.0001));
+			BigDecimal adjust = BigDecimals.getInt( i ).get().divide( pips );
 			
-			if( inBid )
-				adjust = adjust.divide(BigDecimal.valueOf(i));
-			else
-				adjust = adjust.multiply(BigDecimal.valueOf(i));
+			if( !inBid )
+				adjust = adjust.multiply(BigDecimals.MINUS_ONE.get());
 			
 			adjust = adjust.setScale( 4, RoundingMode.HALF_UP );
 			bid = bid.add( adjust );
@@ -173,7 +170,7 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 			
 			entry = entry.add( new DataTypeBigDecimal( bid ) );
 			entry = entry.add( new DataTypeBigDecimal( amt ) );
-			entry = entry.add( new DataTypeBigDecimal( BigDecimal.ONE ) );
+			entry = entry.add( FXDataConstants.getSourceCode( source ) );
 			
 			DataTypeArrayList sideData = new DataTypeArrayList(entry);
 			
@@ -199,6 +196,9 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	
 	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
 	{
+		if( inData.getStatus() == Status.ON_REQUEST )
+			return;
+		
 		stm.commit( new STMTransaction( dataKey, LiquidityPoolProducer.this )
 		{
 			@Override
@@ -215,6 +215,8 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 				}
 				putValue( FXDataConstants.FIELD_BID, new DataTypeArrayList( bidSide ) );
 				putValue( FXDataConstants.FIELD_ASK, new DataTypeArrayList( askSide ) );
+				
+				setStatus( Status.OK );
 			}
 		} );
 		

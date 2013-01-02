@@ -68,7 +68,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 	
 	public void dataInitialized()
 	{
-		stm.registerProducer( this, Status.OK );
+		stm.updateProducerStatus( this, Status.OK );
 		stm.subscribeToData( KeyConstants.PRODUCER_SERVICE_KEY, this);
 	}
 

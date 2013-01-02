@@ -14,6 +14,7 @@ import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.stm.de.DeclarativeEntriesService;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
@@ -43,6 +44,8 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	
 	private ServerConnector connector;
 	
+	private DeclarativeEntriesService m_deService;
+	
 	/**
 	 * @param inExecutor
 	 */
@@ -52,6 +55,13 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		keyToData.put( KeyConstants.PRODUCER_SERVICE_KEY.getKey(), createEmptyData(Status.OK, this, this));
 		registerProducer( this, Status.OK );
 		
+		m_deService = new DeclarativeEntriesService();
+		registerProducer( m_deService, Status.INITIALIZING );
+		
+		m_deService.init( this );
+		
+		//TICKET
+		//Connector should be removed and replaced with some config
 		connector = new ServerConnector( this, 8085 );
 		connector.run();
 	}
@@ -63,8 +73,11 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	public void registerProducer( final ISTMEntryProducerService inProducerService, final Status initState )
 	{
 		String id = inProducerService.getServiceId();
-		idToProducerService.put( id, inProducerService );
-		
+		if( idToProducerService.putIfAbsent( id, inProducerService ) != null )
+		{
+			logError( "Producer "+inProducerService.getServiceId()+" already exists" );
+			return;
+		}
 		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
 		{
 			@Override
@@ -79,14 +92,14 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 * @param inProducerService
 	 * @param initState
 	 */
-	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status initState )
+	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status newStatus )
 	{
 		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
 		{
 			@Override
 			public void execute()
 			{
-				putValue( inProducerService.getServiceId(), new DataTypeString( initState.toString() ) );
+				putValue( inProducerService.getServiceId(), new DataTypeString( newStatus.toString() ) );
 			}
 		});
 	}
