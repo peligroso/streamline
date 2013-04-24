@@ -22,6 +22,7 @@ import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeString;
+import org.juxtapose.streamline.util.net.ClientConnector;
 import org.juxtapose.streamline.util.net.ServerConnector;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
@@ -43,14 +44,17 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	
 	private IPublishedDataFactory dataFactory;
 	
-	private ServerConnector connector;
+	private ServerConnector serverConnector;
+	private ClientConnector clientConnector;
 	
 	private DeclarativeEntriesService m_deService;
+	
+	private boolean master;
 	
 	/**
 	 * @param inExecutor
 	 */
-	public void init( IExecutor inExecutor )
+	public void init( IExecutor inExecutor, boolean inMaster )
 	{
 		executor = inExecutor;
 		keyToData.put( KeyConstants.PRODUCER_SERVICE_KEY.getKey(), createEmptyData(Status.OK, this, this));
@@ -63,8 +67,18 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		
 		//TICKET
 		//Connector should be removed and replaced with some config
-		connector = new ServerConnector( this, 8085 );
-		connector.run();
+		master = inMaster;
+		
+		if( inMaster )
+		{
+			serverConnector = new ServerConnector( this, 8085 );
+			serverConnector.run();
+		}
+		else
+		{
+			clientConnector = new ClientConnector( "127.0.0.1", 8085, this );
+			clientConnector.run();
+		}
 	}
 	
 	/**
@@ -124,7 +138,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	{
 		String val = inQuery.get( FIELD_QUERY_KEY );
 		
-		if( val != null && val == PRODUCER_SERVICES )
+		if( val != null && PRODUCER_SERVICES.equals( val ) )
 		{
 			inSubscriber.deliverKey( KeyConstants.PRODUCER_SERVICE_KEY, inTag );
 		}

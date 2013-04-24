@@ -8,4 +8,5 @@ public class FXProducerServiceConstants extends ProducerServiceConstants
 	public static String ORDER_MANAGER = "OM";
 	public static String AGGREGATOR = "AG";
 	public static String MARKET_DATA = "MD";
+	public static String CONFIG = "C";
 }

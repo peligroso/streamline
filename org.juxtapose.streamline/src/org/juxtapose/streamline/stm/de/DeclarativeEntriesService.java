@@ -29,7 +29,7 @@ public class DeclarativeEntriesService implements ISTMEntryProducerService
 		String dir = "D:\\peligroso\\ccy.csv";
 		try
 		{
-			DeclarativeEntriesProtocol.parseFile( dir );
+//			DeclarativeEntriesProtocol.parseFile( dir );
 		}
 		catch( Exception e )
 		{

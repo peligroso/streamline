@@ -13,7 +13,10 @@ import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.stm.STMUtil;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 public class ClientConnectorHandler extends SimpleChannelUpstreamHandler 
 {
@@ -35,13 +38,16 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	}
 
 	@Override
-	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) {
-		sendMessage(e);
+	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) 
+	{
+		stm.logInfo("Connection recieved..");
+		sendStatusMessage(e);
 	}
 
 	@Override
-	public void channelInterestChanged(ChannelHandlerContext ctx, ChannelStateEvent e) {
-		sendMessage(e);
+	public void channelInterestChanged(ChannelHandlerContext ctx, ChannelStateEvent e) 
+	{
+		
 	}
 
 	@Override
@@ -58,17 +64,14 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	}
 
 
-	private void sendMessage(ChannelStateEvent e) 
+	private void sendStatusMessage(ChannelStateEvent e) 
 	{
 		Channel channel = e.getChannel();
 		
 		Map<String, String> query = new HashMap<String, String>();
-		query.put("CCY1", "EUR");
-		query.put("CCY2", "SEK");
-		query.put("INST", "SP");
-		query.put("T", "PRICE");
+		query.put(DataConstants.FIELD_QUERY_KEY, STMUtil.PRODUCER_SERVICES );
 		
-		Message mess = PreMarshaller.createSubQuery( "PE", 1, query );
+		Message mess = PreMarshaller.createSubQuery( ProducerServiceConstants.STM_SERVICE_KEY, 1, query );
 		
 		channel.write(mess);
 	}

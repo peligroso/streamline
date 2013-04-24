@@ -15,12 +15,11 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
-import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 
 /**
  * @author Pontus Jörgne
@@ -79,11 +78,16 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		}, IExecutor.LOW );
     }
    
+    @Override
+    public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
+    {
+        stm.logInfo( "Client connected.." );
+    }
 
     @Override
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
     {
-        //TODO
+    	stm.logInfo( "Client disconnected.." );
     }
 
     @Override
@@ -117,7 +121,6 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 
 	@Override
 	public void queryNotAvailible( Object inTag ) {
-		// TODO Auto-generated method stub
 		
 	}
 

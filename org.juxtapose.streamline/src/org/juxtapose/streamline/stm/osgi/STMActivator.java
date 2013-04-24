@@ -47,6 +47,6 @@ public class STMActivator extends NonBlockingSTM
 		}
 		
 //		init( new StickyHashDisruptorExecutor( 5, 2, 2, 2, true ));
-		init( new BlockingQueueExecutor( 5, 3, 2, 2 ));
+		init( new BlockingQueueExecutor( 5, 3, 2, 2 ), true);
 	}
 }

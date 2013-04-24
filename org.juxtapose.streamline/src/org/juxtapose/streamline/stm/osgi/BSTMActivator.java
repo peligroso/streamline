@@ -37,7 +37,7 @@ public class BSTMActivator extends BlockingSTM
 				logError( e.getMessage() );
 			}
 		}
-		init( new BlockingQueueExecutor( 3, 3, 2, 2 ));
+		init( new BlockingQueueExecutor( 3, 3, 2, 2 ), true);
 //		init( new StickyHashDisruptorExecutor( 3, 3, 2, 2, true ));
 	}
 

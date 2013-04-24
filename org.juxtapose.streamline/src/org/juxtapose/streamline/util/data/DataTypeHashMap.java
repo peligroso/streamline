@@ -1,10 +1,10 @@
 package org.juxtapose.streamline.util.data;
 
-import com.trifork.clj_ds.PersistentHashMap;
+import com.trifork.clj_ds.IPersistentMap;
 
-public class DataTypeHashMap extends DataType<PersistentHashMap<String, DataType<?>>> {
+public class DataTypeHashMap extends DataType<IPersistentMap<String, DataType<?>>> {
 
-	DataTypeHashMap(PersistentHashMap<String, DataType<?>> inValue) {
+	public DataTypeHashMap(IPersistentMap<String, DataType<?>> inValue) {
 		super(inValue);
 	}
 
