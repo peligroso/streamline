@@ -9,18 +9,26 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.juxtapose.streamline.protocol.message.PostMarshaller;
 import org.juxtapose.streamline.protocol.message.PreMarshaller;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMUtil;
 import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
+
+import com.trifork.clj_ds.IPersistentMap;
+import com.trifork.clj_ds.PersistentHashMap;
 
 public class ClientConnectorHandler extends SimpleChannelUpstreamHandler 
 {
 	private final ISTM stm;
+	
+	final static Long SERVICE_TAG = new Long( 0 ); 
 	
 	public ClientConnectorHandler( ISTM inSTM ) 
 	{
@@ -64,11 +72,21 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     			return;
     		
     		int ref = subMess.getReference();
-    		
-    		
     				
     		int tag = subMess.getTag();
     		
+    		DataMap data = subMess.getData();
+    		
+    		if( data != null )
+    		{
+    			IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
+    			map = PostMarshaller.parseDataMap( data, map );
+    			
+    			if( SERVICE_TAG.equals( tag ) )
+        		{
+//        			stm.registerProducer( inProducerService, initState )
+        		}
+    		}
     	}
 	}
 

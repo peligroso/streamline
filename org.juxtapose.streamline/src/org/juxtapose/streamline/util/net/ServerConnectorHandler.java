@@ -34,8 +34,6 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 {	
 	final ISTM stm;
 	
-	final static Long tag = new Long( 0 ); 
-	
 	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
 	
 	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
