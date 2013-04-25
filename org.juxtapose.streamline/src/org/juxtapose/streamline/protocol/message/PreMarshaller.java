@@ -15,6 +15,8 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
+import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
@@ -84,16 +86,44 @@ public class PreMarshaller
 		
 	}
 	
+
 	/**
 	 * @param inTag
 	 * @param inRef
 	 * @return
 	 */
-	public static Message createSubResponse( Long inTag, int inRef )
+	public static Message createSubResponse( Long inTag, int inRef, Status inStatus )
 	{
 		SubQueryResponseMessage.Builder builder = SubQueryResponseMessage.newBuilder();
 		builder.setReference( inRef );
 		builder.setTag( inTag.intValue() );
+		builder.setStatus( inStatus.ordinal() );
+		
+		Message.Builder messBuilder = Message.newBuilder();
+		messBuilder.setSubQueryResponseMessage( builder.build() );
+		messBuilder.setType( Message.Type.SubQueryResponseMessage );
+		
+		
+		return messBuilder.build();
+	}
+	
+	/**
+	 * @param inTag
+	 * @param inRef
+	 * @param inStatus
+	 * @param inEntry
+	 * @return
+	 */
+	public static Message createSubResponse( Long inTag, int inRef, Status inStatus, ISTMEntry inEntry )
+	{
+		DataMap.Builder dataBuilder = DataMap.newBuilder();
+		parseMapValues( inEntry.getDataMap(), dataBuilder );
+		
+		SubQueryResponseMessage.Builder builder = SubQueryResponseMessage.newBuilder();
+		builder.setReference( inRef );
+		builder.setTag( inTag.intValue() );
+		builder.setStatus( inStatus.ordinal() );
+		builder.setData( dataBuilder.build() );
 		
 		Message.Builder messBuilder = Message.newBuilder();
 		messBuilder.setSubQueryResponseMessage( builder.build() );
@@ -102,6 +132,10 @@ public class PreMarshaller
 		return messBuilder.build();
 	}
 	
+	/**
+	 * @param inDataMap
+	 * @param inBuilder
+	 */
 	public static void parseMapValues( IPersistentMap<String, DataType<?>> inDataMap, DataMap.Builder inBuilder )
 	{
 		Iterator<Map.Entry<String, DataType<?>>> iterator = inDataMap.iterator();

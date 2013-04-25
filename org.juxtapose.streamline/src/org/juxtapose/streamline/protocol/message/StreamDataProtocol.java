@@ -1668,24 +1668,20 @@ public final class StreamDataProtocol {
   public interface SubQueryResponseMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required string service = 1;
-    boolean hasService();
-    String getService();
-    
-    // required int32 status = 2;
+    // required int32 status = 1;
     boolean hasStatus();
     int getStatus();
     
-    // required int32 tag = 3;
+    // required int32 tag = 2;
     boolean hasTag();
     int getTag();
     
-    // optional .StringMap queryMap = 4;
-    boolean hasQueryMap();
-    StreamDataProtocol.StringMap getQueryMap();
-    StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder();
+    // required .DataMap data = 3;
+    boolean hasData();
+    StreamDataProtocol.DataMap getData();
+    StreamDataProtocol.DataMapOrBuilder getDataOrBuilder();
     
-    // optional int32 reference = 5;
+    // optional int32 reference = 4;
     boolean hasReference();
     int getReference();
   }
@@ -1718,86 +1714,53 @@ public final class StreamDataProtocol {
     }
     
     private int bitField0_;
-    // required string service = 1;
-    public static final int SERVICE_FIELD_NUMBER = 1;
-    private java.lang.Object service_;
-    public boolean hasService() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    public String getService() {
-      java.lang.Object ref = service_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          service_ = s;
-        }
-        return s;
-      }
-    }
-    private com.google.protobuf.ByteString getServiceBytes() {
-      java.lang.Object ref = service_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        service_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    
-    // required int32 status = 2;
-    public static final int STATUS_FIELD_NUMBER = 2;
+    // required int32 status = 1;
+    public static final int STATUS_FIELD_NUMBER = 1;
     private int status_;
     public boolean hasStatus() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+      return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     public int getStatus() {
       return status_;
     }
     
-    // required int32 tag = 3;
-    public static final int TAG_FIELD_NUMBER = 3;
+    // required int32 tag = 2;
+    public static final int TAG_FIELD_NUMBER = 2;
     private int tag_;
     public boolean hasTag() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
+      return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     public int getTag() {
       return tag_;
     }
     
-    // optional .StringMap queryMap = 4;
-    public static final int QUERYMAP_FIELD_NUMBER = 4;
-    private StreamDataProtocol.StringMap queryMap_;
-    public boolean hasQueryMap() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    // required .DataMap data = 3;
+    public static final int DATA_FIELD_NUMBER = 3;
+    private StreamDataProtocol.DataMap data_;
+    public boolean hasData() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
-    public StreamDataProtocol.StringMap getQueryMap() {
-      return queryMap_;
+    public StreamDataProtocol.DataMap getData() {
+      return data_;
     }
-    public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
-      return queryMap_;
+    public StreamDataProtocol.DataMapOrBuilder getDataOrBuilder() {
+      return data_;
     }
     
-    // optional int32 reference = 5;
-    public static final int REFERENCE_FIELD_NUMBER = 5;
+    // optional int32 reference = 4;
+    public static final int REFERENCE_FIELD_NUMBER = 4;
     private int reference_;
     public boolean hasReference() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     public int getReference() {
       return reference_;
     }
     
     private void initFields() {
-      service_ = "";
       status_ = 0;
       tag_ = 0;
-      queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      data_ = StreamDataProtocol.DataMap.getDefaultInstance();
       reference_ = 0;
     }
     private byte memoizedIsInitialized = -1;
@@ -1805,10 +1768,6 @@ public final class StreamDataProtocol {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      if (!hasService()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       if (!hasStatus()) {
         memoizedIsInitialized = 0;
         return false;
@@ -1817,11 +1776,13 @@ public final class StreamDataProtocol {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (hasQueryMap()) {
-        if (!getQueryMap().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
+      if (!hasData()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getData().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
       }
       memoizedIsInitialized = 1;
       return true;
@@ -1831,19 +1792,16 @@ public final class StreamDataProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getServiceBytes());
+        output.writeInt32(1, status_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt32(2, status_);
+        output.writeInt32(2, tag_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt32(3, tag_);
+        output.writeMessage(3, data_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(4, queryMap_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeInt32(5, reference_);
+        output.writeInt32(4, reference_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1856,23 +1814,19 @@ public final class StreamDataProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getServiceBytes());
+          .computeInt32Size(1, status_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, status_);
+          .computeInt32Size(2, tag_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, tag_);
+          .computeMessageSize(3, data_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, queryMap_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, reference_);
+          .computeInt32Size(4, reference_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1990,7 +1944,7 @@ public final class StreamDataProtocol {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getQueryMapFieldBuilder();
+          getDataFieldBuilder();
         }
       }
       private static Builder create() {
@@ -1999,20 +1953,18 @@ public final class StreamDataProtocol {
       
       public Builder clear() {
         super.clear();
-        service_ = "";
-        bitField0_ = (bitField0_ & ~0x00000001);
         status_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         tag_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        if (queryMapBuilder_ == null) {
-          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        if (dataBuilder_ == null) {
+          data_ = StreamDataProtocol.DataMap.getDefaultInstance();
         } else {
-          queryMapBuilder_.clear();
+          dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000004);
         reference_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       
@@ -2054,25 +2006,21 @@ public final class StreamDataProtocol {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.service_ = service_;
+        result.status_ = status_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
         }
-        result.status_ = status_;
+        result.tag_ = tag_;
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.tag_ = tag_;
+        if (dataBuilder_ == null) {
+          result.data_ = data_;
+        } else {
+          result.data_ = dataBuilder_.build();
+        }
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
-        }
-        if (queryMapBuilder_ == null) {
-          result.queryMap_ = queryMap_;
-        } else {
-          result.queryMap_ = queryMapBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-          to_bitField0_ |= 0x00000010;
         }
         result.reference_ = reference_;
         result.bitField0_ = to_bitField0_;
@@ -2091,17 +2039,14 @@ public final class StreamDataProtocol {
       
       public Builder mergeFrom(StreamDataProtocol.SubQueryResponseMessage other) {
         if (other == StreamDataProtocol.SubQueryResponseMessage.getDefaultInstance()) return this;
-        if (other.hasService()) {
-          setService(other.getService());
-        }
         if (other.hasStatus()) {
           setStatus(other.getStatus());
         }
         if (other.hasTag()) {
           setTag(other.getTag());
         }
-        if (other.hasQueryMap()) {
-          mergeQueryMap(other.getQueryMap());
+        if (other.hasData()) {
+          mergeData(other.getData());
         }
         if (other.hasReference()) {
           setReference(other.getReference());
@@ -2111,10 +2056,6 @@ public final class StreamDataProtocol {
       }
       
       public final boolean isInitialized() {
-        if (!hasService()) {
-          
-          return false;
-        }
         if (!hasStatus()) {
           
           return false;
@@ -2123,11 +2064,13 @@ public final class StreamDataProtocol {
           
           return false;
         }
-        if (hasQueryMap()) {
-          if (!getQueryMap().isInitialized()) {
-            
-            return false;
-          }
+        if (!hasData()) {
+          
+          return false;
+        }
+        if (!getData().isInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -2155,32 +2098,27 @@ public final class StreamDataProtocol {
               }
               break;
             }
-            case 10: {
+            case 8: {
               bitField0_ |= 0x00000001;
-              service_ = input.readBytes();
+              status_ = input.readInt32();
               break;
             }
             case 16: {
               bitField0_ |= 0x00000002;
-              status_ = input.readInt32();
-              break;
-            }
-            case 24: {
-              bitField0_ |= 0x00000004;
               tag_ = input.readInt32();
               break;
             }
-            case 34: {
-              StreamDataProtocol.StringMap.Builder subBuilder = StreamDataProtocol.StringMap.newBuilder();
-              if (hasQueryMap()) {
-                subBuilder.mergeFrom(getQueryMap());
+            case 26: {
+              StreamDataProtocol.DataMap.Builder subBuilder = StreamDataProtocol.DataMap.newBuilder();
+              if (hasData()) {
+                subBuilder.mergeFrom(getData());
               }
               input.readMessage(subBuilder, extensionRegistry);
-              setQueryMap(subBuilder.buildPartial());
+              setData(subBuilder.buildPartial());
               break;
             }
-            case 40: {
-              bitField0_ |= 0x00000010;
+            case 32: {
+              bitField0_ |= 0x00000008;
               reference_ = input.readInt32();
               break;
             }
@@ -2190,190 +2128,154 @@ public final class StreamDataProtocol {
       
       private int bitField0_;
       
-      // required string service = 1;
-      private java.lang.Object service_ = "";
-      public boolean hasService() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      public String getService() {
-        java.lang.Object ref = service_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-          service_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
-      }
-      public Builder setService(String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        service_ = value;
-        onChanged();
-        return this;
-      }
-      public Builder clearService() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        service_ = getDefaultInstance().getService();
-        onChanged();
-        return this;
-      }
-      void setService(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000001;
-        service_ = value;
-        onChanged();
-      }
-      
-      // required int32 status = 2;
+      // required int32 status = 1;
       private int status_ ;
       public boolean hasStatus() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
+        return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       public int getStatus() {
         return status_;
       }
       public Builder setStatus(int value) {
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
         status_ = value;
         onChanged();
         return this;
       }
       public Builder clearStatus() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         status_ = 0;
         onChanged();
         return this;
       }
       
-      // required int32 tag = 3;
+      // required int32 tag = 2;
       private int tag_ ;
       public boolean hasTag() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       public int getTag() {
         return tag_;
       }
       public Builder setTag(int value) {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000002;
         tag_ = value;
         onChanged();
         return this;
       }
       public Builder clearTag() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         tag_ = 0;
         onChanged();
         return this;
       }
       
-      // optional .StringMap queryMap = 4;
-      private StreamDataProtocol.StringMap queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      // required .DataMap data = 3;
+      private StreamDataProtocol.DataMap data_ = StreamDataProtocol.DataMap.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> queryMapBuilder_;
-      public boolean hasQueryMap() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
+          StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> dataBuilder_;
+      public boolean hasData() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
       }
-      public StreamDataProtocol.StringMap getQueryMap() {
-        if (queryMapBuilder_ == null) {
-          return queryMap_;
+      public StreamDataProtocol.DataMap getData() {
+        if (dataBuilder_ == null) {
+          return data_;
         } else {
-          return queryMapBuilder_.getMessage();
+          return dataBuilder_.getMessage();
         }
       }
-      public Builder setQueryMap(StreamDataProtocol.StringMap value) {
-        if (queryMapBuilder_ == null) {
+      public Builder setData(StreamDataProtocol.DataMap value) {
+        if (dataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          queryMap_ = value;
+          data_ = value;
           onChanged();
         } else {
-          queryMapBuilder_.setMessage(value);
+          dataBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         return this;
       }
-      public Builder setQueryMap(
-          StreamDataProtocol.StringMap.Builder builderForValue) {
-        if (queryMapBuilder_ == null) {
-          queryMap_ = builderForValue.build();
+      public Builder setData(
+          StreamDataProtocol.DataMap.Builder builderForValue) {
+        if (dataBuilder_ == null) {
+          data_ = builderForValue.build();
           onChanged();
         } else {
-          queryMapBuilder_.setMessage(builderForValue.build());
+          dataBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         return this;
       }
-      public Builder mergeQueryMap(StreamDataProtocol.StringMap value) {
-        if (queryMapBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008) &&
-              queryMap_ != StreamDataProtocol.StringMap.getDefaultInstance()) {
-            queryMap_ =
-              StreamDataProtocol.StringMap.newBuilder(queryMap_).mergeFrom(value).buildPartial();
+      public Builder mergeData(StreamDataProtocol.DataMap value) {
+        if (dataBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              data_ != StreamDataProtocol.DataMap.getDefaultInstance()) {
+            data_ =
+              StreamDataProtocol.DataMap.newBuilder(data_).mergeFrom(value).buildPartial();
           } else {
-            queryMap_ = value;
+            data_ = value;
           }
           onChanged();
         } else {
-          queryMapBuilder_.mergeFrom(value);
+          dataBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         return this;
       }
-      public Builder clearQueryMap() {
-        if (queryMapBuilder_ == null) {
-          queryMap_ = StreamDataProtocol.StringMap.getDefaultInstance();
+      public Builder clearData() {
+        if (dataBuilder_ == null) {
+          data_ = StreamDataProtocol.DataMap.getDefaultInstance();
           onChanged();
         } else {
-          queryMapBuilder_.clear();
+          dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
-      public StreamDataProtocol.StringMap.Builder getQueryMapBuilder() {
-        bitField0_ |= 0x00000008;
+      public StreamDataProtocol.DataMap.Builder getDataBuilder() {
+        bitField0_ |= 0x00000004;
         onChanged();
-        return getQueryMapFieldBuilder().getBuilder();
+        return getDataFieldBuilder().getBuilder();
       }
-      public StreamDataProtocol.StringMapOrBuilder getQueryMapOrBuilder() {
-        if (queryMapBuilder_ != null) {
-          return queryMapBuilder_.getMessageOrBuilder();
+      public StreamDataProtocol.DataMapOrBuilder getDataOrBuilder() {
+        if (dataBuilder_ != null) {
+          return dataBuilder_.getMessageOrBuilder();
         } else {
-          return queryMap_;
+          return data_;
         }
       }
       private com.google.protobuf.SingleFieldBuilder<
-          StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder> 
-          getQueryMapFieldBuilder() {
-        if (queryMapBuilder_ == null) {
-          queryMapBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              StreamDataProtocol.StringMap, StreamDataProtocol.StringMap.Builder, StreamDataProtocol.StringMapOrBuilder>(
-                  queryMap_,
+          StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> 
+          getDataFieldBuilder() {
+        if (dataBuilder_ == null) {
+          dataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder>(
+                  data_,
                   getParentForChildren(),
                   isClean());
-          queryMap_ = null;
+          data_ = null;
         }
-        return queryMapBuilder_;
+        return dataBuilder_;
       }
       
-      // optional int32 reference = 5;
+      // optional int32 reference = 4;
       private int reference_ ;
       public boolean hasReference() {
-        return ((bitField0_ & 0x00000010) == 0x00000010);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       public int getReference() {
         return reference_;
       }
       public Builder setReference(int value) {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000008;
         reference_ = value;
         onChanged();
         return this;
       }
       public Builder clearReference() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000008);
         reference_ = 0;
         onChanged();
         return this;
@@ -2739,11 +2641,15 @@ public final class StreamDataProtocol {
   public interface UpdateMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required int32 type = 1;
+    // required int32 reference = 1;
+    boolean hasReference();
+    int getReference();
+    
+    // required int32 type = 2;
     boolean hasType();
     int getType();
     
-    // required .DataMap data = 2;
+    // required .DataMap data = 3;
     boolean hasData();
     StreamDataProtocol.DataMap getData();
     StreamDataProtocol.DataMapOrBuilder getDataOrBuilder();
@@ -2777,21 +2683,31 @@ public final class StreamDataProtocol {
     }
     
     private int bitField0_;
-    // required int32 type = 1;
-    public static final int TYPE_FIELD_NUMBER = 1;
+    // required int32 reference = 1;
+    public static final int REFERENCE_FIELD_NUMBER = 1;
+    private int reference_;
+    public boolean hasReference() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public int getReference() {
+      return reference_;
+    }
+    
+    // required int32 type = 2;
+    public static final int TYPE_FIELD_NUMBER = 2;
     private int type_;
     public boolean hasType() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
+      return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     public int getType() {
       return type_;
     }
     
-    // required .DataMap data = 2;
-    public static final int DATA_FIELD_NUMBER = 2;
+    // required .DataMap data = 3;
+    public static final int DATA_FIELD_NUMBER = 3;
     private StreamDataProtocol.DataMap data_;
     public boolean hasData() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     public StreamDataProtocol.DataMap getData() {
       return data_;
@@ -2801,6 +2717,7 @@ public final class StreamDataProtocol {
     }
     
     private void initFields() {
+      reference_ = 0;
       type_ = 0;
       data_ = StreamDataProtocol.DataMap.getDefaultInstance();
     }
@@ -2809,6 +2726,10 @@ public final class StreamDataProtocol {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
+      if (!hasReference()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!hasType()) {
         memoizedIsInitialized = 0;
         return false;
@@ -2829,10 +2750,13 @@ public final class StreamDataProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, type_);
+        output.writeInt32(1, reference_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeMessage(2, data_);
+        output.writeInt32(2, type_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, data_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2845,11 +2769,15 @@ public final class StreamDataProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, type_);
+          .computeInt32Size(1, reference_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, data_);
+          .computeInt32Size(2, type_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, data_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2976,14 +2904,16 @@ public final class StreamDataProtocol {
       
       public Builder clear() {
         super.clear();
-        type_ = 0;
+        reference_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
+        type_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
         if (dataBuilder_ == null) {
           data_ = StreamDataProtocol.DataMap.getDefaultInstance();
         } else {
           dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
       
@@ -3025,9 +2955,13 @@ public final class StreamDataProtocol {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.type_ = type_;
+        result.reference_ = reference_;
         if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
           to_bitField0_ |= 0x00000002;
+        }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
         }
         if (dataBuilder_ == null) {
           result.data_ = data_;
@@ -3050,6 +2984,9 @@ public final class StreamDataProtocol {
       
       public Builder mergeFrom(StreamDataProtocol.UpdateMessage other) {
         if (other == StreamDataProtocol.UpdateMessage.getDefaultInstance()) return this;
+        if (other.hasReference()) {
+          setReference(other.getReference());
+        }
         if (other.hasType()) {
           setType(other.getType());
         }
@@ -3061,6 +2998,10 @@ public final class StreamDataProtocol {
       }
       
       public final boolean isInitialized() {
+        if (!hasReference()) {
+          
+          return false;
+        }
         if (!hasType()) {
           
           return false;
@@ -3101,10 +3042,15 @@ public final class StreamDataProtocol {
             }
             case 8: {
               bitField0_ |= 0x00000001;
+              reference_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
               type_ = input.readInt32();
               break;
             }
-            case 18: {
+            case 26: {
               StreamDataProtocol.DataMap.Builder subBuilder = StreamDataProtocol.DataMap.newBuilder();
               if (hasData()) {
                 subBuilder.mergeFrom(getData());
@@ -3119,33 +3065,54 @@ public final class StreamDataProtocol {
       
       private int bitField0_;
       
-      // required int32 type = 1;
+      // required int32 reference = 1;
+      private int reference_ ;
+      public boolean hasReference() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      public int getReference() {
+        return reference_;
+      }
+      public Builder setReference(int value) {
+        bitField0_ |= 0x00000001;
+        reference_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearReference() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        reference_ = 0;
+        onChanged();
+        return this;
+      }
+      
+      // required int32 type = 2;
       private int type_ ;
       public boolean hasType() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
+        return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       public int getType() {
         return type_;
       }
       public Builder setType(int value) {
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000002;
         type_ = value;
         onChanged();
         return this;
       }
       public Builder clearType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000002);
         type_ = 0;
         onChanged();
         return this;
       }
       
-      // required .DataMap data = 2;
+      // required .DataMap data = 3;
       private StreamDataProtocol.DataMap data_ = StreamDataProtocol.DataMap.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           StreamDataProtocol.DataMap, StreamDataProtocol.DataMap.Builder, StreamDataProtocol.DataMapOrBuilder> dataBuilder_;
       public boolean hasData() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
+        return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       public StreamDataProtocol.DataMap getData() {
         if (dataBuilder_ == null) {
@@ -3164,7 +3131,7 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         return this;
       }
       public Builder setData(
@@ -3175,12 +3142,12 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         return this;
       }
       public Builder mergeData(StreamDataProtocol.DataMap value) {
         if (dataBuilder_ == null) {
-          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
               data_ != StreamDataProtocol.DataMap.getDefaultInstance()) {
             data_ =
               StreamDataProtocol.DataMap.newBuilder(data_).mergeFrom(value).buildPartial();
@@ -3191,7 +3158,7 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         return this;
       }
       public Builder clearData() {
@@ -3201,11 +3168,11 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
       public StreamDataProtocol.DataMap.Builder getDataBuilder() {
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         onChanged();
         return getDataFieldBuilder().getBuilder();
       }
@@ -10246,31 +10213,30 @@ public final class StreamDataProtocol {
       "sage\020\001\022\033\n\027SubQueryResponseMessage\020\002\022\026\n\022U" +
       "nSubscribeMessage\020\003\022\021\n\rUpdateMessage\020\004\"M" +
       "\n\017SubQueryMessage\022\017\n\007service\030\001 \002(\t\022\034\n\010qu",
-      "eryMap\030\002 \002(\0132\n.StringMap\022\013\n\003tag\030\003 \002(\005\"x\n" +
-      "\027SubQueryResponseMessage\022\017\n\007service\030\001 \002(" +
-      "\t\022\016\n\006status\030\002 \002(\005\022\013\n\003tag\030\003 \002(\005\022\034\n\010queryM" +
-      "ap\030\004 \001(\0132\n.StringMap\022\021\n\treference\030\005 \001(\005\"" +
-      "\'\n\022UnsubscribeMessage\022\021\n\treference\030\001 \002(\005" +
-      "\"5\n\rUpdateMessage\022\014\n\004type\030\001 \002(\005\022\026\n\004data\030" +
-      "\002 \002(\0132\010.DataMap\"M\n\007DataKey\022\017\n\007service\030\001 " +
-      "\002(\t\022\014\n\004type\030\002 \002(\t\022#\n\rstringEntries\030\003 \003(\013" +
-      "2\014.StringEntry\"+\n\010BDecimal\022\r\n\005scale\030\001 \002(" +
-      "\005\022\020\n\010intBytes\030\002 \002(\014\"\031\n\010BInteger\022\r\n\005value",
-      "\030\001 \002(\014\"*\n\013StringEntry\022\r\n\005field\030\001 \002(\t\022\014\n\004" +
-      "data\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n\005field\030\001 \002(" +
-      "\t\022\014\n\004data\030\002 \002(\010\"(\n\tLongEntry\022\r\n\005field\030\001 " +
-      "\002(\t\022\014\n\004data\030\002 \002(\004\"A\n\017BigDecimalEntry\022\r\n\005" +
-      "field\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n\010intBytes\030\003" +
-      " \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 \002(\t\"5\n\014Hash" +
-      "MapEntry\022\r\n\005field\030\001 \002(\t\022\026\n\004data\030\002 \002(\0132\010." +
-      "DataMap\"\340\001\n\007DataMap\022#\n\rstringEntries\030\002 \003" +
-      "(\0132\014.StringEntry\022\037\n\013longEntries\030\003 \003(\0132\n." +
-      "LongEntry\022#\n\tbDEntries\030\004 \003(\0132\020.BigDecima",
-      "lEntry\022\"\n\013boolEntries\030\005 \003(\0132\r.BooleanEnt" +
-      "ry\022\037\n\013nullEntries\030\006 \003(\0132\n.NullEntry\022%\n\016h" +
-      "ashMapEntries\030\007 \003(\0132\r.HashMapEntry\"0\n\tSt" +
-      "ringMap\022#\n\rstringEntries\030\001 \003(\0132\014.StringE" +
-      "ntry"
+      "eryMap\030\002 \002(\0132\n.StringMap\022\013\n\003tag\030\003 \002(\005\"a\n" +
+      "\027SubQueryResponseMessage\022\016\n\006status\030\001 \002(\005" +
+      "\022\013\n\003tag\030\002 \002(\005\022\026\n\004data\030\003 \002(\0132\010.DataMap\022\021\n" +
+      "\treference\030\004 \001(\005\"\'\n\022UnsubscribeMessage\022\021" +
+      "\n\treference\030\001 \002(\005\"H\n\rUpdateMessage\022\021\n\tre" +
+      "ference\030\001 \002(\005\022\014\n\004type\030\002 \002(\005\022\026\n\004data\030\003 \002(" +
+      "\0132\010.DataMap\"M\n\007DataKey\022\017\n\007service\030\001 \002(\t\022" +
+      "\014\n\004type\030\002 \002(\t\022#\n\rstringEntries\030\003 \003(\0132\014.S" +
+      "tringEntry\"+\n\010BDecimal\022\r\n\005scale\030\001 \002(\005\022\020\n" +
+      "\010intBytes\030\002 \002(\014\"\031\n\010BInteger\022\r\n\005value\030\001 \002",
+      "(\014\"*\n\013StringEntry\022\r\n\005field\030\001 \002(\t\022\014\n\004data" +
+      "\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n\005field\030\001 \002(\t\022\014\n" +
+      "\004data\030\002 \002(\010\"(\n\tLongEntry\022\r\n\005field\030\001 \002(\t\022" +
+      "\014\n\004data\030\002 \002(\004\"A\n\017BigDecimalEntry\022\r\n\005fiel" +
+      "d\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n\010intBytes\030\003 \002(\014" +
+      "\"\032\n\tNullEntry\022\r\n\005field\030\001 \002(\t\"5\n\014HashMapE" +
+      "ntry\022\r\n\005field\030\001 \002(\t\022\026\n\004data\030\002 \002(\0132\010.Data" +
+      "Map\"\340\001\n\007DataMap\022#\n\rstringEntries\030\002 \003(\0132\014" +
+      ".StringEntry\022\037\n\013longEntries\030\003 \003(\0132\n.Long" +
+      "Entry\022#\n\tbDEntries\030\004 \003(\0132\020.BigDecimalEnt",
+      "ry\022\"\n\013boolEntries\030\005 \003(\0132\r.BooleanEntry\022\037" +
+      "\n\013nullEntries\030\006 \003(\0132\n.NullEntry\022%\n\016hashM" +
+      "apEntries\030\007 \003(\0132\r.HashMapEntry\"0\n\tString" +
+      "Map\022#\n\rstringEntries\030\001 \003(\0132\014.StringEntry"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -10298,7 +10264,7 @@ public final class StreamDataProtocol {
           internal_static_SubQueryResponseMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_SubQueryResponseMessage_descriptor,
-              new java.lang.String[] { "Service", "Status", "Tag", "QueryMap", "Reference", },
+              new java.lang.String[] { "Status", "Tag", "Data", "Reference", },
               StreamDataProtocol.SubQueryResponseMessage.class,
               StreamDataProtocol.SubQueryResponseMessage.Builder.class);
           internal_static_UnsubscribeMessage_descriptor =
@@ -10314,7 +10280,7 @@ public final class StreamDataProtocol {
           internal_static_UpdateMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_UpdateMessage_descriptor,
-              new java.lang.String[] { "Type", "Data", },
+              new java.lang.String[] { "Reference", "Type", "Data", },
               StreamDataProtocol.UpdateMessage.class,
               StreamDataProtocol.UpdateMessage.Builder.class);
           internal_static_DataKey_descriptor =

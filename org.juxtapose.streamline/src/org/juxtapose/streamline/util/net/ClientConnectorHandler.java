@@ -59,7 +59,16 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		SubQueryResponseMessage subMess = message.getSubQueryResponseMessage();
     		int statusInt = subMess.getStatus();
     		Status status = Status.values()[statusInt];
+    		
+    		if( status != Status.OK )
+    			return;
+    		
+    		int ref = subMess.getReference();
+    		
+    		
+    				
     		int tag = subMess.getTag();
+    		
     	}
 	}
 

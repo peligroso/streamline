@@ -323,7 +323,7 @@ public class BlockingSTM extends STM
 		}
 		catch( Throwable t )
 		{
-			logError( t.getStackTrace().toString() );
+			logError( t.getMessage(), t );
 		}
 		finally
 		{
@@ -390,7 +390,7 @@ public class BlockingSTM extends STM
 
 		}catch( Throwable t )
 		{
-			logError( t.getStackTrace().toString() );
+			logError( t.getMessage(), t );
 		}
 		finally
 		{
@@ -456,7 +456,7 @@ public class BlockingSTM extends STM
 
 		}catch( Throwable t )
 		{
-			logError( t.getStackTrace().toString() );
+			logError( t.getMessage(), t );
 		}
 		finally
 		{

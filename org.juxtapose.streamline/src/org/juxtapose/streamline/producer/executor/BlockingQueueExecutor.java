@@ -57,11 +57,15 @@ public class BlockingQueueExecutor extends Executor implements IExecutor
 			@Override
 			public void run()
 			{
-				inSequenceLock.lock();
+				try
 				{
+					inSequenceLock.lock();
+					
 					inExecutable.run();
 				}
-				inSequenceLock.unlock();
+				finally{
+					inSequenceLock.unlock();
+				}
 			}
 		});
 	}

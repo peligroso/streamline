@@ -25,9 +25,21 @@ public abstract class DataType<T> {
 		return get().toString();
 	}
 	
-	public boolean equals( DataType<?> inObject )
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals( Object inObject )
 	{
-		return get().equals( inObject.get() );
+		if( inObject instanceof DataType<?> )
+		{
+			return get().equals( ((DataType<?>)inObject).get() );
+		}
+		return false;
+	}
+	
+	public int hashCode()
+	{
+		return get().hashCode();
 	}
 	
 	public byte[] serialize( byte[] inField )

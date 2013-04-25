@@ -26,13 +26,13 @@ message SubQueryMessage
 
 message SubQueryResponseMessage
 {
-	required string service = 1;
-	required int32 status = 2;
-	required int32 tag = 3;	
+	required int32 status = 1;
+	required int32 tag = 2;	
 	
-	optional StringMap queryMap = 4;
-	optional int32 reference = 5;
+	required DataMap data = 3;
+	optional int32 reference = 4;
 }
+
 
 message UnsubscribeMessage
 {
@@ -41,8 +41,9 @@ message UnsubscribeMessage
 
 message UpdateMessage
 {
-	required int32 type = 1;
-	required DataMap data = 2;
+	required int32 reference = 1;
+	required int32 type = 2;
+	required DataMap data = 3;
 }
 
 message DataKey
