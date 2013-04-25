@@ -99,6 +99,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			public void execute()
 			{
 				putValue( inProducerService.getServiceId(), new DataTypeString( initState.toString() ) );
+				logInfo( "Producer "+inProducerService.getServiceId()+" registered" );
 			}
 		});
 	}
@@ -142,7 +143,10 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		{
 			inSubscriber.deliverKey( KeyConstants.PRODUCER_SERVICE_KEY, inTag );
 		}
-		inSubscriber.queryNotAvailible( inTag );
+		else
+		{
+			inSubscriber.queryNotAvailible( inTag );
+		}
 	}
 	
 	/* (non-Javadoc)

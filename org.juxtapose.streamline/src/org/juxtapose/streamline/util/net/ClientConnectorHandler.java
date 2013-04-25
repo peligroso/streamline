@@ -1,7 +1,9 @@
 package org.juxtapose.streamline.util.net;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -28,11 +30,14 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 {
 	private final ISTM stm;
 	
-	final static Long SERVICE_TAG = new Long( 0 ); 
+	final static int SERVICE_TAG =  0;
+	
+	RemoteServiceTracker serviceTracker;
 	
 	public ClientConnectorHandler( ISTM inSTM ) 
 	{
 		stm = inSTM;
+		serviceTracker = new RemoteServiceTracker( stm );
 	}
 
 	@Override
@@ -82,9 +87,18 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     			IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
     			map = PostMarshaller.parseDataMap( data, map );
     			
-    			if( SERVICE_TAG.equals( tag ) )
+    			if( SERVICE_TAG == tag )
         		{
-//        			stm.registerProducer( inProducerService, initState )
+    				Iterator<Entry<String, DataType<?>>> iterator = map.iterator();
+    				
+    				while( iterator.hasNext() )
+    				{
+    					Entry<String, DataType<?>> entry = iterator.next();
+    					
+    					String strStatus = (String)entry.getValue().get();
+    					Status serviceStatus = Status.valueOf( strStatus );
+    					serviceTracker.statusUpdated( entry.getKey(), serviceStatus );
+    				}        			
         		}
     		}
     	}
@@ -98,7 +112,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		Map<String, String> query = new HashMap<String, String>();
 		query.put(DataConstants.FIELD_QUERY_KEY, STMUtil.PRODUCER_SERVICES );
 		
-		Message mess = PreMarshaller.createSubQuery( ProducerServiceConstants.STM_SERVICE_KEY, 1, query );
+		Message mess = PreMarshaller.createSubQuery( ProducerServiceConstants.STM_SERVICE_KEY, SERVICE_TAG, query );
 		
 		channel.write(mess);
 	}

@@ -29,7 +29,7 @@ message SubQueryResponseMessage
 	required int32 status = 1;
 	required int32 tag = 2;	
 	
-	required DataMap data = 3;
+	optional DataMap data = 3;
 	optional int32 reference = 4;
 }
 
