@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -20,8 +21,11 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.stm.STMEntryFactory;
 import org.juxtapose.streamline.stm.STMUtil;
+import org.juxtapose.streamline.util.BucketMap;
 import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
@@ -31,6 +35,11 @@ import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
 
+/**
+ * 
+ * @author Pontus
+ *NOTE TO SELF.. HANDLERS ARE NOT!! THREADSAFE
+ */
 public class ClientConnectorHandler extends SimpleChannelUpstreamHandler 
 {
 	private final ISTM stm;
@@ -40,9 +49,11 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
 	HashMap< ISTMEntryKey, Integer> keyToReference = new HashMap<ISTMEntryKey, Integer>();
 	
-	HashMap<Integer, ISTMEntryRequestSubscriber> tagToSubscriber = new HashMap<Integer, ISTMEntryRequestSubscriber>(); 
+	HashMap<Integer, RemoteServiceProxy> tagToService = new HashMap<Integer, RemoteServiceProxy>(); 
 	
 	Channel channel;
+	
+	HashMap<ISTMEntryKey, RemoteProxyEntryProducer> keyTosubscribers = new HashMap<ISTMEntryKey, RemoteProxyEntryProducer>();
 	
 	public ClientConnectorHandler( ISTM inSTM ) 
 	{
@@ -106,17 +117,6 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		}
     		
     		queryResponse( status, key, ref, tag, pData );
-    		
-//    		keyToReference.put( key,  ref );
-//    		referenceToKey.put( ref, key );
-//    		
-//    		if( tag == SERVICE_TAG )
-//    		{
-//    			serviceKey = key;
-//    		}
-//    		
-//    		Message subMessage = PreMarshaller.createSubscriptionMessage( ref );
-//    		channel.write( subMessage );
     	}
     	else if( message.getType() == Message.Type.UpdateMessage )
     	{
@@ -133,31 +133,35 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		
     		DataMap data = update.getData();
     		
-    		if( data != null )
-    		{
-    			IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
-    			map = PostMarshaller.parseDataMap( data, map );
-    			
-    			if( serviceKey.equals( key ) )
-        		{
-    				Iterator<Entry<String, DataType<?>>> iterator = map.iterator();
-    				
-    				while( iterator.hasNext() )
-    				{
-    					Entry<String, DataType<?>> entry = iterator.next();
-    					
-    					String strStatus = (String)entry.getValue().get();
-    					Status serviceStatus = Status.valueOf( strStatus );
-    					
-    					if( !ProducerServiceConstants.STM_SERVICE_KEY.equals( entry.getKey() ) && !ProducerServiceConstants.DE_SERVICE_KEY.equals( entry.getKey() ) )
-    						serviceTracker.statusUpdated( entry.getKey(), serviceStatus );
-    				}        			
-        		}
-    		}
+//    		IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
+//    		map = PostMarshaller.parseDataMap( data, map );
+//    		
+//    		STMEntryFactory.
+//    			
+//    			if( serviceKey.equals( key ) )
+//        		{
+//    				Iterator<Entry<String, DataType<?>>> iterator = map.iterator();
+//    				
+//    				while( iterator.hasNext() )
+//    				{
+//    					Entry<String, DataType<?>> entry = iterator.next();
+//    					
+//    					String strStatus = (String)entry.getValue().get();
+//    					Status serviceStatus = Status.valueOf( strStatus );
+//    					
+//    					if( !ProducerServiceConstants.STM_SERVICE_KEY.equals( entry.getKey() ) && !ProducerServiceConstants.DE_SERVICE_KEY.equals( entry.getKey() ) )
+//    						serviceTracker.statusUpdated( entry.getKey(), serviceStatus );
+//    				}        			
+//        		}
+//    		}
     	}
 	}
 
 
+	/**
+	 * @param e
+	 * @param inSubscriber
+	 */
 	private void sendRemoteServiceRequest( ChannelStateEvent e, ISTMEntryRequestSubscriber inSubscriber ) 
 	{
 		Channel channel = e.getChannel();
@@ -178,31 +182,43 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	 * @param inQuery
 	 * @param inTag
 	 */
-	public void requestKey( ISTMEntryRequestSubscriber inSubscriber, String inService, Map<String, String> inQuery, Integer inTag)
+	public void requestKey( RemoteServiceProxy inProxy, String inService, Map<String, String> inQuery, Integer inTag)
 	{
-		tagToSubscriber.put( inTag, inSubscriber );
+		tagToService.put( inTag, inProxy );
 		
 		Message mess = PreMarshaller.createSubQuery( inService, inTag, inQuery );
 		
 		channel.write(mess);
 	}
 	
+	/**
+	 * @param inStatus
+	 * @param inKey
+	 * @param inRef
+	 * @param inTag
+	 * @param inData
+	 */
 	public void queryResponse( Status inStatus, ISTMEntryKey inKey, Integer inRef, Integer inTag, IPersistentMap<String, DataType<?>> inData  )
 	{
-		ISTMEntryRequestSubscriber subscriber = tagToSubscriber.remove( inTag );
+		RemoteServiceProxy service = tagToService.remove( inTag );
 		
-		if( subscriber == null )
+		if( service == null )
 		{
-			stm.logError( "subscriber to tag "+inTag+" has been removed");
+			stm.logError( "Service to handle request to tag "+inTag+" has been removed");
 			return;
 		}
 		
 		keyToReference.put( inKey,  inRef );
 		referenceToKey.put( inRef, inKey );
 		
-		subscriber.deliverKey( inKey, inTag );
+		service.remoteKeyDelivered( inKey, inTag );
+		
 	}
 	
+	/**
+	 * @param inSubscriber
+	 * @param inKey
+	 */
 	public void subscribe( ISTMEntrySubscriber inSubscriber, ISTMEntryKey inKey )
 	{
 		Integer ref = keyToReference.get( inKey );
@@ -215,5 +231,18 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		
 		Message subMessage = PreMarshaller.createSubscriptionMessage( ref );
 		channel.write( subMessage );
+	}
+	
+	public void dataUpdated( ISTMEntryKey inKey, ISTMEntry inData )
+	{
+		Set<ISTMEntrySubscriber> subscribers = keyTosubscribers.get( inKey );
+		
+		if( subscribers != null )
+		{
+			for( ISTMEntrySubscriber subscriber : subscribers )
+			{
+				subscriber.updateData( inKey, inData, true );
+			}
+		}
 	}
 }
