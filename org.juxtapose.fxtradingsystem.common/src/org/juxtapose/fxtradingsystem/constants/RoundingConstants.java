@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingsystem;
+package org.juxtapose.fxtradingsystem.constants;
 
 import java.math.MathContext;
 import java.math.RoundingMode;

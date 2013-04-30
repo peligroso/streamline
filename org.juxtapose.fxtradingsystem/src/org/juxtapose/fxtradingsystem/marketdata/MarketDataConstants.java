@@ -1,6 +1,6 @@
 package org.juxtapose.fxtradingsystem.marketdata;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 
 public class MarketDataConstants extends FXDataConstants
 {

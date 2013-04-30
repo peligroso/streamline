@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Common
+Bundle-SymbolicName: org.juxtapose.fxtradingsystem.common
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.juxtapose.streamline.util.producerservices
+Export-Package: org.juxtapose.fxtradingsystem.constants
+Require-Bundle: org.juxtapose.streamline;bundle-version="1.0.0"

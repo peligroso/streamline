@@ -1,6 +1,6 @@
 package org.juxtapose.fxtradingsystem.priceengine;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 
 public class PriceEngineDataConstants extends FXDataConstants
 {

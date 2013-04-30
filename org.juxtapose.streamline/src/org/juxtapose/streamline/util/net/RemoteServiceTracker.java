@@ -1,8 +1,14 @@
 package org.juxtapose.streamline.util.net;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.stm.STMUtil;
+import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
 
 /**
@@ -10,15 +16,25 @@ import org.juxtapose.streamline.util.Status;
  * 25 apr 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class RemoteServiceTracker
+public class RemoteServiceTracker implements ISTMEntryRequestSubscriber
 {
 	HashMap<String, RemoteServiceProxy> serviceProxies = new HashMap<String, RemoteServiceProxy>();
 
 	ISTM stm;
+	ClientConnectorHandler clientConnector;
 	
-	public RemoteServiceTracker( ISTM inSTM )
+	final static int SERVICE_TAG =  0;
+	private ISTMEntryKey serviceKey;
+	
+	public RemoteServiceTracker( ISTM inSTM, ClientConnectorHandler inClientConnector )
 	{
 		stm = inSTM;
+		clientConnector = inClientConnector;
+		
+		Map<String, String> query = new HashMap<String, String>();
+		query.put(DataConstants.FIELD_QUERY_KEY, STMUtil.PRODUCER_SERVICES );
+		
+		clientConnector.requestKey( this, STMUtil.PRODUCER_SERVICES, query, SERVICE_TAG);
 	}
 	
 	/**
@@ -33,6 +49,31 @@ public class RemoteServiceTracker
 		{
 			serviceProxy = new RemoteServiceProxy( inService, stm, inStatus );
 		}
+		
+	}
+
+	@Override
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getPriority() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
+	{
+		clientConnector.subscribe( this, inDataKey );
+	}
+
+	@Override
+	public void queryNotAvailible( Object inTag ) 
+	{
 		
 	}
 	

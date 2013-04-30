@@ -22,6 +22,11 @@ public class MetaDataProducer extends STMEntryProducer
 	{
 		super( inKey, inSTM );
 	}
+	
+	public ISTMEntryKey getKey()
+	{
+		return dataKey;
+	}
 
 	@Override
 	protected void start()

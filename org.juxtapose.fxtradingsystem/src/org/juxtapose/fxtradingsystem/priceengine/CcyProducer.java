@@ -3,7 +3,7 @@ package org.juxtapose.fxtradingsystem.priceengine;
 import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants.STATE_EUR;
 import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants.STATE_USD;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.IExecutor;

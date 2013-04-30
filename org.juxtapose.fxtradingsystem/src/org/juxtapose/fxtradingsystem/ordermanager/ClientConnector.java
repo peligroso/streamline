@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.MultiThreadedClaimStrategy;

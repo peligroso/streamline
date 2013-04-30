@@ -6,13 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
@@ -47,6 +51,29 @@ public class PostMarshaller
 		}
 		
 		return queryMap;
+	}
+	
+	public static final ISTMEntryKey parseKey( DataKey inKey )
+	{
+		String keys[] = new String[ inKey.getStringEntriesCount() ];
+		String vals[] = new String[ inKey.getStringEntriesCount() ];
+		
+		for( int i = 0; i < inKey.getStringEntriesCount(); i++ )
+		{
+			StringEntry entry = inKey.getStringEntries( i );
+			keys[i] = entry.getField();
+			vals[i] = entry.getData();
+		}
+		
+		if( keys.length == 1 && DataConstants.FIELD_SINGLE_VALUE_DATA_KEY.equals( keys[0] ))
+		{
+			return ProducerUtil.createDataKey( inKey.getService(), inKey.getType(), vals[0] );
+		}
+		else
+		{
+			return ProducerUtil.createDataKey( inKey.getService(), inKey.getType(), keys, vals );
+		}
+		
 	}
 	
 	/**

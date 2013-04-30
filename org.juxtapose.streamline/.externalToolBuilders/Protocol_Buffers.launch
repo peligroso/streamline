@@ -4,6 +4,6 @@
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#13;&#10;&lt;resources&gt;&#13;&#10;&lt;item path=&quot;/org.juxtapose.streamline/protocol/streamDataProtocol.proto&quot; type=&quot;1&quot;/&gt;&#13;&#10;&lt;/resources&gt;}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/org.juxtapose.protobuf/app/protoc.exe}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="full,incremental,auto,"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-I=${project_loc}/protocol --java_out=${project_loc}\src\org\juxtapose\streamline\protocol\message ${project_loc}/protocol/streamDataProtocol.proto"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-I=${project_loc}/protocol --java_out=${project_loc}\src ${project_loc}/protocol/streamDataProtocol.proto"/>
 <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 </launchConfiguration>

@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;

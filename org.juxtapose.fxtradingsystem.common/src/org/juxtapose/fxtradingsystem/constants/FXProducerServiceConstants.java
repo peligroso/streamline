@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingsystem;
+package org.juxtapose.fxtradingsystem.constants;
 
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 

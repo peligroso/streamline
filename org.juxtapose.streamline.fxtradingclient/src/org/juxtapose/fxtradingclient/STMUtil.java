@@ -16,6 +16,8 @@ public class STMUtil
 		STMEntryFactory entryFactory = new STMEntryFactory();
 		bstm.setDataFactory( entryFactory );
 		bstm.init( new BlockingQueueExecutor( 1, 1, 1, 1 ), false );
+		
+		stm = bstm;
 	}
 	
 	public static synchronized ISTM getSTM()

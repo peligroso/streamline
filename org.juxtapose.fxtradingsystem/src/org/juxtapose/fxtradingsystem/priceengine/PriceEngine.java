@@ -2,8 +2,8 @@ package org.juxtapose.fxtradingsystem.priceengine;
 
 import java.util.Map;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ProducerUtil;

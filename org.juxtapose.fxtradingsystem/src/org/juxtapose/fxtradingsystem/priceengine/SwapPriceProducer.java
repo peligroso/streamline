@@ -8,8 +8,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;

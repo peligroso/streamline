@@ -20,6 +20,7 @@ import org.juxtapose.streamline.protocol.message.PostMarshaller;
 import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
@@ -35,10 +36,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	final ISTM stm;
 	
 	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
+	HashMap< ISTMEntryKey, Integer> keyToReference = new HashMap<ISTMEntryKey, Integer>();
 	
 	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
-	
-	HashMap< ISTMEntryKey, Long > keyPendingReply = new HashMap< ISTMEntryKey, Long >();
 	
 	Channel clientChannel;
 	
@@ -53,6 +53,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
         super.handleUpstream(ctx, e);
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#messageReceived(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.MessageEvent)
+     */
     @Override
     public final void messageReceived(ChannelHandlerContext ctx, MessageEvent e) 
     {
@@ -64,9 +67,20 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		Map<String, String> queryMap = PostMarshaller.parseQueryMap( subMess );
     		int tag = subMess.getTag();
     		
-    		Channel ch = ctx.getChannel();
-    		
     		postSubQuery( service, (long)tag, queryMap );
+    	}
+    	else if( message.getType() == Message.Type.SubscribeMessage )
+    	{
+    		SubscribeMessage subMess = message.getSubscribeMessage();
+    		ISTMEntryKey key = referenceToKey.get( subMess.getReference() );
+    		
+    		if( key == null )
+    		{
+    			stm.logError( "Key for reference : "+subMess.getReference()+" not found" );
+    			return;
+    		}
+    		
+    		stm.subscribeToData( key, this );
     	}
     	else
     	{
@@ -108,24 +122,29 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
 	{
-		Long tag = keyPendingReply.remove( inKey );
+		Integer ref = keyToReference.get( inKey );
 		
-		if( tag != null )
+		if( ref == null )
 		{
-			int ref = referenceIncrement.incrementAndGet();
-			referenceToKey.put( ref, inKey );
-			Message mess = PreMarshaller.createSubResponse( tag, ref, inData.getStatus(), inData );
-			
-			clientChannel.write( mess );
+			stm.logError( "Reference for key : "+inKey+" not found" );
+			return;
 		}
+		
+		Message mess = PreMarshaller.createUpdateMessage( ref, inData.getDataMap() );
+			
+		clientChannel.write( mess );
 	}
 
 	@Override
 	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
 	{	
-		keyPendingReply.put( inDataKey, (Long)inTag );
+		int ref = referenceIncrement.incrementAndGet();
 		
-		stm.subscribeToData( inDataKey, this );
+		keyToReference.put( inDataKey, ref );
+		referenceToKey.put(  ref,  inDataKey );
+		
+		Message mess = PreMarshaller.createSubResponse( (Long)inTag, ref,Status.OK, inDataKey, null );
+		clientChannel.write( mess );
 	}
 
 	@Override

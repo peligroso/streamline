@@ -1,19 +1,23 @@
+option java_package = "org.juxtapose.streamline.protocol.message";
+
 message Message
 {
 	enum Type 
 	{ 
 		SubQueryMessage = 1; 
 		SubQueryResponseMessage = 2; 
-		UnSubscribeMessage = 3; 
-		UpdateMessage = 4; 
+		SubscribeMessage = 3;
+		UnSubscribeMessage = 4; 
+		UpdateMessage = 5; 
 	}
 	
 	required Type type = 1;
 	
 	optional SubQueryMessage subQueryMessage = 2;
 	optional SubQueryResponseMessage subQueryResponseMessage = 3;
-	optional UnsubscribeMessage unsubscribeMessage = 4;
-	optional UpdateMessage updateMessage = 5;
+	optional SubscribeMessage subscribeMessage = 4;
+	optional UnsubscribeMessage unsubscribeMessage = 5;
+	optional UpdateMessage updateMessage = 6;
 
 }
 
@@ -29,10 +33,16 @@ message SubQueryResponseMessage
 	required int32 status = 1;
 	required int32 tag = 2;	
 	
-	optional DataMap data = 3;
+	optional DataKey key = 3;
+	
 	optional int32 reference = 4;
+	optional DataMap data = 5;
 }
 
+message SubscribeMessage
+{
+	required int32 reference = 1;
+}
 
 message UnsubscribeMessage
 {
@@ -42,7 +52,6 @@ message UnsubscribeMessage
 message UpdateMessage
 {
 	required int32 reference = 1;
-	required int32 type = 2;
 	required DataMap data = 3;
 }
 

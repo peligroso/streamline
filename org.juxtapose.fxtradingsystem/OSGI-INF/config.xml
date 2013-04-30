@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="true" name="Config">
+   <implementation class="org.juxtapose.fxtradingsystem.config.ConfigService"/>
+   <property name="ID" type="String" value="C"/>
+   <service>
+      <provide interface="org.juxtapose.fxtradingsystem.config.IConfigService"/>
+   </service>
+   <reference bind="bindSTM" cardinality="1..1" interface="org.juxtapose.streamline.stm.ISTM" name="ISTM" policy="static"/>
+</scr:component>

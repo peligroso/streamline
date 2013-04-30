@@ -11,10 +11,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.net.ClientConnector;
+import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.KeyConstants;
+import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 
-public class View extends ViewPart {
+public class View extends ViewPart implements ISTMEntrySubscriber{
 	public static final String ID = "org.juxtapose.fxtradingclient.view";
 
 	private TableViewer viewer;
@@ -73,6 +79,8 @@ public class View extends ViewPart {
 		viewer.setInput(new String[] {"One", "Two", "Three"});
 		
 		stm = STMUtil.getSTM();
+		
+		stm.subscribeToData( KeyConstants.PRODUCER_SERVICE_KEY, this);
 	}
 
 	/**
@@ -80,5 +88,28 @@ public class View extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+
+	@Override
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
+	{
+		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
+		{
+			DataType<?> dataValue = inData.getValue( FXProducerServiceConstants.CONFIG );
+			if( dataValue != null )
+			{
+				if( dataValue.get() == Status.OK.toString() )
+				{
+					stm.logInfo( "Subscribe to config metadata" );
+//					stm.subscribeToData( FXKeyConstants., inSubscriber )
+				}
+			}
+		}
+	}
+
+	@Override
+	public int getPriority() 
+	{
+		return 0;
 	}
 }

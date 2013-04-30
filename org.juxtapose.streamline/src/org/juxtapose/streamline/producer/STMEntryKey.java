@@ -75,9 +75,9 @@ public class STMEntryKey implements ISTMEntryKey
 		return keyMap.keySet();
 	}
 	
-	/**
-	 * @param inKey
-	 * @return
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals( Object inKey )
 	{

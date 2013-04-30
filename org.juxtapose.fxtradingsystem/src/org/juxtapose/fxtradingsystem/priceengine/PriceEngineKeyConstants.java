@@ -1,7 +1,7 @@
 package org.juxtapose.fxtradingsystem.priceengine;
 
-import org.juxtapose.fxtradingsystem.FXKeyConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXKeyConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ProducerUtil;
 

@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.juxtapose.fxtradingsystem.BigDecimals;
-import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.IMarketDataSubscriber;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataSource;

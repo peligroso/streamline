@@ -5,7 +5,7 @@ import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants
 
 import java.util.HashMap;
 
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;

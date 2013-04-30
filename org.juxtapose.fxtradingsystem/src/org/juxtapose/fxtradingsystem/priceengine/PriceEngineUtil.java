@@ -3,7 +3,7 @@ package org.juxtapose.fxtradingsystem.priceengine;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLong;

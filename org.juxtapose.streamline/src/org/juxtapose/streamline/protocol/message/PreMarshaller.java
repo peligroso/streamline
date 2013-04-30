@@ -3,8 +3,10 @@ package org.juxtapose.streamline.protocol.message;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
@@ -14,6 +16,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
@@ -63,6 +66,22 @@ public class PreMarshaller
 	}
 	
 	/**
+	 * @param inReference
+	 * @return
+	 */
+	public static Message createSubscriptionMessage( int inReference )
+	{
+		SubscribeMessage.Builder subMessB = SubscribeMessage.newBuilder();
+		subMessB.setReference( inReference );
+		
+		Message.Builder messB = Message.newBuilder();
+		messB.setSubscribeMessage( subMessB );
+		messB.setType( Message.Type.SubscribeMessage );
+		
+		return messB.build();
+	}
+	
+	/**
 	 * @param inRef
 	 * @param inDataMap
 	 * @return
@@ -70,7 +89,7 @@ public class PreMarshaller
 	public static Message createUpdateMessage( int inRef, IPersistentMap<String, DataType<?>> inDataMap)
 	{
 		UpdateMessage.Builder builder = UpdateMessage.newBuilder();
-		builder.setType( inRef );
+		builder.setReference( inRef );
 		
 		DataMap.Builder dataMapBuilder = DataMap.newBuilder();
 		
@@ -79,8 +98,14 @@ public class PreMarshaller
 		
 		
 		Message.Builder messBuilder = Message.newBuilder();
-		messBuilder.setUpdateMessage( builder.build() );
-		messBuilder.setType( Message.Type.SubQueryMessage );
+		try
+		{
+			messBuilder.setUpdateMessage( builder.build() );
+		}catch( Throwable t )
+		{
+			t.printStackTrace();
+		}
+		messBuilder.setType( Message.Type.UpdateMessage );
 		
 		return messBuilder.build();
 		
@@ -114,16 +139,27 @@ public class PreMarshaller
 	 * @param inEntry
 	 * @return
 	 */
-	public static Message createSubResponse( Long inTag, int inRef, Status inStatus, ISTMEntry inEntry )
+	public static Message createSubResponse( Long inTag, int inRef, Status inStatus, ISTMEntryKey inKey, ISTMEntry inEntry )
 	{
-		DataMap.Builder dataBuilder = DataMap.newBuilder();
-		parseMapValues( inEntry.getDataMap(), dataBuilder );
 		
 		SubQueryResponseMessage.Builder builder = SubQueryResponseMessage.newBuilder();
 		builder.setReference( inRef );
 		builder.setTag( inTag.intValue() );
 		builder.setStatus( inStatus.ordinal() );
-		builder.setData( dataBuilder.build() );
+		
+		if( inEntry != null )
+		{
+			DataMap.Builder dataBuilder = DataMap.newBuilder();
+			parseMapValues( inEntry.getDataMap(), dataBuilder );
+			builder.setData( dataBuilder.build() );
+		}
+		
+		if( inKey != null )
+		{
+			DataKey dKey = createDataKey( inKey );
+			
+			builder.setKey( dKey );
+		}
 		
 		Message.Builder messBuilder = Message.newBuilder();
 		messBuilder.setSubQueryResponseMessage( builder.build() );
@@ -132,6 +168,25 @@ public class PreMarshaller
 		return messBuilder.build();
 	}
 	
+	public static DataKey createDataKey( ISTMEntryKey inKey )
+	{
+		DataKey.Builder dataKeyB = DataKey.newBuilder();
+		dataKeyB.setType( inKey.getType() );
+		dataKeyB.setService( inKey.getService() );
+		
+		for( String key : inKey.getKeys() )
+		{
+			String val = inKey.getValue( key );
+			
+			StringEntry.Builder entryB = StringEntry.newBuilder();
+			entryB.setField( key );
+			entryB.setData( val );
+			
+			dataKeyB.addStringEntries( entryB.build() );
+		}
+		
+		return dataKeyB.build();
+	}
 	/**
 	 * @param inDataMap
 	 * @param inBuilder

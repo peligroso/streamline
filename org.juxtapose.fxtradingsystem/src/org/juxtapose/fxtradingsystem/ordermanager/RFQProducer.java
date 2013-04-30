@@ -3,8 +3,8 @@ package org.juxtapose.fxtradingsystem.ordermanager;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-import org.juxtapose.fxtradingsystem.FXDataConstants;
-import org.juxtapose.fxtradingsystem.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
+import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineUtil;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
