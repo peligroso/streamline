@@ -11,7 +11,16 @@ import org.juxtapose.streamline.util.ISTMEntry;
 
 public class RemoteProxyEntryProducer implements ISTMEntryProducer
 {
-	int priority = IExecutor.LOW;
+	private final ClientConnectorHandler clientConnector;
+	private int priority = IExecutor.LOW;
+	
+	final ISTMEntryKey key;
+	
+	public RemoteProxyEntryProducer( ISTMEntryKey inKey, ClientConnectorHandler inConnector )
+	{
+		clientConnector = inConnector;
+		key = inKey;
+	}
 	
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
@@ -22,7 +31,7 @@ public class RemoteProxyEntryProducer implements ISTMEntryProducer
 	@Override
 	public void init()
 	{
-		 throw new IllegalAccessError( "This method is not accesible for remote entry");
+		clientConnector.subscribe( inSubscriber, inKey );
 	}
 
 	@Override
