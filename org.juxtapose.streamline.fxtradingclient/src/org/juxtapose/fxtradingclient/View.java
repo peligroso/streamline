@@ -1,5 +1,7 @@
 package org.juxtapose.fxtradingclient;
 
+import java.util.HashMap;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -14,18 +16,24 @@ import org.eclipse.ui.part.ViewPart;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 
-public class View extends ViewPart implements ISTMEntrySubscriber{
+public class View extends ViewPart implements ISTMEntryRequestSubscriber
+{
 	public static final String ID = "org.juxtapose.fxtradingclient.view";
 
 	private TableViewer viewer;
 
 	ISTM stm;
+	
+	private ISTMEntryKey configMetaKey; 
+	boolean subscribedMetaData = false;
 	
 	/**
 	 * The content provider class is responsible for providing objects to the
@@ -93,17 +101,24 @@ public class View extends ViewPart implements ISTMEntrySubscriber{
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
 	{
-		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
+		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ) && !subscribedMetaData )
 		{
-			DataType<?> dataValue = inData.getValue( FXProducerServiceConstants.CONFIG );
+			DataType<?> dataValue = inData.getUpdatedValue( FXProducerServiceConstants.CONFIG );
 			if( dataValue != null )
 			{
 				if( dataValue.get() == Status.OK.toString() )
 				{
-					stm.logInfo( "Subscribe to config metadata" );
-//					stm.subscribeToData( FXKeyConstants., inSubscriber )
+					stm.logInfo( "requesting key for config metadata" );
+					HashMap<String, String> queryMap = new HashMap<String, String>();
+					queryMap.put( DataConstants.FIELD_QUERY_KEY, DataConstants.STATE_TYPE_META );
+					stm.getDataKey( FXProducerServiceConstants.CONFIG, this, FXProducerServiceConstants.CONFIG, queryMap );
+//					subscribedMetaData = true;
 				}
 			}
+		}
+		else if( inKey.equals( configMetaKey ))
+		{
+			stm.logInfo( "Config data recieved for meta data "+inData.getDataMap() );
 		}
 	}
 
@@ -111,5 +126,20 @@ public class View extends ViewPart implements ISTMEntrySubscriber{
 	public int getPriority() 
 	{
 		return 0;
+	}
+
+	@Override
+	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
+	{
+		stm.logInfo( "key for config metadata delivered" );
+		configMetaKey = inDataKey;
+		stm.subscribeToData( inDataKey, this );
+		
+	}
+
+	@Override
+	public void queryNotAvailible( Object inTag ) 
+	{
+		stm.logInfo( "config metadata not availible" );
 	}
 }

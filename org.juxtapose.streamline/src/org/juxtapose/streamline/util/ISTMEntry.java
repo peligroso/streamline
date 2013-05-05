@@ -14,6 +14,7 @@ public interface ISTMEntry {
 	public ISTMEntryProducer getProducer();
 	
 	public DataType<?> getValue( String inKey );
+	public DataType<?> getUpdatedValue( String inKey );
 	public boolean isDeltaValue( String inKey );
 	public ISTMEntry addSubscriber(ISTMEntrySubscriber inSubscriber);
 	public ISTMEntry removeSubscriber(ISTMEntrySubscriber inSubscriber);

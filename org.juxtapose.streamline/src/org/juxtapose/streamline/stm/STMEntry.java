@@ -282,5 +282,14 @@ final class STMEntry implements ISTMEntry
 			return this;
 		}
 	}
+
+	@Override
+	public DataType<?> getUpdatedValue( String inKey ) 
+	{
+		if( deltaSet.contains( inKey ))
+			return getValue( inKey );
+		
+		return null;
+	}
 	
 }

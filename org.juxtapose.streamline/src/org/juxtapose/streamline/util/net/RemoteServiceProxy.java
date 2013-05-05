@@ -11,6 +11,7 @@ import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeNull;
@@ -33,18 +34,32 @@ public class RemoteServiceProxy implements ISTMEntryProducerService
 	
 	Map<ISTMEntryKey, ISTMEntryProducer> keyToProducer = new HashMap<ISTMEntryKey, ISTMEntryProducer>();
 	
+	HashMap<Object, ISTMEntryRequestSubscriber> tagToSubscriber = new HashMap<Object, ISTMEntryRequestSubscriber>();
+	
 	/**
 	 * @param inServiceID
 	 * @param inSTM
 	 * @param inStatus
 	 */
-	public RemoteServiceProxy( String inServiceID, ISTM inSTM, Status inStatus ) 
+	public RemoteServiceProxy( String inServiceID, ISTM inSTM, Status inStatus, ClientConnectorHandler inConnector ) 
 	{
 		serviceID = inServiceID;
 		stm = inSTM;
 		status = inStatus;
+		clientConnector = inConnector;
 		
+		registerProducer();
+	}
+	
+	public void registerProducer()
+	{
 		stm.registerProducer( this, status );
+	}
+	
+	public void updateStatus( Status inStatus )
+	{
+		status = inStatus;
+		stm.updateProducerStatus( this, inStatus );
 	}
 	
 	/* (non-Javadoc)
@@ -59,57 +74,33 @@ public class RemoteServiceProxy implements ISTMEntryProducerService
 	@Override
 	public void getDataKey( ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery ) 
 	{
-		
+		tagToSubscriber.put( inTag, inSubscriber );
+		clientConnector.requestKey( this, serviceID, inQuery, inTag );
 	}
 	
 	public void remoteKeyDelivered( ISTMEntryKey inKey, Object inTag )
 	{
-		//TODO pass on to subscriber
+		ISTMEntryRequestSubscriber subscriber = tagToSubscriber.remove( inTag );
+		
+		if( subscriber == null )
+		{
+			stm.logError( "Subscriber for key "+inKey+" not found in remote proxy service" );
+			return;
+		}
+		
+		subscriber.deliverKey( inKey, inTag );
 	}
 
 	@Override
-	public ISTMEntryProducer getDataProducer( ISTMEntryKey inDataKey ) 
+	public ISTMEntryProducer getDataProducer( ISTMEntryKey inDataKey )
 	{
+		
 		ISTMEntryProducer producer = keyToProducer.get( inDataKey );
 		
-		if( producer == null )
-		{
-			producer = new RemoteProxyEntryProducer();
+		if( producer == null )		{
+			producer = new RemoteProxyEntryProducer( stm, inDataKey, clientConnector );
 		}
 		return producer;
-	}
-	
-	protected void dataUpdated( ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData, boolean inFullUpdate )
-	{
-		stm.commit( new STMTransaction( inKey )
-		{
-			@Override
-			public void execute()
-			{
-				Iterator<Map.Entry<String, DataType<?>>> iterator = inData.iterator();
-				while( iterator.hasNext() )
-				{
-					Map.Entry<String, DataType<?>> entry = iterator.next();
-					
-					if( entry.getValue() instanceof DataTypeNull )
-					{
-						try
-						{
-							removeValue( entry.getKey() );
-						}
-						catch( Exception e )
-						{
-							stm.logError( e.getMessage(), e );
-						}
-					}
-					else
-					{
-						DataType<?> data = entry.getValue();
-						putValue( entry.getKey(), data );
-					}
-				}
-			}
-		} );
 	}
 }
 	
