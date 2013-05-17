@@ -109,7 +109,9 @@ message HashMapEntry
 {
 	required string field = 1;
 	required DataMap data = 2;
+	optional bool list = 3;
 }
+
 
 message DataMap
 {

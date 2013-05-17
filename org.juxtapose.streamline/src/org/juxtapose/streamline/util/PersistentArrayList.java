@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.util;
 
+import java.util.Arrays;
+
 
 /**
  * @author Pontus
@@ -134,6 +136,11 @@ public class PersistentArrayList<T>
 
 		return new PersistentArrayList<T>( newData, size-1 );
 
+	}
+	
+	public String toString()
+	{
+		return Arrays.toString( arr );
 	}
 
 }

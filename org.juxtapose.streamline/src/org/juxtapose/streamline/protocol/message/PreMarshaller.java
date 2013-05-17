@@ -19,8 +19,10 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResp
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
+import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
@@ -187,6 +189,75 @@ public class PreMarshaller
 		
 		return dataKeyB.build();
 	}
+	
+	public static void parseValueToMap( String inKey, DataType<?> inData, DataMap.Builder inBuilder )
+	{
+		if( inData instanceof DataTypeString )
+		{
+			StringEntry.Builder strBuilder = StringEntry.newBuilder();
+			strBuilder.setField( inKey );
+			strBuilder.setData( ((DataTypeString)inData).get() );
+			inBuilder.addStringEntries( strBuilder.build() );
+		}
+		else if( inData instanceof DataTypeBigDecimal )
+		{
+			DataTypeBigDecimal bd = (DataTypeBigDecimal)inData;
+			BigDecimalEntry.Builder bdBuilder = BigDecimalEntry.newBuilder();
+			bdBuilder.setField( inKey );
+			bdBuilder.setScale( bd.get().scale());
+			bdBuilder.setIntBytes( ByteString.copyFrom( bd.get().unscaledValue().toByteArray() ));
+			inBuilder.addBDEntries( bdBuilder.build() );
+		}
+		if( inData instanceof DataTypeLong )
+		{
+			LongEntry.Builder longBuilder = LongEntry.newBuilder();
+			longBuilder.setField( inKey );
+			longBuilder.setData( ((DataTypeLong)inData).get() );
+			inBuilder.addLongEntries( longBuilder.build() );
+		}
+		if( inData instanceof DataTypeBoolean)
+		{
+			BooleanEntry.Builder booleanBuilder = BooleanEntry.newBuilder();
+			booleanBuilder.setField( inKey );
+			booleanBuilder.setData( ((DataTypeBoolean)inData).get() );
+			inBuilder.addBoolEntries( booleanBuilder.build() );
+		}
+		if( inData instanceof DataTypeNull )
+		{
+			NullEntry.Builder nullBuilder = NullEntry.newBuilder();
+			nullBuilder.setField( inKey );
+			inBuilder.addNullEntries( nullBuilder.build() );
+		}
+		if( inData instanceof DataTypeHashMap )
+		{
+			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
+			dataMapBuilder.setField( inKey );
+			
+			DataTypeHashMap hashMap = (DataTypeHashMap)inData;
+			DataMap.Builder hashMapBuilder = DataMap.newBuilder();
+			
+			parseMapValues( hashMap.get(), hashMapBuilder );
+			
+			dataMapBuilder.setData( hashMapBuilder.build() );
+			
+			inBuilder.addHashMapEntries( dataMapBuilder.build() );
+		}
+		if( inData instanceof DataTypeArrayList )
+		{
+			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
+			dataMapBuilder.setField( inKey );
+			dataMapBuilder.setList( true );
+			
+			DataTypeArrayList list = (DataTypeArrayList)inData;
+			DataMap.Builder hashMapBuilder = DataMap.newBuilder();
+			
+			parseListValues( (PersistentArrayList<DataType<?>>) list.get(), hashMapBuilder );
+			
+			dataMapBuilder.setData( hashMapBuilder.build() );
+			
+			inBuilder.addHashMapEntries( dataMapBuilder.build() );
+		}
+	}
 	/**
 	 * @param inDataMap
 	 * @param inBuilder
@@ -199,54 +270,16 @@ public class PreMarshaller
 		{
 			Map.Entry<String, DataType<?>> entry = iterator.next();
 			
-			if( entry.getValue() instanceof DataTypeString )
-			{
-				StringEntry.Builder strBuilder = StringEntry.newBuilder();
-				strBuilder.setField( entry.getKey() );
-				strBuilder.setData( ((DataTypeString)entry.getValue()).get() );
-				inBuilder.addStringEntries( strBuilder.build() );
-			}
-			else if( entry.getValue() instanceof DataTypeBigDecimal )
-			{
-				DataTypeBigDecimal bd = (DataTypeBigDecimal)entry.getValue();
-				BigDecimalEntry.Builder bdBuilder = BigDecimalEntry.newBuilder();
-				bdBuilder.setField( entry.getKey() );
-				bdBuilder.setScale( bd.get().scale());
-				bdBuilder.setIntBytes( ByteString.copyFrom( bd.get().unscaledValue().toByteArray() ));
-				inBuilder.addBDEntries( bdBuilder.build() );
-			}
-			if( entry.getValue() instanceof DataTypeLong )
-			{
-				LongEntry.Builder longBuilder = LongEntry.newBuilder();
-				longBuilder.setField( entry.getKey() );
-				longBuilder.setData( ((DataTypeLong)entry.getValue()).get() );
-				inBuilder.addLongEntries( longBuilder.build() );
-			}
-			if( entry.getValue() instanceof DataTypeBoolean)
-			{
-				BooleanEntry.Builder booleanBuilder = BooleanEntry.newBuilder();
-				booleanBuilder.setField( entry.getKey() );
-				booleanBuilder.setData( ((DataTypeBoolean)entry.getValue()).get() );
-				inBuilder.addBoolEntries( booleanBuilder.build() );
-			}
-			if( entry.getValue() instanceof DataTypeNull )
-			{
-				NullEntry.Builder nullBuilder = NullEntry.newBuilder();
-				nullBuilder.setField( entry.getKey() );
-				inBuilder.addNullEntries( nullBuilder.build() );
-			}
-			if( entry.getValue() instanceof DataTypeHashMap )
-			{
-				HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
-				dataMapBuilder.setField( entry.getKey() );
-				
-				DataTypeHashMap hashMap = (DataTypeHashMap)entry.getValue();
-				DataMap.Builder hashMapBuilder = DataMap.newBuilder();
-				
-				parseMapValues( hashMap.get(), hashMapBuilder );
-				
-				dataMapBuilder.setData( hashMapBuilder.build() );
-			}
+			parseValueToMap( entry.getKey(), entry.getValue(), inBuilder );
+		}
+	}
+	
+	public static void parseListValues( PersistentArrayList<DataType<?>> inList, DataMap.Builder inBuilder )
+	{
+		for( int i = 0; i < inList.size(); i++ )
+		{
+			DataType<?> data = inList.get( i );
+			parseValueToMap( Integer.toString( i ), data, inBuilder );
 		}
 	}
 	
