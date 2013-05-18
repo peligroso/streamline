@@ -28,7 +28,7 @@ public class RemoteServiceTracker extends RemoteServiceProxy implements ISTMEntr
 	
 	public RemoteServiceTracker( ISTM inSTM, ClientConnectorHandler inClientConnector )
 	{
-		super( ProducerServiceConstants.STM_SERVICE_KEY, inSTM, Status.INITIALIZING, inClientConnector );
+		super( ProducerServiceConstants.STM_SERVICE_KEY, inSTM, Status.ON_REQUEST, inClientConnector );
 		
 		Map<String, String> query = new HashMap<String, String>();
 		query.put(DataConstants.FIELD_QUERY_KEY, STMUtil.PRODUCER_SERVICES );

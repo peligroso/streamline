@@ -9,9 +9,11 @@ import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
+import org.juxtapose.streamline.util.data.DataTypeStatus;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -215,6 +217,7 @@ public abstract class STMTransaction
 	
 	public void setStatus( Status inStatus )
 	{
+		putValue( DataConstants.FIELD_STATUS, new DataTypeStatus( inStatus ) );
 		status = inStatus;
 	}
 	

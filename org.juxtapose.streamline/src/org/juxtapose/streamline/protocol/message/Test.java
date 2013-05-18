@@ -79,17 +79,17 @@ public class Test {
 			long startInit = System.nanoTime();
 			IPersistentMap<String, DataType<?>> keyValues = createDataKeyValueMap();
 			
-			Message mess = PreMarshaller.createUpdateMessage(1, keyValues);
-			
-			initTime +=( System.nanoTime() - startInit );
-			
-			byte[] bytes = mess.toByteArray();
-			
-			totalByteSize += bytes.length;
-			
-			Message mess2 = Message.parseFrom(bytes);
-			
-			anchor += mess2.getUpdateMessage().getData().getBDEntries(0).getSerializedSize();
+//			Message mess = PreMarshaller.createUpdateMessage(1, keyValues, true);
+//			
+//			initTime +=( System.nanoTime() - startInit );
+//			
+//			byte[] bytes = mess.toByteArray();
+//			
+//			totalByteSize += bytes.length;
+//			
+//			Message mess2 = Message.parseFrom(bytes);
+//			
+//			anchor += mess2.getUpdateMessage().getData().getBDEntries(0).getSerializedSize();
 		}
 		
 		long endTime = System.nanoTime();

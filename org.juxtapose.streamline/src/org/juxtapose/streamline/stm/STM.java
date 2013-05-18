@@ -60,11 +60,6 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		keyToData.put( KeyConstants.PRODUCER_SERVICE_KEY.getKey(), createEmptyData(Status.OK, this, this));
 		registerProducer( this, Status.OK );
 		
-		m_deService = new DeclarativeEntriesService();
-		registerProducer( m_deService, Status.INITIALIZING );
-		
-		m_deService.init( this );
-		
 		//TICKET
 		//Connector should be removed and replaced with some config
 		master = inMaster;

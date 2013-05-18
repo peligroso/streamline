@@ -2,6 +2,7 @@ package org.juxtapose.streamline.protocol.message;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
@@ -88,14 +89,25 @@ public class PreMarshaller
 	 * @param inDataMap
 	 * @return
 	 */
-	public static Message createUpdateMessage( int inRef, IPersistentMap<String, DataType<?>> inDataMap)
+	public static Message createUpdateMessage( int inRef, ISTMEntry inEntry, boolean inFullUpdate )
 	{
+		IPersistentMap<String, DataType<?>> dataMap = inEntry.getDataMap();
+		
 		UpdateMessage.Builder builder = UpdateMessage.newBuilder();
 		builder.setReference( inRef );
+		builder.setFullupdate( inFullUpdate );
 		
 		DataMap.Builder dataMapBuilder = DataMap.newBuilder();
 		
-		parseMapValues( inDataMap, dataMapBuilder );
+		if( inFullUpdate )
+		{
+			parseMapValues( dataMap, dataMapBuilder );
+		}
+		else
+		{
+			parseDeltaMapValues( dataMap, inEntry.getDeltaSet(), dataMapBuilder );
+		}
+		
 		builder.setData( dataMapBuilder.build() );
 		
 		
@@ -271,6 +283,19 @@ public class PreMarshaller
 			Map.Entry<String, DataType<?>> entry = iterator.next();
 			
 			parseValueToMap( entry.getKey(), entry.getValue(), inBuilder );
+		}
+	}
+	
+	public static void parseDeltaMapValues( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDeltaSet, DataMap.Builder inBuilder )
+	{
+		Iterator<String> iterator = inDeltaSet.iterator();
+		
+		while( iterator.hasNext() )
+		{
+			String key = iterator.next();
+			DataType<?> val = inDataMap.valAt( key );
+			
+			parseValueToMap( key, val, inBuilder );
 		}
 	}
 	

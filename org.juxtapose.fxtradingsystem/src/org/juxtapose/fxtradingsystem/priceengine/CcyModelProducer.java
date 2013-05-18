@@ -9,6 +9,7 @@ import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
@@ -37,7 +38,7 @@ public class CcyModelProducer extends STMEntryProducer
 			@Override
 			public void execute()
 			{
-				setStatus( Status.INITIALIZING );
+				setStatus( Status.ON_REQUEST );
 				addReference(PriceEngineDataConstants.FIELD_EUR, new DataTypeRef( PriceEngineKeyConstants.CCY_EUR_KEY ) );
 				addReference(PriceEngineDataConstants.FIELD_SEK, new DataTypeRef( PriceEngineKeyConstants.CCY_SEK_KEY ) );
 				addReference(PriceEngineDataConstants.FIELD_NOK, new DataTypeRef( PriceEngineKeyConstants.CCY_NOK_KEY ) );
@@ -84,13 +85,16 @@ public class CcyModelProducer extends STMEntryProducer
 		ISTMEntry data = stm.getData( dataKey.getKey() );
 		if( data != null )
 		{
-			if( data.getStatus() == Status.INITIALIZING )
+			if( data.getStatus() == Status.ON_REQUEST )
 			{
 				Iterator<Entry<String, DataType<?>>> iterator = data.getDataMap().iterator();
 				
 				while( iterator.hasNext() )
 				{
 					Entry<String, DataType<?>> entry = iterator.next();
+					
+					if( entry.getKey().equals( DataConstants.FIELD_STATUS ))
+						continue;
 					
 					ISTMEntry ref = ((DataTypeRef)entry.getValue()).getReferenceData();
 					

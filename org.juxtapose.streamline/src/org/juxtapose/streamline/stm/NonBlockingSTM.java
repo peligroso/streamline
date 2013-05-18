@@ -146,7 +146,7 @@ public class NonBlockingSTM extends STM
 				/**If previous update was a partial update we need to merge the deltas**/
 				delta.addAll( existingData.getDeltaSet() );
 			}
-			newData = existingData.setUpdatedData( inst, delta, inTransaction.getStatus(), inTransaction.isCompleteStateTransition() );
+			newData = existingData.setUpdatedData( inst, delta, inTransaction.isCompleteStateTransition() );
 			
 			keyToData.put( dataKey.getKey(), newData );
 			

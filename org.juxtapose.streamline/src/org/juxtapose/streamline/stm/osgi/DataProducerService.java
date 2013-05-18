@@ -39,7 +39,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 		
 		if( initializer != null )
 		{
-			stm.registerProducer( this, Status.INITIALIZING );
+			stm.registerProducer( this, Status.ON_REQUEST );
 			initializer.init();
 		}
 		else

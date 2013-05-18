@@ -3304,6 +3304,10 @@ public final class StreamDataProtocol {
     boolean hasData();
     org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap getData();
     org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMapOrBuilder getDataOrBuilder();
+    
+    // required bool fullupdate = 4;
+    boolean hasFullupdate();
+    boolean getFullupdate();
   }
   public static final class UpdateMessage extends
       com.google.protobuf.GeneratedMessage
@@ -3357,9 +3361,20 @@ public final class StreamDataProtocol {
       return data_;
     }
     
+    // required bool fullupdate = 4;
+    public static final int FULLUPDATE_FIELD_NUMBER = 4;
+    private boolean fullupdate_;
+    public boolean hasFullupdate() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    public boolean getFullupdate() {
+      return fullupdate_;
+    }
+    
     private void initFields() {
       reference_ = 0;
       data_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance();
+      fullupdate_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3371,6 +3386,10 @@ public final class StreamDataProtocol {
         return false;
       }
       if (!hasData()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasFullupdate()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -3391,6 +3410,9 @@ public final class StreamDataProtocol {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(3, data_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBool(4, fullupdate_);
+      }
       getUnknownFields().writeTo(output);
     }
     
@@ -3407,6 +3429,10 @@ public final class StreamDataProtocol {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, data_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(4, fullupdate_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3541,6 +3567,8 @@ public final class StreamDataProtocol {
           dataBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
+        fullupdate_ = false;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
       
@@ -3591,6 +3619,10 @@ public final class StreamDataProtocol {
         } else {
           result.data_ = dataBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.fullupdate_ = fullupdate_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3613,6 +3645,9 @@ public final class StreamDataProtocol {
         if (other.hasData()) {
           mergeData(other.getData());
         }
+        if (other.hasFullupdate()) {
+          setFullupdate(other.getFullupdate());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -3623,6 +3658,10 @@ public final class StreamDataProtocol {
           return false;
         }
         if (!hasData()) {
+          
+          return false;
+        }
+        if (!hasFullupdate()) {
           
           return false;
         }
@@ -3668,6 +3707,11 @@ public final class StreamDataProtocol {
               }
               input.readMessage(subBuilder, extensionRegistry);
               setData(subBuilder.buildPartial());
+              break;
+            }
+            case 32: {
+              bitField0_ |= 0x00000004;
+              fullupdate_ = input.readBool();
               break;
             }
           }
@@ -3785,6 +3829,27 @@ public final class StreamDataProtocol {
           data_ = null;
         }
         return dataBuilder_;
+      }
+      
+      // required bool fullupdate = 4;
+      private boolean fullupdate_ ;
+      public boolean hasFullupdate() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      public boolean getFullupdate() {
+        return fullupdate_;
+      }
+      public Builder setFullupdate(boolean value) {
+        bitField0_ |= 0x00000004;
+        fullupdate_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearFullupdate() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        fullupdate_ = false;
+        onChanged();
+        return this;
       }
       
       // @@protoc_insertion_point(builder_scope:UpdateMessage)
@@ -10872,28 +10937,28 @@ public final class StreamDataProtocol {
       "\022\025\n\003key\030\003 \001(\0132\010.DataKey\022\021\n\treference\030\004 \001" +
       "(\005\022\026\n\004data\030\005 \001(\0132\010.DataMap\"%\n\020SubscribeM" +
       "essage\022\021\n\treference\030\001 \002(\005\"\'\n\022Unsubscribe" +
-      "Message\022\021\n\treference\030\001 \002(\005\":\n\rUpdateMess" +
+      "Message\022\021\n\treference\030\001 \002(\005\"N\n\rUpdateMess" +
       "age\022\021\n\treference\030\001 \002(\005\022\026\n\004data\030\003 \002(\0132\010.D" +
-      "ataMap\"M\n\007DataKey\022\017\n\007service\030\001 \002(\t\022\014\n\004ty",
-      "pe\030\002 \002(\t\022#\n\rstringEntries\030\003 \003(\0132\014.String" +
-      "Entry\"+\n\010BDecimal\022\r\n\005scale\030\001 \002(\005\022\020\n\010intB" +
-      "ytes\030\002 \002(\014\"\031\n\010BInteger\022\r\n\005value\030\001 \002(\014\"*\n" +
-      "\013StringEntry\022\r\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(" +
-      "\t\"+\n\014BooleanEntry\022\r\n\005field\030\001 \002(\t\022\014\n\004data" +
-      "\030\002 \002(\010\"(\n\tLongEntry\022\r\n\005field\030\001 \002(\t\022\014\n\004da" +
-      "ta\030\002 \002(\004\"A\n\017BigDecimalEntry\022\r\n\005field\030\001 \002" +
-      "(\t\022\r\n\005scale\030\002 \002(\005\022\020\n\010intBytes\030\003 \002(\014\"\032\n\tN" +
-      "ullEntry\022\r\n\005field\030\001 \002(\t\"C\n\014HashMapEntry\022" +
-      "\r\n\005field\030\001 \002(\t\022\026\n\004data\030\002 \002(\0132\010.DataMap\022\014",
-      "\n\004list\030\003 \001(\010\"\340\001\n\007DataMap\022#\n\rstringEntrie" +
-      "s\030\002 \003(\0132\014.StringEntry\022\037\n\013longEntries\030\003 \003" +
-      "(\0132\n.LongEntry\022#\n\tbDEntries\030\004 \003(\0132\020.BigD" +
-      "ecimalEntry\022\"\n\013boolEntries\030\005 \003(\0132\r.Boole" +
-      "anEntry\022\037\n\013nullEntries\030\006 \003(\0132\n.NullEntry" +
-      "\022%\n\016hashMapEntries\030\007 \003(\0132\r.HashMapEntry\"" +
-      "0\n\tStringMap\022#\n\rstringEntries\030\001 \003(\0132\014.St" +
-      "ringEntryB+\n)org.juxtapose.streamline.pr" +
-      "otocol.message"
+      "ataMap\022\022\n\nfullupdate\030\004 \002(\010\"M\n\007DataKey\022\017\n",
+      "\007service\030\001 \002(\t\022\014\n\004type\030\002 \002(\t\022#\n\rstringEn" +
+      "tries\030\003 \003(\0132\014.StringEntry\"+\n\010BDecimal\022\r\n" +
+      "\005scale\030\001 \002(\005\022\020\n\010intBytes\030\002 \002(\014\"\031\n\010BInteg" +
+      "er\022\r\n\005value\030\001 \002(\014\"*\n\013StringEntry\022\r\n\005fiel" +
+      "d\030\001 \002(\t\022\014\n\004data\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n" +
+      "\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\010\"(\n\tLongEntry\022" +
+      "\r\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\004\"A\n\017BigDecim" +
+      "alEntry\022\r\n\005field\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n" +
+      "\010intBytes\030\003 \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 " +
+      "\002(\t\"C\n\014HashMapEntry\022\r\n\005field\030\001 \002(\t\022\026\n\004da",
+      "ta\030\002 \002(\0132\010.DataMap\022\014\n\004list\030\003 \001(\010\"\340\001\n\007Dat" +
+      "aMap\022#\n\rstringEntries\030\002 \003(\0132\014.StringEntr" +
+      "y\022\037\n\013longEntries\030\003 \003(\0132\n.LongEntry\022#\n\tbD" +
+      "Entries\030\004 \003(\0132\020.BigDecimalEntry\022\"\n\013boolE" +
+      "ntries\030\005 \003(\0132\r.BooleanEntry\022\037\n\013nullEntri" +
+      "es\030\006 \003(\0132\n.NullEntry\022%\n\016hashMapEntries\030\007" +
+      " \003(\0132\r.HashMapEntry\"0\n\tStringMap\022#\n\rstri" +
+      "ngEntries\030\001 \003(\0132\014.StringEntryB+\n)org.jux" +
+      "tapose.streamline.protocol.message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -10945,7 +11010,7 @@ public final class StreamDataProtocol {
           internal_static_UpdateMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_UpdateMessage_descriptor,
-              new java.lang.String[] { "Reference", "Data", },
+              new java.lang.String[] { "Reference", "Data", "Fullupdate", },
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage.class,
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage.Builder.class);
           internal_static_DataKey_descriptor =

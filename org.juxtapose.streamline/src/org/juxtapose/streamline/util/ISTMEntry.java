@@ -20,7 +20,7 @@ public interface ISTMEntry {
 	public ISTMEntry removeSubscriber(ISTMEntrySubscriber inSubscriber);
 	public boolean hasSubscribers();
 	public IPersistentMap<String, DataType<?>> getDataMap();
-	public ISTMEntry setUpdatedData(IPersistentMap<String, DataType<?>> stateInstruction, Set<String> deltaState, Status inStatus, boolean completeUpdate);
+	public ISTMEntry setUpdatedData(IPersistentMap<String, DataType<?>> stateInstruction, Set<String> deltaState, boolean completeUpdate);
 	public void updateSubscribers(ISTMEntryKey dataKey);
 	public ISTMEntry putDataValue( String inKey, DataType<?> inValue )throws Exception;
 	public Status getStatus();

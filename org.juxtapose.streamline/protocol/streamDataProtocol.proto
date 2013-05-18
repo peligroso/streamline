@@ -53,6 +53,7 @@ message UpdateMessage
 {
 	required int32 reference = 1;
 	required DataMap data = 3;
+	required bool fullupdate = 4;
 }
 
 message DataKey

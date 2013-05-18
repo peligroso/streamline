@@ -7,6 +7,7 @@ import java.util.Set;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.util.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
@@ -37,8 +38,6 @@ final class STMEntry implements ISTMEntry
 	
 	final ISTMEntryProducer producer;
 	
-	final Status status;
-	
 	final long sequenceID;
 	
 	final boolean completeVersion;
@@ -50,14 +49,13 @@ final class STMEntry implements ISTMEntry
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	protected STMEntry( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inLowPrioSubscribers, PersistentArrayList<ISTMEntrySubscriber> inHighPrioSubscribers, ISTMEntryProducer inProducer, Status inStatus, long inSequenceID, boolean inCompleteUpdate ) 
+	protected STMEntry( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inLowPrioSubscribers, PersistentArrayList<ISTMEntrySubscriber> inHighPrioSubscribers, ISTMEntryProducer inProducer, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
 		lowPrioSubscribers = inLowPrioSubscribers;
 		highPrioSubscribers = inHighPrioSubscribers;
 		producer = inProducer;
-		status = inStatus;
 		sequenceID = inSequenceID;
 		completeVersion = inCompleteUpdate;
 	}
@@ -86,12 +84,12 @@ final class STMEntry implements ISTMEntry
 		if( inSubscriber.getPriority() == IExecutor.HIGH )
 		{
 			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.add( inSubscriber );
-			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, sequenceID, completeVersion );
 		}
 		else
 		{
 			PersistentArrayList<ISTMEntrySubscriber> newSub = lowPrioSubscribers.add( inSubscriber );
-			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, sequenceID, completeVersion );
 
 		}
 	}
@@ -105,12 +103,12 @@ final class STMEntry implements ISTMEntry
 		if( inSubscriber.getPriority() == IExecutor.HIGH )
 		{
 			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.remove( inSubscriber );
-			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, lowPrioSubscribers, newSub, producer, sequenceID, completeVersion );
 		}
 		else
 		{
 			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.add( inSubscriber );
-			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, sequenceID, completeVersion );
 
 		}
 	}
@@ -138,7 +136,7 @@ final class STMEntry implements ISTMEntry
 		else
 			newMap = dataMap.assoc( inKey, inValue );
 		
-		return new STMEntry( newMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( newMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, sequenceID+1, completeVersion );
 	}
 	
 	/**
@@ -165,7 +163,7 @@ final class STMEntry implements ISTMEntry
 			}
 		}
 		
-		return new STMEntry( newDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( newDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, sequenceID+1, completeVersion );
 	}
 	
 	/**
@@ -174,16 +172,16 @@ final class STMEntry implements ISTMEntry
 	 */
 	public ISTMEntry setDataMap( IPersistentMap<String, DataType<?>> inDataMap )
 	{
-		return new STMEntry( inDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, status, sequenceID+1, completeVersion );
+		return new STMEntry( inDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, sequenceID+1, completeVersion );
 	}
 	
 	/**
 	 * @param inDataMap
 	 * @return
 	 */
-	public ISTMEntry setUpdatedData( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDelta, Status inStatus, boolean inCompleteUpdate )
+	public ISTMEntry setUpdatedData( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDelta, boolean inCompleteUpdate )
 	{
-		return new STMEntry( inDataMap, inDelta, lowPrioSubscribers, highPrioSubscribers, producer, inStatus, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
+		return new STMEntry( inDataMap, inDelta, lowPrioSubscribers, highPrioSubscribers, producer, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
 	}
 	
 	public boolean isCompleteVersion()
@@ -230,7 +228,7 @@ final class STMEntry implements ISTMEntry
 	
 	public Status getStatus()
 	{
-		return status;
+		return (Status)dataMap.valAt( DataConstants.FIELD_STATUS ).get();
 	}
 
 	public long getSequenceID()
@@ -264,7 +262,7 @@ final class STMEntry implements ISTMEntry
 			}
 			PersistentArrayList<ISTMEntrySubscriber> newHighPrioSubscribers = highPrioSubscribers.add( inSubscriber );
 			
-			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, sequenceID, completeVersion );
 		}
 		else if( inNewPriority == IExecutor.LOW )
 		{
@@ -275,7 +273,7 @@ final class STMEntry implements ISTMEntry
 			}
 			PersistentArrayList<ISTMEntrySubscriber> newLowPrioSubscribers = lowPrioSubscribers.add( inSubscriber );
 			
-			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, status, sequenceID, completeVersion );
+			return new STMEntry( dataMap, deltaSet, newLowPrioSubscribers, newHighPrioSubscribers, producer, sequenceID, completeVersion );
 		}
 		else 
 		{

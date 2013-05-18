@@ -122,6 +122,10 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
 	{
+		//We dont care about initializing update since the client is already in state initializing
+		if( inData.getStatus() == Status.ON_REQUEST )
+			return;
+		
 		Integer ref = keyToReference.get( inKey );
 		
 		if( ref == null )
@@ -130,7 +134,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 			return;
 		}
 		
-		Message mess = PreMarshaller.createUpdateMessage( ref, inData.getDataMap() );
+		Message mess = PreMarshaller.createUpdateMessage( ref, inData, inFirstUpdate );
 			
 		clientChannel.write( mess );
 	}
