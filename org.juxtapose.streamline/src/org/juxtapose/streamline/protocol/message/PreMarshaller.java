@@ -29,6 +29,7 @@ import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeNull;
+import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.google.protobuf.ByteString;
@@ -268,6 +269,10 @@ public class PreMarshaller
 			dataMapBuilder.setData( hashMapBuilder.build() );
 			
 			inBuilder.addHashMapEntries( dataMapBuilder.build() );
+		}
+		else if( inData instanceof DataTypeStatus )
+		{
+			inBuilder.setStatus( ((DataTypeStatus)inData).get().ordinal() );
 		}
 	}
 	/**

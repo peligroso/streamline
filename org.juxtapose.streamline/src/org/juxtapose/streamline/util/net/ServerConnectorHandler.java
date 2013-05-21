@@ -38,6 +38,8 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
 	HashMap< ISTMEntryKey, Integer> keyToReference = new HashMap<ISTMEntryKey, Integer>();
 	
+	HashSet< ISTMEntryKey> fullUpdateSent = new HashSet<ISTMEntryKey>();
+	
 	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
 	
 	Channel clientChannel;
@@ -111,12 +113,25 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
     {
     	stm.logInfo( "Client disconnected.." );
+    	removeSubscriptions();
+    	
     }
 
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, ExceptionEvent e) 
     {
         e.getChannel().close();
+    }
+    
+    private void removeSubscriptions()
+    {
+    	for( ISTMEntryKey key : keyToReference.keySet() )
+    	{
+    		stm.unsubscribeToData( key, this );
+    	}
+    	
+    	keyToReference.clear();
+    	referenceToKey.clear();
     }
 
 	@Override
@@ -134,7 +149,8 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 			return;
 		}
 		
-		Message mess = PreMarshaller.createUpdateMessage( ref, inData, inFirstUpdate );
+		boolean fullUpdate = fullUpdateSent.remove( inKey );
+		Message mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
 			
 		clientChannel.write( mess );
 	}
@@ -146,6 +162,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		
 		keyToReference.put( inDataKey, ref );
 		referenceToKey.put(  ref,  inDataKey );
+		fullUpdateSent.add( inDataKey );
 		
 		Message mess = PreMarshaller.createSubResponse( (Long)inTag, ref,Status.OK, inDataKey, null );
 		clientChannel.write( mess );

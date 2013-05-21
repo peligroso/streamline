@@ -7,7 +7,7 @@ import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ProducerUtil;
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
@@ -41,7 +41,7 @@ public class MarketData extends DataProducerService implements IMarketDataServic
 				inSubscriber.queryNotAvailible( inTag );
 			}
 
-			ISTMEntryKey key = ProducerUtil.createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new String[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
+			ISTMEntryKey key = createDataKey( getServiceId(), MarketDataConstants.STATE_TYPE_INSTRUMENT, new String[]{MarketDataConstants.FIELD_SOURCE, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_PERIOD},new String[]{source, ccy1, ccy2, period} );
 			inSubscriber.deliverKey( key, inTag );
 		}
 		else

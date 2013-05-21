@@ -7,7 +7,7 @@ import java.util.Set;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
@@ -107,7 +107,7 @@ final class STMEntry implements ISTMEntry
 		}
 		else
 		{
-			PersistentArrayList<ISTMEntrySubscriber> newSub = highPrioSubscribers.add( inSubscriber );
+			PersistentArrayList<ISTMEntrySubscriber> newSub = lowPrioSubscribers.remove( inSubscriber );
 			return new STMEntry( dataMap, deltaSet, newSub, highPrioSubscribers, producer, sequenceID, completeVersion );
 
 		}

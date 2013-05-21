@@ -7,7 +7,7 @@ import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ProducerUtil;
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
@@ -31,7 +31,7 @@ public class LiquidityService extends DataProducerService implements IAggregator
 			String ccy2 = inQuery.get( FXDataConstants.FIELD_CCY2 );
 			String source = inQuery.get( FXDataConstants.FIELD_SOURCE );
 		
-			inSubscriber.deliverKey(  ProducerUtil.createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_LIQUIDITY, 
+			inSubscriber.deliverKey(  createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_LIQUIDITY, 
 					new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT, FXDataConstants.FIELD_SOURCE},
 					new String[]{ccy1, ccy2, instrumentType, source} ), inTag);
 		}

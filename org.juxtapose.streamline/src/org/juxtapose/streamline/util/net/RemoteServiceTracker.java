@@ -6,8 +6,8 @@ import java.util.Map;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.stm.STMUtil;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
@@ -31,7 +31,7 @@ public class RemoteServiceTracker extends RemoteServiceProxy implements ISTMEntr
 		super( ProducerServiceConstants.STM_SERVICE_KEY, inSTM, Status.ON_REQUEST, inClientConnector );
 		
 		Map<String, String> query = new HashMap<String, String>();
-		query.put(DataConstants.FIELD_QUERY_KEY, STMUtil.PRODUCER_SERVICES );
+		query.put(DataConstants.FIELD_QUERY_KEY, STMAssertionUtil.PRODUCER_SERVICES );
 		
 		clientConnector.requestKey( this, ProducerServiceConstants.STM_SERVICE_KEY, query, SERVICE_TAG);
 	}

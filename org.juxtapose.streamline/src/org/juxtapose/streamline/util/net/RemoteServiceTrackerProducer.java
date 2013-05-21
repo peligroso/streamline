@@ -7,6 +7,7 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
+import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -45,10 +46,13 @@ public class RemoteServiceTrackerProducer extends RemoteProxyEntryProducer {
 		{
 			Entry<String, DataType<?>> entry = iterator.next();
 			
-			String strStatus = (String)entry.getValue().get();
-			Status serviceStatus = Status.valueOf( strStatus );
+			if( entry.getValue() instanceof DataTypeString )
+			{
+				String strStatus = (String)entry.getValue().get();
+				Status serviceStatus = Status.valueOf( strStatus );
 			
-			tracker.statusUpdated( entry.getKey(), serviceStatus );
+				tracker.statusUpdated( entry.getKey(), serviceStatus );
+			}
 		}  
 	}
 

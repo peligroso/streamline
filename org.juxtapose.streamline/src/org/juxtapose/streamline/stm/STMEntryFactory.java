@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;

@@ -6,7 +6,7 @@ import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ProducerUtil;
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
@@ -52,7 +52,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 			String ccy1 = inQuery.get( FXDataConstants.FIELD_CCY1 );
 			String ccy2 = inQuery.get( FXDataConstants.FIELD_CCY2 );
 		
-			inSubscriber.deliverKey(  ProducerUtil.createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
+			inSubscriber.deliverKey(  createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
 		}
 		else
 		{

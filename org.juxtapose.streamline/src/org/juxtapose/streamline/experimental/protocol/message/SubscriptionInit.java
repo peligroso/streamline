@@ -1,6 +1,6 @@
 package org.juxtapose.streamline.experimental.protocol.message;
 
-import org.juxtapose.streamline.producer.STMEntryKey;
+import org.juxtapose.streamline.tools.STMEntryKey;
 
 public class SubscriptionInit extends SubscriptionEvent 
 {

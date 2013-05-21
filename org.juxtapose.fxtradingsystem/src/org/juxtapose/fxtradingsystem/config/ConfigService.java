@@ -5,9 +5,9 @@ import java.util.Map;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ProducerUtil;
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 
@@ -21,7 +21,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 	 */
 	public void init( )
 	{
-		metaProducer = new MetaDataProducer( ProducerUtil.createDataKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_META, FXProducerServiceConstants.CONFIG ), stm );
+		metaProducer = new MetaDataProducer( createDataKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_META, FXProducerServiceConstants.CONFIG ), stm );
 		super.init();
 	}
 	

@@ -10,14 +10,15 @@ import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
-import org.juxtapose.streamline.producer.ProducerUtil;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.KeyConstants;
+
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
@@ -252,7 +253,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				
 				if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SPOT ))
 				{
-					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 						new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2}, 
 						new String[]{id, inMessage.ccy1, inMessage.ccy2 } );
 					
@@ -260,7 +261,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_FWD ))
 				{
-					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate } );
 					
@@ -268,7 +269,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SWAP ))
 				{
-					key = ProducerUtil.createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP, FXDataConstants.FIELD_FAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate } );
 					

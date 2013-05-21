@@ -19,7 +19,7 @@ import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.DependencyTransaction;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;

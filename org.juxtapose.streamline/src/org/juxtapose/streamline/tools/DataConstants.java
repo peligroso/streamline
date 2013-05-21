@@ -1,4 +1,4 @@
-package org.juxtapose.streamline.util;
+package org.juxtapose.streamline.tools;
 
 
 public class DataConstants 

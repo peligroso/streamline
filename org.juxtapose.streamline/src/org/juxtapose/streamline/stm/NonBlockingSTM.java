@@ -14,6 +14,7 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
@@ -124,7 +125,7 @@ public class NonBlockingSTM extends STM
 				return;
 			}
 
-			if( !STMUtil.validateProducerToData(existingData, inTransaction) )
+			if( !STMAssertionUtil.validateProducerToData(existingData, inTransaction) )
 			{
 				logError( "Wrong version DataProducer tried to update data: "+dataKey );
 				//The producer for this data is of the wrong version, Transaction is discarded

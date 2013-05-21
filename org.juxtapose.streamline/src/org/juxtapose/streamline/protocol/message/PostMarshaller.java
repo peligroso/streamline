@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import org.juxtapose.streamline.producer.ProducerUtil;
+import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
@@ -17,13 +17,15 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.PersistentArrayList;
+import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.google.protobuf.ByteString;
@@ -70,11 +72,11 @@ public class PostMarshaller
 		
 		if( keys.length == 1 && DataConstants.FIELD_SINGLE_VALUE_DATA_KEY.equals( keys[0] ))
 		{
-			return ProducerUtil.createDataKey( inKey.getService(), inKey.getType(), vals[0] );
+			return createDataKey( inKey.getService(), inKey.getType(), vals[0] );
 		}
 		else
 		{
-			return ProducerUtil.createDataKey( inKey.getService(), inKey.getType(), keys, vals );
+			return createDataKey( inKey.getService(), inKey.getType(), keys, vals );
 		}
 		
 	}
@@ -235,6 +237,14 @@ public class PostMarshaller
 					map = map.assoc( field, new DataTypeHashMap(subMap) );
 				}
 			}
+		}
+		
+		Integer status = inDataMap.getStatus();
+		
+		if( status != null )
+		{
+			Status st = Status.values()[status];
+			map = map.assoc( DataConstants.FIELD_STATUS, new DataTypeStatus( st ) );
 		}
 		
 		return map;

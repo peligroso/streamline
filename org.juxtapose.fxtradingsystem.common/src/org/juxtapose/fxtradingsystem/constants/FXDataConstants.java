@@ -2,7 +2,7 @@ package org.juxtapose.fxtradingsystem.constants;
 
 import java.math.BigDecimal;
 
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 
 public class FXDataConstants extends DataConstants

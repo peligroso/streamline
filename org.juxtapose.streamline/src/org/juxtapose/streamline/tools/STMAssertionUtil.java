@@ -1,6 +1,7 @@
-package org.juxtapose.streamline.stm;
+package org.juxtapose.streamline.tools;
 
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
+import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.ISTMEntry;
 
 /**
@@ -8,7 +9,7 @@ import org.juxtapose.streamline.util.ISTMEntry;
  * 28 jun 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class STMUtil {
+public class STMAssertionUtil {
 
 	public static String PRODUCER_SERVICES = "PRODUCER_SERVICES";
 	

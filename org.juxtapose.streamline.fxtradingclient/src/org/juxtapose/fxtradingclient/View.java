@@ -1,5 +1,7 @@
 package org.juxtapose.fxtradingclient;
 
+import static org.juxtapose.streamline.tools.STMUtil.isStatusUpdatedToOk;
+
 import java.util.HashMap;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -16,12 +18,10 @@ import org.eclipse.ui.part.ViewPart;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
-import org.juxtapose.streamline.util.ISTMEntrySubscriber;
-import org.juxtapose.streamline.util.KeyConstants;
-import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 
 public class View extends ViewPart implements ISTMEntryRequestSubscriber
@@ -86,9 +86,10 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 		// Provide the input to the ContentProvider
 		viewer.setInput(new String[] {"One", "Two", "Three"});
 		
-		stm = STMUtil.getSTM();
+		stm = STMStatic.getSTM();
 		
 		stm.subscribeToData( KeyConstants.PRODUCER_SERVICE_KEY, this);
+		
 	}
 
 	/**
@@ -103,18 +104,19 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ) && !subscribedMetaData )
 		{
-			DataType<?> dataValue = inData.getUpdatedValue( FXProducerServiceConstants.CONFIG );
-			if( dataValue != null )
+			if( isStatusUpdatedToOk( FXProducerServiceConstants.CONFIG, inData ))
 			{
-				if( dataValue.get() == Status.OK.toString() )
-				{
-					stm.logInfo( "requesting key for config metadata" );
-					HashMap<String, String> queryMap = new HashMap<String, String>();
-					queryMap.put( DataConstants.FIELD_QUERY_KEY, DataConstants.STATE_TYPE_META );
-					stm.getDataKey( FXProducerServiceConstants.CONFIG, this, FXProducerServiceConstants.CONFIG, queryMap );
-//					subscribedMetaData = true;
-				}
+				stm.logInfo( "requesting key for config metadata" );
+				HashMap<String, String> queryMap = new HashMap<String, String>();
+				queryMap.put( DataConstants.FIELD_QUERY_KEY, DataConstants.STATE_TYPE_META );
+				stm.getDataKey( FXProducerServiceConstants.CONFIG, this, FXProducerServiceConstants.CONFIG, queryMap );
+				
 			}
+			else if( isStatusUpdatedToOk( FXProducerServiceConstants.PRICE_ENGINE, inData ))
+			{
+				PriceSubscriber ps = new PriceSubscriber( stm );
+			}
+			DataType<?> peVal = inData.getUpdatedValue( FXProducerServiceConstants.PRICE_ENGINE );
 		}
 		else if( inKey.equals( configMetaKey ))
 		{

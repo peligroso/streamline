@@ -1,7 +1,7 @@
 package org.juxtapose.streamline.stm;
 
-import static org.juxtapose.streamline.stm.STMUtil.PRODUCER_SERVICES;
-import static org.juxtapose.streamline.util.DataConstants.FIELD_QUERY_KEY;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_QUERY_KEY;
+import static org.juxtapose.streamline.tools.STMAssertionUtil.PRODUCER_SERVICES;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +15,10 @@ import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.stm.de.DeclarativeEntriesService;
+import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
-import org.juxtapose.streamline.util.KeyConstants;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeString;
 import org.juxtapose.streamline.util.net.ClientConnector;
@@ -46,8 +45,6 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	
 	private ServerConnector serverConnector;
 	private ClientConnector clientConnector;
-	
-	private DeclarativeEntriesService m_deService;
 	
 	private boolean master;
 	

@@ -9,7 +9,8 @@ import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -110,7 +111,7 @@ public abstract class STMTransaction
 	 */
 	public void putValue( String inKey, DataType<?> inData )
 	{
-		assert STMUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
+		assert STMAssertionUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
 		assert !( inData instanceof DataTypeRef ) : "Reference values should be added via addReference method";
 		
 		m_stateInstruction = m_stateInstruction.assoc( inKey, inData );
@@ -123,7 +124,7 @@ public abstract class STMTransaction
 	 */
 	public void updateReferenceValue( String inKey, DataTypeRef inDataTypeRef )
 	{
-		assert STMUtil.validateTransactionStack() : "Transaction.updateReferenceValue was not from called from within a STM commit as required";
+		assert STMAssertionUtil.validateTransactionStack() : "Transaction.updateReferenceValue was not from called from within a STM commit as required";
 		assert m_stateInstruction.valAt( inKey) != null : "Tried to update non existing Reference";
 		assert m_stateInstruction.valAt( inKey ) instanceof DataTypeRef : "Tried to update Reference that was not of reference type";
 		
@@ -137,7 +138,7 @@ public abstract class STMTransaction
 	 */
 	public void addReference( String inKey, DataTypeRef inDataRef )
 	{
-		assert STMUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
+		assert STMAssertionUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
 		
 		addedDataReferences.put( inKey, inDataRef );
 		
@@ -153,7 +154,7 @@ public abstract class STMTransaction
 	 */
 	public void removeValue( String inKey )throws Exception
 	{
-		assert STMUtil.validateTransactionStack() : "Transaction.removeValue was not from called from within a STM commit as required";
+		assert STMAssertionUtil.validateTransactionStack() : "Transaction.removeValue was not from called from within a STM commit as required";
 		assert m_deltaState.contains( inKey ) : "Transaction may not add and remove the same field value: "+inKey;
 		
 		DataType<?> removedData = m_stateInstruction.valAt( inKey );

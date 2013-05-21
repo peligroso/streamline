@@ -122,6 +122,8 @@ message DataMap
 	repeated BooleanEntry boolEntries = 5;
 	repeated NullEntry nullEntries = 6;
 	repeated HashMapEntry hashMapEntries = 7;
+	
+	optional int32 status = 8;
 }
 
 message StringMap

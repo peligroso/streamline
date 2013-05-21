@@ -1,9 +1,9 @@
-package org.juxtapose.streamline.producer;
+package org.juxtapose.streamline.tools;
 
 import java.util.HashMap;
 import java.util.Set;
 
-import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 
 /**
  * @author Pontus Jörgne

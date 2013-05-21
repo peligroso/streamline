@@ -1,15 +1,15 @@
-package org.juxtapose.streamline.producer;
+package org.juxtapose.streamline.tools;
+
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_SINGLE_VALUE_DATA_KEY;
 
 import java.util.HashMap;
 
-import static org.juxtapose.streamline.util.DataConstants.*;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 
-/**
- * @author Pontus Jörgne
- * 7 aug 2011
- * Copyright (c) Pontus Jörgne. All rights reserved
- */
-public class ProducerUtil
+public class STMUtil
 {
 	public static String AND = "&";
 	public static String EQUALS = "=";
@@ -58,5 +58,14 @@ public class ProducerUtil
 		String key = inServiceKey+SERVICE_KEY_DELIM+inType+SERVICE_KEY_DELIM+FIELD_SINGLE_VALUE_DATA_KEY+EQUALS+inSingleValue;
 		
 		return new STMEntryKey( inServiceKey, inType, inSingleValue, key ); 
+	}
+	
+	public static boolean isStatusUpdatedToOk( String inServiceKey, ISTMEntry inEntry )
+	{
+		DataType<?> dataValue = inEntry.getUpdatedValue( inServiceKey );
+		if( dataValue == null )
+			return false;
+		
+		return dataValue.get().equals( Status.OK.toString() );
 	}
 }

@@ -6,7 +6,7 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STM;
 import org.juxtapose.streamline.stm.STMEntryFactory;
 
-public class STMUtil
+public class STMStatic
 {
 	static ISTM stm;
 	

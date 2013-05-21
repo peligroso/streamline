@@ -8337,6 +8337,10 @@ public final class StreamDataProtocol {
         getHashMapEntriesOrBuilderList();
     org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntryOrBuilder getHashMapEntriesOrBuilder(
         int index);
+    
+    // optional int32 status = 8;
+    boolean hasStatus();
+    int getStatus();
   }
   public static final class DataMap extends
       com.google.protobuf.GeneratedMessage
@@ -8366,6 +8370,7 @@ public final class StreamDataProtocol {
       return org.juxtapose.streamline.protocol.message.StreamDataProtocol.internal_static_DataMap_fieldAccessorTable;
     }
     
+    private int bitField0_;
     // repeated .StringEntry stringEntries = 2;
     public static final int STRINGENTRIES_FIELD_NUMBER = 2;
     private java.util.List<org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry> stringEntries_;
@@ -8492,6 +8497,16 @@ public final class StreamDataProtocol {
       return hashMapEntries_.get(index);
     }
     
+    // optional int32 status = 8;
+    public static final int STATUS_FIELD_NUMBER = 8;
+    private int status_;
+    public boolean hasStatus() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    public int getStatus() {
+      return status_;
+    }
+    
     private void initFields() {
       stringEntries_ = java.util.Collections.emptyList();
       longEntries_ = java.util.Collections.emptyList();
@@ -8499,6 +8514,7 @@ public final class StreamDataProtocol {
       boolEntries_ = java.util.Collections.emptyList();
       nullEntries_ = java.util.Collections.emptyList();
       hashMapEntries_ = java.util.Collections.emptyList();
+      status_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -8566,6 +8582,9 @@ public final class StreamDataProtocol {
       for (int i = 0; i < hashMapEntries_.size(); i++) {
         output.writeMessage(7, hashMapEntries_.get(i));
       }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(8, status_);
+      }
       getUnknownFields().writeTo(output);
     }
     
@@ -8598,6 +8617,10 @@ public final class StreamDataProtocol {
       for (int i = 0; i < hashMapEntries_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, hashMapEntries_.get(i));
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, status_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -8765,6 +8788,8 @@ public final class StreamDataProtocol {
         } else {
           hashMapEntriesBuilder_.clear();
         }
+        status_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       
@@ -8802,6 +8827,7 @@ public final class StreamDataProtocol {
       public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap buildPartial() {
         org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap result = new org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (stringEntriesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) == 0x00000001)) {
             stringEntries_ = java.util.Collections.unmodifiableList(stringEntries_);
@@ -8856,6 +8882,11 @@ public final class StreamDataProtocol {
         } else {
           result.hashMapEntries_ = hashMapEntriesBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.status_ = status_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -9027,6 +9058,9 @@ public final class StreamDataProtocol {
             }
           }
         }
+        if (other.hasStatus()) {
+          setStatus(other.getStatus());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -9128,6 +9162,11 @@ public final class StreamDataProtocol {
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry.Builder subBuilder = org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addHashMapEntries(subBuilder.buildPartial());
+              break;
+            }
+            case 64: {
+              bitField0_ |= 0x00000040;
+              status_ = input.readInt32();
               break;
             }
           }
@@ -10252,6 +10291,27 @@ public final class StreamDataProtocol {
         return hashMapEntriesBuilder_;
       }
       
+      // optional int32 status = 8;
+      private int status_ ;
+      public boolean hasStatus() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      public int getStatus() {
+        return status_;
+      }
+      public Builder setStatus(int value) {
+        bitField0_ |= 0x00000040;
+        status_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearStatus() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        status_ = 0;
+        onChanged();
+        return this;
+      }
+      
       // @@protoc_insertion_point(builder_scope:DataMap)
     }
     
@@ -10950,15 +11010,16 @@ public final class StreamDataProtocol {
       "alEntry\022\r\n\005field\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n" +
       "\010intBytes\030\003 \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 " +
       "\002(\t\"C\n\014HashMapEntry\022\r\n\005field\030\001 \002(\t\022\026\n\004da",
-      "ta\030\002 \002(\0132\010.DataMap\022\014\n\004list\030\003 \001(\010\"\340\001\n\007Dat" +
+      "ta\030\002 \002(\0132\010.DataMap\022\014\n\004list\030\003 \001(\010\"\360\001\n\007Dat" +
       "aMap\022#\n\rstringEntries\030\002 \003(\0132\014.StringEntr" +
       "y\022\037\n\013longEntries\030\003 \003(\0132\n.LongEntry\022#\n\tbD" +
       "Entries\030\004 \003(\0132\020.BigDecimalEntry\022\"\n\013boolE" +
       "ntries\030\005 \003(\0132\r.BooleanEntry\022\037\n\013nullEntri" +
       "es\030\006 \003(\0132\n.NullEntry\022%\n\016hashMapEntries\030\007" +
-      " \003(\0132\r.HashMapEntry\"0\n\tStringMap\022#\n\rstri" +
-      "ngEntries\030\001 \003(\0132\014.StringEntryB+\n)org.jux" +
-      "tapose.streamline.protocol.message"
+      " \003(\0132\r.HashMapEntry\022\016\n\006status\030\010 \001(\005\"0\n\tS" +
+      "tringMap\022#\n\rstringEntries\030\001 \003(\0132\014.String" +
+      "EntryB+\n)org.juxtapose.streamline.protoc" +
+      "ol.message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -11090,7 +11151,7 @@ public final class StreamDataProtocol {
           internal_static_DataMap_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_DataMap_descriptor,
-              new java.lang.String[] { "StringEntries", "LongEntries", "BDEntries", "BoolEntries", "NullEntries", "HashMapEntries", },
+              new java.lang.String[] { "StringEntries", "LongEntries", "BDEntries", "BoolEntries", "NullEntries", "HashMapEntries", "Status", },
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.class,
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.Builder.class);
           internal_static_StringMap_descriptor =
