@@ -140,7 +140,22 @@ public class PersistentArrayList<T>
 	
 	public String toString()
 	{
-		return Arrays.toString( arr );
+		StringBuilder sb = new StringBuilder("[");
+		boolean first = true;
+		for( int i = 0; i < size; i++ )
+		{
+			if( first )
+			{
+				first = false;
+			}
+			else
+				sb.append(", ");
+			
+			sb.append( arr[i] );
+		}
+		sb.append("]");
+		
+		return sb.toString();
 	}
 
 }

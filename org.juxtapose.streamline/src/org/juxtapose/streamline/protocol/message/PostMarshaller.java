@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ProducerUtil;
@@ -17,7 +18,9 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.util.DataConstants;
+import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.data.DataType;
+import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
@@ -76,12 +79,94 @@ public class PostMarshaller
 		
 	}
 	
+	
+	public static final PersistentArrayList<DataType<?>> parseDataList( DataMap inDataMap )
+	{
+		PersistentArrayList<DataType<?>> perList = new PersistentArrayList<DataType<?>>();
+		
+		TreeMap<String, DataType<?>> sortedMap = new TreeMap<String, DataType<?>>();
+		
+		List<StringEntry> stringEntries = inDataMap.getStringEntriesList();
+		
+		if( stringEntries != null && !stringEntries.isEmpty() )
+		{
+			for( StringEntry entry : stringEntries )
+			{
+				String field = entry.getField();
+				String data = entry.getData();
+				
+				sortedMap.put( field, new DataTypeString(data) );
+			}
+		}
+		
+		List<BigDecimalEntry> bdEntries = inDataMap.getBDEntriesList();
+		
+		if( bdEntries != null && !bdEntries.isEmpty() )
+		{
+			for( BigDecimalEntry entry : bdEntries )
+			{
+				String field = entry.getField();
+				int scale = entry.getScale();
+				ByteString bs = entry.getIntBytes();
+				BigInteger bi = new BigInteger(bs.toByteArray());
+				
+				BigDecimal bd = new BigDecimal(bi, scale);
+				
+				sortedMap.put( field, new DataTypeBigDecimal(bd) );
+			}
+		}
+		
+		List<BooleanEntry> boolEntries = inDataMap.getBoolEntriesList();
+		
+		if( boolEntries != null && !boolEntries.isEmpty() )
+		{
+			for( BooleanEntry entry : boolEntries )
+			{
+				String field = entry.getField();
+				boolean value = entry.getData();
+				
+				sortedMap.put( field, new DataTypeBoolean(value) );
+			}
+		}
+		
+		List<HashMapEntry> hashMapEntries = inDataMap.getHashMapEntriesList();
+		
+		if( hashMapEntries != null && !hashMapEntries.isEmpty() )
+		{
+			for( HashMapEntry entry : hashMapEntries )
+			{
+				String field = entry.getField();
+				DataMap dMap = entry.getData();
+				boolean list = entry.getList();
+				
+				if( list )
+				{
+					PersistentArrayList<DataType<?>> arr = parseDataList( dMap );
+					sortedMap.put( field, new DataTypeArrayList( arr ) );
+				}
+				else
+				{
+					IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+					subMap = parseDataMap( dMap, subMap );
+					sortedMap.put( field, new DataTypeHashMap(subMap) );
+				}
+			}
+		}
+		
+		for( Map.Entry<String, DataType<?>> entry : sortedMap.entrySet() )
+		{
+			perList = perList.add( entry.getValue() );
+		}
+		
+		return perList;
+	}
+	
 	/**
 	 * @param inDataMap
 	 * @param inMap
 	 * @return
 	 */
-	public  static final IPersistentMap<String, DataType<?>> parseDataMap( DataMap inDataMap, IPersistentMap <String, DataType<?>> inMap )
+	public static final IPersistentMap<String, DataType<?>> parseDataMap( DataMap inDataMap, IPersistentMap <String, DataType<?>> inMap )
 	{
 		IPersistentMap<String, DataType<?>> map = inMap;
 		
@@ -136,12 +221,19 @@ public class PostMarshaller
 			{
 				String field = entry.getField();
 				DataMap dMap = entry.getData();
+				boolean list = entry.getList();
 				
-				IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
-				
-				subMap = parseDataMap( dMap, subMap );
-				
-				map = map.assoc( field, new DataTypeHashMap(subMap) );
+				if( list )
+				{
+					PersistentArrayList<DataType<?>> arr = parseDataList( dMap );
+					map = map.assoc( field, new DataTypeArrayList(arr) );
+				}
+				else
+				{
+					IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+					subMap = parseDataMap( dMap, subMap );
+					map = map.assoc( field, new DataTypeHashMap(subMap) );
+				}
 			}
 		}
 		
