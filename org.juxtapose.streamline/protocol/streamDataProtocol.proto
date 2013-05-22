@@ -41,7 +41,8 @@ message SubQueryResponseMessage
 
 message SubscribeMessage
 {
-	required int32 reference = 1;
+	optional int32 reference = 1;
+	optional DataKey key = 2;
 }
 
 message UnsubscribeMessage
@@ -54,6 +55,7 @@ message UpdateMessage
 	required int32 reference = 1;
 	required DataMap data = 3;
 	required bool fullupdate = 4;
+	optional DataKey key = 5;
 }
 
 message DataKey

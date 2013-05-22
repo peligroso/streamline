@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -14,6 +15,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
@@ -25,6 +27,7 @@ import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
@@ -39,6 +42,43 @@ import com.trifork.clj_ds.PersistentHashMap;
  */
 public class PostMarshaller 
 {
+	public static interface IParseObject
+	{
+		public void update( String inField, DataType<?> inData );
+	}
+	
+	public static class MapParseObject implements IParseObject
+	{
+		IPersistentMap<String, DataType<?>> map;
+		
+		public MapParseObject( IPersistentMap<String, DataType<?>> inMap )
+		{
+			map = inMap;
+		}
+
+		@Override
+		public void update( String inField, DataType<?> inData )
+		{
+			map = map.assoc( inField, inData );			
+		}
+	}
+	
+	public static class ArrayParseObject implements IParseObject
+	{
+		SortedMap<String, DataType<?>> map;
+		
+		public ArrayParseObject( SortedMap<String, DataType<?>> inMap )
+		{
+			map = inMap;
+		}
+
+		@Override
+		public void update( String inField, DataType<?> inData )
+		{
+			map.put( inField, inData );			
+		}
+	}
+	
 	/**
 	 * @param inMessage
 	 * @return
@@ -81,13 +121,8 @@ public class PostMarshaller
 		
 	}
 	
-	
-	public static final PersistentArrayList<DataType<?>> parseDataList( DataMap inDataMap )
+	public static final void parseData( DataMap inDataMap, IParseObject inParseObject )
 	{
-		PersistentArrayList<DataType<?>> perList = new PersistentArrayList<DataType<?>>();
-		
-		TreeMap<String, DataType<?>> sortedMap = new TreeMap<String, DataType<?>>();
-		
 		List<StringEntry> stringEntries = inDataMap.getStringEntriesList();
 		
 		if( stringEntries != null && !stringEntries.isEmpty() )
@@ -97,7 +132,7 @@ public class PostMarshaller
 				String field = entry.getField();
 				String data = entry.getData();
 				
-				sortedMap.put( field, new DataTypeString(data) );
+				inParseObject.update( field, new DataTypeString(data) );
 			}
 		}
 		
@@ -114,7 +149,20 @@ public class PostMarshaller
 				
 				BigDecimal bd = new BigDecimal(bi, scale);
 				
-				sortedMap.put( field, new DataTypeBigDecimal(bd) );
+				inParseObject.update( field, new DataTypeBigDecimal(bd) );
+			}
+		}
+		
+		List<LongEntry> longEntries = inDataMap.getLongEntriesList();
+		
+		if( longEntries != null && !longEntries.isEmpty() )
+		{
+			for( LongEntry entry : longEntries )
+			{
+				String field = entry.getField();
+				long value = entry.getData();
+				
+				inParseObject.update( field, new DataTypeLong( value ) );
 			}
 		}
 		
@@ -127,7 +175,7 @@ public class PostMarshaller
 				String field = entry.getField();
 				boolean value = entry.getData();
 				
-				sortedMap.put( field, new DataTypeBoolean(value) );
+				inParseObject.update( field, new DataTypeBoolean(value) );
 			}
 		}
 		
@@ -144,16 +192,27 @@ public class PostMarshaller
 				if( list )
 				{
 					PersistentArrayList<DataType<?>> arr = parseDataList( dMap );
-					sortedMap.put( field, new DataTypeArrayList( arr ) );
+					inParseObject.update( field, new DataTypeArrayList( arr ) );
 				}
 				else
 				{
 					IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
 					subMap = parseDataMap( dMap, subMap );
-					sortedMap.put( field, new DataTypeHashMap(subMap) );
+					inParseObject.update( field, new DataTypeHashMap(subMap) );
 				}
 			}
 		}
+	}
+	
+	
+	public static final PersistentArrayList<DataType<?>> parseDataList( DataMap inDataMap )
+	{
+		PersistentArrayList<DataType<?>> perList = new PersistentArrayList<DataType<?>>();
+		
+		TreeMap<String, DataType<?>> sortedMap = new TreeMap<String, DataType<?>>();
+		
+		ArrayParseObject parseObject = new ArrayParseObject( sortedMap );
+		parseData( inDataMap, parseObject );
 		
 		for( Map.Entry<String, DataType<?>> entry : sortedMap.entrySet() )
 		{
@@ -172,72 +231,10 @@ public class PostMarshaller
 	{
 		IPersistentMap<String, DataType<?>> map = inMap;
 		
-		List<StringEntry> stringEntries = inDataMap.getStringEntriesList();
+		MapParseObject parseObject = new MapParseObject( map );
+		parseData( inDataMap, parseObject );
 		
-		if( stringEntries != null && !stringEntries.isEmpty() )
-		{
-			for( StringEntry entry : stringEntries )
-			{
-				String field = entry.getField();
-				String data = entry.getData();
-				
-				map = map.assoc( field, new DataTypeString(data) );
-			}
-		}
-		
-		List<BigDecimalEntry> bdEntries = inDataMap.getBDEntriesList();
-		
-		if( bdEntries != null && !bdEntries.isEmpty() )
-		{
-			for( BigDecimalEntry entry : bdEntries )
-			{
-				String field = entry.getField();
-				int scale = entry.getScale();
-				ByteString bs = entry.getIntBytes();
-				BigInteger bi = new BigInteger(bs.toByteArray());
-				
-				BigDecimal bd = new BigDecimal(bi, scale);
-				
-				map = map.assoc( field, new DataTypeBigDecimal(bd) );
-			}
-		}
-		
-		List<BooleanEntry> boolEntries = inDataMap.getBoolEntriesList();
-		
-		if( boolEntries != null && !boolEntries.isEmpty() )
-		{
-			for( BooleanEntry entry : boolEntries )
-			{
-				String field = entry.getField();
-				boolean value = entry.getData();
-				
-				map = map.assoc( field, new DataTypeBoolean(value) );
-			}
-		}
-		
-		List<HashMapEntry> hashMapEntries = inDataMap.getHashMapEntriesList();
-		
-		if( hashMapEntries != null && !hashMapEntries.isEmpty() )
-		{
-			for( HashMapEntry entry : hashMapEntries )
-			{
-				String field = entry.getField();
-				DataMap dMap = entry.getData();
-				boolean list = entry.getList();
-				
-				if( list )
-				{
-					PersistentArrayList<DataType<?>> arr = parseDataList( dMap );
-					map = map.assoc( field, new DataTypeArrayList(arr) );
-				}
-				else
-				{
-					IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
-					subMap = parseDataMap( dMap, subMap );
-					map = map.assoc( field, new DataTypeHashMap(subMap) );
-				}
-			}
-		}
+		map = parseObject.map;
 		
 		Integer status = inDataMap.getStatus();
 		

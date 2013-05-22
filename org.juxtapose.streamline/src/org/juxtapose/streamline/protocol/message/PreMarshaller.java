@@ -85,12 +85,26 @@ public class PreMarshaller
 		return messB.build();
 	}
 	
+	public static Message createSubscriptionMessage( ISTMEntryKey inKey )
+	{
+		SubscribeMessage.Builder subMessB = SubscribeMessage.newBuilder();
+		
+		DataKey key = createDataKey( inKey );
+		subMessB.setKey( key );
+		
+		Message.Builder messB = Message.newBuilder();
+		messB.setSubscribeMessage( subMessB );
+		messB.setType( Message.Type.SubscribeMessage );
+		
+		return messB.build();
+	}
+	
 	/**
 	 * @param inRef
 	 * @param inDataMap
 	 * @return
 	 */
-	public static Message createUpdateMessage( int inRef, ISTMEntry inEntry, boolean inFullUpdate )
+	public static Message createUpdateMessage( int inRef, ISTMEntry inEntry, boolean inFullUpdate, ISTMEntryKey inKey )
 	{
 		IPersistentMap<String, DataType<?>> dataMap = inEntry.getDataMap();
 		
@@ -111,6 +125,11 @@ public class PreMarshaller
 		
 		builder.setData( dataMapBuilder.build() );
 		
+		if( inKey != null )
+		{
+			DataKey dKey = createDataKey( inKey );
+			
+		}
 		
 		Message.Builder messBuilder = Message.newBuilder();
 		try
@@ -124,6 +143,11 @@ public class PreMarshaller
 		
 		return messBuilder.build();
 		
+	}
+	
+	public static Message createUpdateMessage( int inRef, ISTMEntry inEntry, boolean inFullUpdate )
+	{
+		return createUpdateMessage( inRef, inEntry, inFullUpdate, null );
 	}
 	
 

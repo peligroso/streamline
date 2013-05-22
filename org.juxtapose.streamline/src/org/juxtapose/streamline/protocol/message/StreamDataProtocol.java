@@ -2604,9 +2604,14 @@ public final class StreamDataProtocol {
   public interface SubscribeMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // required int32 reference = 1;
+    // optional int32 reference = 1;
     boolean hasReference();
     int getReference();
+    
+    // optional .DataKey key = 2;
+    boolean hasKey();
+    org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey();
+    org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder();
   }
   public static final class SubscribeMessage extends
       com.google.protobuf.GeneratedMessage
@@ -2637,7 +2642,7 @@ public final class StreamDataProtocol {
     }
     
     private int bitField0_;
-    // required int32 reference = 1;
+    // optional int32 reference = 1;
     public static final int REFERENCE_FIELD_NUMBER = 1;
     private int reference_;
     public boolean hasReference() {
@@ -2647,17 +2652,33 @@ public final class StreamDataProtocol {
       return reference_;
     }
     
+    // optional .DataKey key = 2;
+    public static final int KEY_FIELD_NUMBER = 2;
+    private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey key_;
+    public boolean hasKey() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey() {
+      return key_;
+    }
+    public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder() {
+      return key_;
+    }
+    
     private void initFields() {
       reference_ = 0;
+      key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
-      if (!hasReference()) {
-        memoizedIsInitialized = 0;
-        return false;
+      if (hasKey()) {
+        if (!getKey().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
       }
       memoizedIsInitialized = 1;
       return true;
@@ -2668,6 +2689,9 @@ public final class StreamDataProtocol {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeInt32(1, reference_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeMessage(2, key_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2681,6 +2705,10 @@ public final class StreamDataProtocol {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(1, reference_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, key_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2798,6 +2826,7 @@ public final class StreamDataProtocol {
       }
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getKeyFieldBuilder();
         }
       }
       private static Builder create() {
@@ -2808,6 +2837,12 @@ public final class StreamDataProtocol {
         super.clear();
         reference_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
+        if (keyBuilder_ == null) {
+          key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+        } else {
+          keyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
       
@@ -2850,6 +2885,14 @@ public final class StreamDataProtocol {
           to_bitField0_ |= 0x00000001;
         }
         result.reference_ = reference_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        if (keyBuilder_ == null) {
+          result.key_ = key_;
+        } else {
+          result.key_ = keyBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -2869,14 +2912,19 @@ public final class StreamDataProtocol {
         if (other.hasReference()) {
           setReference(other.getReference());
         }
+        if (other.hasKey()) {
+          mergeKey(other.getKey());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
       
       public final boolean isInitialized() {
-        if (!hasReference()) {
-          
-          return false;
+        if (hasKey()) {
+          if (!getKey().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -2909,13 +2957,22 @@ public final class StreamDataProtocol {
               reference_ = input.readInt32();
               break;
             }
+            case 18: {
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder subBuilder = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.newBuilder();
+              if (hasKey()) {
+                subBuilder.mergeFrom(getKey());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setKey(subBuilder.buildPartial());
+              break;
+            }
           }
         }
       }
       
       private int bitField0_;
       
-      // required int32 reference = 1;
+      // optional int32 reference = 1;
       private int reference_ ;
       public boolean hasReference() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
@@ -2934,6 +2991,96 @@ public final class StreamDataProtocol {
         reference_ = 0;
         onChanged();
         return this;
+      }
+      
+      // optional .DataKey key = 2;
+      private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder> keyBuilder_;
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey() {
+        if (keyBuilder_ == null) {
+          return key_;
+        } else {
+          return keyBuilder_.getMessage();
+        }
+      }
+      public Builder setKey(org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey value) {
+        if (keyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          key_ = value;
+          onChanged();
+        } else {
+          keyBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder setKey(
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder builderForValue) {
+        if (keyBuilder_ == null) {
+          key_ = builderForValue.build();
+          onChanged();
+        } else {
+          keyBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder mergeKey(org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey value) {
+        if (keyBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002) &&
+              key_ != org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance()) {
+            key_ =
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.newBuilder(key_).mergeFrom(value).buildPartial();
+          } else {
+            key_ = value;
+          }
+          onChanged();
+        } else {
+          keyBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        return this;
+      }
+      public Builder clearKey() {
+        if (keyBuilder_ == null) {
+          key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+          onChanged();
+        } else {
+          keyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder getKeyBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getKeyFieldBuilder().getBuilder();
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder() {
+        if (keyBuilder_ != null) {
+          return keyBuilder_.getMessageOrBuilder();
+        } else {
+          return key_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder> 
+          getKeyFieldBuilder() {
+        if (keyBuilder_ == null) {
+          keyBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder>(
+                  key_,
+                  getParentForChildren(),
+                  isClean());
+          key_ = null;
+        }
+        return keyBuilder_;
       }
       
       // @@protoc_insertion_point(builder_scope:SubscribeMessage)
@@ -3308,6 +3455,11 @@ public final class StreamDataProtocol {
     // required bool fullupdate = 4;
     boolean hasFullupdate();
     boolean getFullupdate();
+    
+    // optional .DataKey key = 5;
+    boolean hasKey();
+    org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey();
+    org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder();
   }
   public static final class UpdateMessage extends
       com.google.protobuf.GeneratedMessage
@@ -3371,10 +3523,24 @@ public final class StreamDataProtocol {
       return fullupdate_;
     }
     
+    // optional .DataKey key = 5;
+    public static final int KEY_FIELD_NUMBER = 5;
+    private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey key_;
+    public boolean hasKey() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey() {
+      return key_;
+    }
+    public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder() {
+      return key_;
+    }
+    
     private void initFields() {
       reference_ = 0;
       data_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance();
       fullupdate_ = false;
+      key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3397,6 +3563,12 @@ public final class StreamDataProtocol {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (hasKey()) {
+        if (!getKey().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -3412,6 +3584,9 @@ public final class StreamDataProtocol {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBool(4, fullupdate_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(5, key_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3433,6 +3608,10 @@ public final class StreamDataProtocol {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, fullupdate_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, key_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3551,6 +3730,7 @@ public final class StreamDataProtocol {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getDataFieldBuilder();
+          getKeyFieldBuilder();
         }
       }
       private static Builder create() {
@@ -3569,6 +3749,12 @@ public final class StreamDataProtocol {
         bitField0_ = (bitField0_ & ~0x00000002);
         fullupdate_ = false;
         bitField0_ = (bitField0_ & ~0x00000004);
+        if (keyBuilder_ == null) {
+          key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+        } else {
+          keyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       
@@ -3623,6 +3809,14 @@ public final class StreamDataProtocol {
           to_bitField0_ |= 0x00000004;
         }
         result.fullupdate_ = fullupdate_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        if (keyBuilder_ == null) {
+          result.key_ = key_;
+        } else {
+          result.key_ = keyBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3648,6 +3842,9 @@ public final class StreamDataProtocol {
         if (other.hasFullupdate()) {
           setFullupdate(other.getFullupdate());
         }
+        if (other.hasKey()) {
+          mergeKey(other.getKey());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -3668,6 +3865,12 @@ public final class StreamDataProtocol {
         if (!getData().isInitialized()) {
           
           return false;
+        }
+        if (hasKey()) {
+          if (!getKey().isInitialized()) {
+            
+            return false;
+          }
         }
         return true;
       }
@@ -3712,6 +3915,15 @@ public final class StreamDataProtocol {
             case 32: {
               bitField0_ |= 0x00000004;
               fullupdate_ = input.readBool();
+              break;
+            }
+            case 42: {
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder subBuilder = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.newBuilder();
+              if (hasKey()) {
+                subBuilder.mergeFrom(getKey());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setKey(subBuilder.buildPartial());
               break;
             }
           }
@@ -3850,6 +4062,96 @@ public final class StreamDataProtocol {
         fullupdate_ = false;
         onChanged();
         return this;
+      }
+      
+      // optional .DataKey key = 5;
+      private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder> keyBuilder_;
+      public boolean hasKey() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey getKey() {
+        if (keyBuilder_ == null) {
+          return key_;
+        } else {
+          return keyBuilder_.getMessage();
+        }
+      }
+      public Builder setKey(org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey value) {
+        if (keyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          key_ = value;
+          onChanged();
+        } else {
+          keyBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder setKey(
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder builderForValue) {
+        if (keyBuilder_ == null) {
+          key_ = builderForValue.build();
+          onChanged();
+        } else {
+          keyBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder mergeKey(org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey value) {
+        if (keyBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              key_ != org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance()) {
+            key_ =
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.newBuilder(key_).mergeFrom(value).buildPartial();
+          } else {
+            key_ = value;
+          }
+          onChanged();
+        } else {
+          keyBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      public Builder clearKey() {
+        if (keyBuilder_ == null) {
+          key_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.getDefaultInstance();
+          onChanged();
+        } else {
+          keyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder getKeyBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getKeyFieldBuilder().getBuilder();
+      }
+      public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder getKeyOrBuilder() {
+        if (keyBuilder_ != null) {
+          return keyBuilder_.getMessageOrBuilder();
+        } else {
+          return key_;
+        }
+      }
+      private com.google.protobuf.SingleFieldBuilder<
+          org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder> 
+          getKeyFieldBuilder() {
+        if (keyBuilder_ == null) {
+          keyBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKeyOrBuilder>(
+                  key_,
+                  getParentForChildren(),
+                  isClean());
+          key_ = null;
+        }
+        return keyBuilder_;
       }
       
       // @@protoc_insertion_point(builder_scope:UpdateMessage)
@@ -10995,31 +11297,32 @@ public final class StreamDataProtocol {
       "\n.StringMap\022\013\n\003tag\030\003 \002(\005\"x\n\027SubQueryResp" +
       "onseMessage\022\016\n\006status\030\001 \002(\005\022\013\n\003tag\030\002 \002(\005" +
       "\022\025\n\003key\030\003 \001(\0132\010.DataKey\022\021\n\treference\030\004 \001" +
-      "(\005\022\026\n\004data\030\005 \001(\0132\010.DataMap\"%\n\020SubscribeM" +
-      "essage\022\021\n\treference\030\001 \002(\005\"\'\n\022Unsubscribe" +
-      "Message\022\021\n\treference\030\001 \002(\005\"N\n\rUpdateMess" +
-      "age\022\021\n\treference\030\001 \002(\005\022\026\n\004data\030\003 \002(\0132\010.D" +
-      "ataMap\022\022\n\nfullupdate\030\004 \002(\010\"M\n\007DataKey\022\017\n",
-      "\007service\030\001 \002(\t\022\014\n\004type\030\002 \002(\t\022#\n\rstringEn" +
-      "tries\030\003 \003(\0132\014.StringEntry\"+\n\010BDecimal\022\r\n" +
-      "\005scale\030\001 \002(\005\022\020\n\010intBytes\030\002 \002(\014\"\031\n\010BInteg" +
-      "er\022\r\n\005value\030\001 \002(\014\"*\n\013StringEntry\022\r\n\005fiel" +
-      "d\030\001 \002(\t\022\014\n\004data\030\002 \002(\t\"+\n\014BooleanEntry\022\r\n" +
-      "\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\010\"(\n\tLongEntry\022" +
-      "\r\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\004\"A\n\017BigDecim" +
-      "alEntry\022\r\n\005field\030\001 \002(\t\022\r\n\005scale\030\002 \002(\005\022\020\n" +
-      "\010intBytes\030\003 \002(\014\"\032\n\tNullEntry\022\r\n\005field\030\001 " +
-      "\002(\t\"C\n\014HashMapEntry\022\r\n\005field\030\001 \002(\t\022\026\n\004da",
-      "ta\030\002 \002(\0132\010.DataMap\022\014\n\004list\030\003 \001(\010\"\360\001\n\007Dat" +
-      "aMap\022#\n\rstringEntries\030\002 \003(\0132\014.StringEntr" +
-      "y\022\037\n\013longEntries\030\003 \003(\0132\n.LongEntry\022#\n\tbD" +
-      "Entries\030\004 \003(\0132\020.BigDecimalEntry\022\"\n\013boolE" +
-      "ntries\030\005 \003(\0132\r.BooleanEntry\022\037\n\013nullEntri" +
-      "es\030\006 \003(\0132\n.NullEntry\022%\n\016hashMapEntries\030\007" +
-      " \003(\0132\r.HashMapEntry\022\016\n\006status\030\010 \001(\005\"0\n\tS" +
-      "tringMap\022#\n\rstringEntries\030\001 \003(\0132\014.String" +
-      "EntryB+\n)org.juxtapose.streamline.protoc" +
-      "ol.message"
+      "(\005\022\026\n\004data\030\005 \001(\0132\010.DataMap\"<\n\020SubscribeM" +
+      "essage\022\021\n\treference\030\001 \001(\005\022\025\n\003key\030\002 \001(\0132\010" +
+      ".DataKey\"\'\n\022UnsubscribeMessage\022\021\n\trefere" +
+      "nce\030\001 \002(\005\"e\n\rUpdateMessage\022\021\n\treference\030" +
+      "\001 \002(\005\022\026\n\004data\030\003 \002(\0132\010.DataMap\022\022\n\nfullupd",
+      "ate\030\004 \002(\010\022\025\n\003key\030\005 \001(\0132\010.DataKey\"M\n\007Data" +
+      "Key\022\017\n\007service\030\001 \002(\t\022\014\n\004type\030\002 \002(\t\022#\n\rst" +
+      "ringEntries\030\003 \003(\0132\014.StringEntry\"+\n\010BDeci" +
+      "mal\022\r\n\005scale\030\001 \002(\005\022\020\n\010intBytes\030\002 \002(\014\"\031\n\010" +
+      "BInteger\022\r\n\005value\030\001 \002(\014\"*\n\013StringEntry\022\r" +
+      "\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\t\"+\n\014BooleanEn" +
+      "try\022\r\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\010\"(\n\tLong" +
+      "Entry\022\r\n\005field\030\001 \002(\t\022\014\n\004data\030\002 \002(\004\"A\n\017Bi" +
+      "gDecimalEntry\022\r\n\005field\030\001 \002(\t\022\r\n\005scale\030\002 " +
+      "\002(\005\022\020\n\010intBytes\030\003 \002(\014\"\032\n\tNullEntry\022\r\n\005fi",
+      "eld\030\001 \002(\t\"C\n\014HashMapEntry\022\r\n\005field\030\001 \002(\t" +
+      "\022\026\n\004data\030\002 \002(\0132\010.DataMap\022\014\n\004list\030\003 \001(\010\"\360" +
+      "\001\n\007DataMap\022#\n\rstringEntries\030\002 \003(\0132\014.Stri" +
+      "ngEntry\022\037\n\013longEntries\030\003 \003(\0132\n.LongEntry" +
+      "\022#\n\tbDEntries\030\004 \003(\0132\020.BigDecimalEntry\022\"\n" +
+      "\013boolEntries\030\005 \003(\0132\r.BooleanEntry\022\037\n\013nul" +
+      "lEntries\030\006 \003(\0132\n.NullEntry\022%\n\016hashMapEnt" +
+      "ries\030\007 \003(\0132\r.HashMapEntry\022\016\n\006status\030\010 \001(" +
+      "\005\"0\n\tStringMap\022#\n\rstringEntries\030\001 \003(\0132\014." +
+      "StringEntryB+\n)org.juxtapose.streamline.",
+      "protocol.message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -11055,7 +11358,7 @@ public final class StreamDataProtocol {
           internal_static_SubscribeMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_SubscribeMessage_descriptor,
-              new java.lang.String[] { "Reference", },
+              new java.lang.String[] { "Reference", "Key", },
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage.class,
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage.Builder.class);
           internal_static_UnsubscribeMessage_descriptor =
@@ -11071,7 +11374,7 @@ public final class StreamDataProtocol {
           internal_static_UpdateMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_UpdateMessage_descriptor,
-              new java.lang.String[] { "Reference", "Data", "Fullupdate", },
+              new java.lang.String[] { "Reference", "Data", "Fullupdate", "Key", },
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage.class,
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage.Builder.class);
           internal_static_DataKey_descriptor =

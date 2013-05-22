@@ -35,8 +35,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	
 	RemoteServiceTracker serviceTracker;
 	
-	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
-	HashMap< ISTMEntryKey, Integer> keyToReference = new HashMap<ISTMEntryKey, Integer>();
+	ReferenceStore refStore = new ClientReferenceStore();
 	
 	HashMap<Object, RemoteServiceProxy> tagToService = new HashMap<Object, RemoteServiceProxy>(); 
 	
@@ -114,7 +113,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		UpdateMessage update = message.getUpdateMessage();
     		int reference = update.getReference();
     		
-    		ISTMEntryKey key = referenceToKey.get( reference );
+    		ISTMEntryKey key = refStore.getKeyFromRef( reference );
     		
     		if( key == null )
     		{
@@ -184,8 +183,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 			return;
 		}
 		
-		keyToReference.put( inKey,  inRef );
-		referenceToKey.put( inRef, inKey );
+		refStore.addReference( inRef, inKey );
 		
 		service.remoteKeyDelivered( inKey, tag );
 		
@@ -197,7 +195,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	 */
 	public void subscribe( RemoteProxyEntryProducer inProducer, ISTMEntryKey inKey )
 	{
-		Integer ref = keyToReference.get( inKey );
+		Integer ref = refStore.getRefFromKey( inKey );
 		
 		if( ref == null )
 		{

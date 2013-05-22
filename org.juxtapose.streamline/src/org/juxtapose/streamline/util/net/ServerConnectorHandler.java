@@ -18,6 +18,7 @@ import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
 import org.juxtapose.streamline.protocol.message.PreMarshaller;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
@@ -25,6 +26,7 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
+import static org.juxtapose.streamline.tools.Preconditions.*;
 
 /**
  * @author Pontus Jörgne
@@ -33,14 +35,13 @@ import org.juxtapose.streamline.util.Status;
  */
 public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements ISTMEntryRequestSubscriber
 {	
+	static int OPTIMISTIC_REF = -1;
+	
 	final ISTM stm;
 	
-	HashMap<Integer, ISTMEntryKey> referenceToKey = new HashMap<Integer, ISTMEntryKey>();
-	HashMap< ISTMEntryKey, Integer> keyToReference = new HashMap<ISTMEntryKey, Integer>();
+	ReferenceStore refStore = new ServerReferenceStore();
 	
 	HashSet< ISTMEntryKey> fullUpdateSent = new HashSet<ISTMEntryKey>();
-	
-	AtomicInteger referenceIncrement = new AtomicInteger( 0 );
 	
 	Channel clientChannel;
 	
@@ -74,12 +75,24 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     	else if( message.getType() == Message.Type.SubscribeMessage )
     	{
     		SubscribeMessage subMess = message.getSubscribeMessage();
-    		ISTMEntryKey key = referenceToKey.get( subMess.getReference() );
     		
-    		if( key == null )
+    		Integer ref = subMess.getReference();
+    		
+    		ISTMEntryKey key;
+    		
+    		if( ref != null )
     		{
-    			stm.logError( "Key for reference : "+subMess.getReference()+" not found" );
-    			return;
+    			key = refStore.getKeyFromRef( subMess.getReference() );
+    			notNull( key, "Key for reference : "+subMess.getReference()+" not found" );
+    		}
+    		else
+    		{
+    			//optimistic subscribe witout previous query
+    			DataKey dataKey = subMess.getKey();
+    			notNull( dataKey, "Both key and Ref is missing from subMessage" );
+    			
+    			key = PostMarshaller.parseKey( dataKey );
+    			refStore.addReference( OPTIMISTIC_REF, key );
     		}
     		
     		stm.subscribeToData( key, this );
@@ -125,13 +138,12 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     
     private void removeSubscriptions()
     {
-    	for( ISTMEntryKey key : keyToReference.keySet() )
+    	for( ISTMEntryKey key : refStore.getAllKeys() )
     	{
     		stm.unsubscribeToData( key, this );
     	}
     	
-    	keyToReference.clear();
-    	referenceToKey.clear();
+    	refStore.clear();
     }
 
 	@Override
@@ -141,27 +153,31 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		if( inData.getStatus() == Status.ON_REQUEST )
 			return;
 		
-		Integer ref = keyToReference.get( inKey );
+		Integer ref = refStore.getRefFromKey( inKey );
+		notNull( ref, "Reference for key : "+inKey+" not found" );
 		
-		if( ref == null )
+		Message mess;
+		if( ref == OPTIMISTIC_REF )
 		{
-			stm.logError( "Reference for key : "+inKey+" not found" );
-			return;
+			ref = refStore.addReference( inKey );
+			mess = PreMarshaller.createUpdateMessage( ref, inData, true );
+		}
+		else
+		{	
+			boolean fullUpdate = fullUpdateSent.remove( inKey );
+			mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
 		}
 		
-		boolean fullUpdate = fullUpdateSent.remove( inKey );
-		Message mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
 			
 		clientChannel.write( mess );
 	}
+	
 
 	@Override
 	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
 	{	
-		int ref = referenceIncrement.incrementAndGet();
+		int ref = refStore.addReference( inDataKey );
 		
-		keyToReference.put( inDataKey, ref );
-		referenceToKey.put(  ref,  inDataKey );
 		fullUpdateSent.add( inDataKey );
 		
 		Message mess = PreMarshaller.createSubResponse( (Long)inTag, ref,Status.OK, inDataKey, null );
