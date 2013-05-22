@@ -41,7 +41,7 @@ message SubQueryResponseMessage
 
 message SubscribeMessage
 {
-	optional int32 reference = 1;
+	required int32 reference = 1;
 	optional DataKey key = 2;
 }
 

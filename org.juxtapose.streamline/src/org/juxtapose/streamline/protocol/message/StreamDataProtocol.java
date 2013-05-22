@@ -2604,7 +2604,7 @@ public final class StreamDataProtocol {
   public interface SubscribeMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
     
-    // optional int32 reference = 1;
+    // required int32 reference = 1;
     boolean hasReference();
     int getReference();
     
@@ -2642,7 +2642,7 @@ public final class StreamDataProtocol {
     }
     
     private int bitField0_;
-    // optional int32 reference = 1;
+    // required int32 reference = 1;
     public static final int REFERENCE_FIELD_NUMBER = 1;
     private int reference_;
     public boolean hasReference() {
@@ -2674,6 +2674,10 @@ public final class StreamDataProtocol {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
       
+      if (!hasReference()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (hasKey()) {
         if (!getKey().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -2920,6 +2924,10 @@ public final class StreamDataProtocol {
       }
       
       public final boolean isInitialized() {
+        if (!hasReference()) {
+          
+          return false;
+        }
         if (hasKey()) {
           if (!getKey().isInitialized()) {
             
@@ -2972,7 +2980,7 @@ public final class StreamDataProtocol {
       
       private int bitField0_;
       
-      // optional int32 reference = 1;
+      // required int32 reference = 1;
       private int reference_ ;
       public boolean hasReference() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
@@ -11298,7 +11306,7 @@ public final class StreamDataProtocol {
       "onseMessage\022\016\n\006status\030\001 \002(\005\022\013\n\003tag\030\002 \002(\005" +
       "\022\025\n\003key\030\003 \001(\0132\010.DataKey\022\021\n\treference\030\004 \001" +
       "(\005\022\026\n\004data\030\005 \001(\0132\010.DataMap\"<\n\020SubscribeM" +
-      "essage\022\021\n\treference\030\001 \001(\005\022\025\n\003key\030\002 \001(\0132\010" +
+      "essage\022\021\n\treference\030\001 \002(\005\022\025\n\003key\030\002 \001(\0132\010" +
       ".DataKey\"\'\n\022UnsubscribeMessage\022\021\n\trefere" +
       "nce\030\001 \002(\005\"e\n\rUpdateMessage\022\021\n\treference\030" +
       "\001 \002(\005\022\026\n\004data\030\003 \002(\0132\010.DataMap\022\022\n\nfullupd",

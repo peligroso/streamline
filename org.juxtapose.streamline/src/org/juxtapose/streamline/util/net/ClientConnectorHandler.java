@@ -20,7 +20,9 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessag
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
+import static org.juxtapose.streamline.tools.Preconditions.*;
 
+import com.sun.istack.internal.NotNull;
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
 
@@ -177,11 +179,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		
 		RemoteServiceProxy service = tagToService.remove( inTag );
 		
-		if( service == null )
-		{
-			stm.logError( "Service to handle request to tag "+inTag+" has been removed");
-			return;
-		}
+		notNull( service );
 		
 		refStore.addReference( inRef, inKey );
 		
@@ -197,15 +195,21 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	{
 		Integer ref = refStore.getRefFromKey( inKey );
 		
+		Message subMessage;
+		
 		if( ref == null )
 		{
-			stm.logError( "referens for "+inKey+" can not be found in client handler.");
-			return;
+			//Optimistic request
+			ref = refStore.addReference( inKey );
+			subMessage = PreMarshaller.createSubscriptionMessage( ref, inKey );
 		}
-		
+		else
+		{
+			subMessage = PreMarshaller.createSubscriptionMessage( ref );
+		}
 		keyToSubscriber.put( inKey, inProducer );
 		
-		Message subMessage = PreMarshaller.createSubscriptionMessage( ref );
+		
 		channel.write( subMessage );
 	}
 	

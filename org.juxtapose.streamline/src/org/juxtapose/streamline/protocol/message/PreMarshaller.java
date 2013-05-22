@@ -85,12 +85,13 @@ public class PreMarshaller
 		return messB.build();
 	}
 	
-	public static Message createSubscriptionMessage( ISTMEntryKey inKey )
+	public static Message createSubscriptionMessage( int inReference, ISTMEntryKey inKey )
 	{
 		SubscribeMessage.Builder subMessB = SubscribeMessage.newBuilder();
 		
 		DataKey key = createDataKey( inKey );
 		subMessB.setKey( key );
+		subMessB.setReference( inReference );
 		
 		Message.Builder messB = Message.newBuilder();
 		messB.setSubscribeMessage( subMessB );

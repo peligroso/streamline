@@ -1,10 +1,9 @@
 package org.juxtapose.streamline.util.net;
 
-import java.util.HashMap;
+import static org.juxtapose.streamline.tools.Preconditions.notNull;
+
 import java.util.HashSet;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
@@ -26,7 +25,6 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
-import static org.juxtapose.streamline.tools.Preconditions.*;
 
 /**
  * @author Pontus Jörgne
@@ -50,6 +48,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		stm = inSTM;
 	}
 	
+    /* (non-Javadoc)
+     * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#handleUpstream(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.ChannelEvent)
+     */
     @Override
     public final void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception 
     {
@@ -80,19 +81,17 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		
     		ISTMEntryKey key;
     		
-    		if( ref != null )
+    		if( subMess.hasKey() )
     		{
-    			key = refStore.getKeyFromRef( subMess.getReference() );
-    			notNull( key, "Key for reference : "+subMess.getReference()+" not found" );
+    			//Optimistic subscribe
+    			DataKey dKey = subMess.getKey();
+    			key = PostMarshaller.parseKey( dKey );
+    			refStore.addReference( ref, key );
     		}
     		else
     		{
-    			//optimistic subscribe witout previous query
-    			DataKey dataKey = subMess.getKey();
-    			notNull( dataKey, "Both key and Ref is missing from subMessage" );
-    			
-    			key = PostMarshaller.parseKey( dataKey );
-    			refStore.addReference( OPTIMISTIC_REF, key );
+    			key = refStore.getKeyFromRef( ref );
+    			notNull( key, "There is no key for reference "+ref );
     		}
     		
     		stm.subscribeToData( key, this );
@@ -103,6 +102,11 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     	}
     }
     
+    /**
+     * @param inService
+     * @param inTag
+     * @param inQuery
+     */
     public final void postSubQuery( final String inService, final long inTag, final Map<String, String> inQuery )
     {
     	stm.execute( new Executable() {
@@ -115,6 +119,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		}, IExecutor.LOW );
     }
    
+    /* (non-Javadoc)
+     * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#channelConnected(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.ChannelStateEvent)
+     */
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
     {
@@ -122,6 +129,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
         stm.logInfo( "Client connected.." );
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#channelDisconnected(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.ChannelStateEvent)
+     */
     @Override
     public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception 
     {
@@ -130,12 +140,18 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     	
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#exceptionCaught(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.ExceptionEvent)
+     */
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, ExceptionEvent e) 
     {
         e.getChannel().close();
     }
     
+    /**
+     * 
+     */
     private void removeSubscriptions()
     {
     	for( ISTMEntryKey key : refStore.getAllKeys() )
@@ -146,6 +162,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     	refStore.clear();
     }
 
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.ISTMEntrySubscriber#updateData(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.util.ISTMEntry, boolean)
+	 */
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
 	{
@@ -173,6 +192,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.ISTMEntryRequestSubscriber#deliverKey(org.juxtapose.streamline.producer.ISTMEntryKey, java.lang.Object)
+	 */
 	@Override
 	public void deliverKey( ISTMEntryKey inDataKey, Object inTag ) 
 	{	
@@ -184,6 +206,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		clientChannel.write( mess );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.ISTMEntryRequestSubscriber#queryNotAvailible(java.lang.Object)
+	 */
 	@Override
 	public void queryNotAvailible( Object inTag ) 
 	{
@@ -191,6 +216,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		clientChannel.write( mess );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.ISTMEntrySubscriber#getPriority()
+	 */
 	@Override
 	public int getPriority() 
 	{
