@@ -115,6 +115,12 @@ message HashMapEntry
 	optional bool list = 3;
 }
 
+message ReferenceEntry
+{
+	required string field = 1;
+	required DataKey key = 2;
+}
+
 
 message DataMap
 {
@@ -124,8 +130,9 @@ message DataMap
 	repeated BooleanEntry boolEntries = 5;
 	repeated NullEntry nullEntries = 6;
 	repeated HashMapEntry hashMapEntries = 7;
+	repeated ReferenceEntry refEntries = 8;
 	
-	optional int32 status = 8;
+	optional int32 status = 9;
 }
 
 message StringMap

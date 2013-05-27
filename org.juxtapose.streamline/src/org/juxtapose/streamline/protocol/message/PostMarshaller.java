@@ -16,10 +16,12 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.ReferenceEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.STMEntryKey;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
@@ -28,6 +30,7 @@ import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLong;
+import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
@@ -202,6 +205,21 @@ public class PostMarshaller
 				}
 			}
 		}
+		
+		List<ReferenceEntry> refEntries = inDataMap.getRefEntriesList();
+		
+		if( refEntries != null && !refEntries.isEmpty() )
+		{
+			for( ReferenceEntry refEntry : refEntries )
+			{
+				String field = refEntry.getField();
+				DataKey key = refEntry.getKey();
+				
+				ISTMEntryKey entryKey = parseKey( key );
+				
+				inParseObject.update( field, new DataTypeRef( entryKey ) );
+			}
+		}
 	}
 	
 	
@@ -236,10 +254,10 @@ public class PostMarshaller
 		
 		map = parseObject.map;
 		
-		Integer status = inDataMap.getStatus();
-		
-		if( status != null )
+		if( inDataMap.hasStatus() )
 		{
+			Integer status = inDataMap.getStatus();
+			
 			Status st = Status.values()[status];
 			map = map.assoc( DataConstants.FIELD_STATUS, new DataTypeStatus( st ) );
 		}

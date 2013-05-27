@@ -7,6 +7,7 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -211,6 +212,14 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		
 		
 		channel.write( subMessage );
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.jboss.netty.channel.SimpleChannelUpstreamHandler#exceptionCaught(org.jboss.netty.channel.ChannelHandlerContext, org.jboss.netty.channel.ExceptionEvent)
+	 */
+	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception
+	{   
+	    stm.logError(e.toString(), e.getCause());
 	}
 	
 }

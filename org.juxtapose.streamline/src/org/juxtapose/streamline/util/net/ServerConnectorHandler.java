@@ -33,8 +33,6 @@ import org.juxtapose.streamline.util.Status;
  */
 public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements ISTMEntryRequestSubscriber
 {	
-	static int OPTIMISTIC_REF = -1;
-	
 	final ISTM stm;
 	
 	ReferenceStore refStore = new ServerReferenceStore();
@@ -146,6 +144,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     @Override
     public void exceptionCaught( ChannelHandlerContext ctx, ExceptionEvent e) 
     {
+    	stm.logError( e.toString(), e.getCause() );
         e.getChannel().close();
     }
     
@@ -175,19 +174,9 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		Integer ref = refStore.getRefFromKey( inKey );
 		notNull( ref, "Reference for key : "+inKey+" not found" );
 		
-		Message mess;
-		if( ref == OPTIMISTIC_REF )
-		{
-			ref = refStore.addReference( inKey );
-			mess = PreMarshaller.createUpdateMessage( ref, inData, true );
-		}
-		else
-		{	
-			boolean fullUpdate = fullUpdateSent.remove( inKey );
-			mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
-		}
+		boolean fullUpdate = fullUpdateSent.remove( inKey );
+		Message mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
 		
-			
 		clientChannel.write( mess );
 	}
 	
@@ -224,4 +213,5 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	{
 		return IExecutor.LOW;
 	}
+	
 }

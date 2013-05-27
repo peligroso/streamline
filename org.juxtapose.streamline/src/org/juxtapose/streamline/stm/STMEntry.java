@@ -290,4 +290,9 @@ final class STMEntry implements ISTMEntry
 		return null;
 	}
 	
+	public String toString()
+	{
+		return "version: "+sequenceID+" "+dataMap+" delta: "+deltaSet;
+	}
+	
 }

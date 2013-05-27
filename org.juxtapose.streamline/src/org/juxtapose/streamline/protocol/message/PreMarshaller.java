@@ -13,6 +13,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.NullEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.ReferenceEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
@@ -29,6 +30,7 @@ import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeNull;
+import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
@@ -298,6 +300,18 @@ public class PreMarshaller
 		else if( inData instanceof DataTypeStatus )
 		{
 			inBuilder.setStatus( ((DataTypeStatus)inData).get().ordinal() );
+		}
+		else if( inData instanceof DataTypeRef )
+		{
+			ISTMEntryKey entryKey = ((DataTypeRef)inData).get();
+			DataKey key = createDataKey( entryKey );
+			
+			ReferenceEntry.Builder refBuilder = ReferenceEntry.newBuilder();
+			
+			refBuilder.setField( inKey );
+			refBuilder.setKey( key );
+			
+			inBuilder.addRefEntries( refBuilder.build() );
 		}
 	}
 	/**
