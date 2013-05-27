@@ -13,15 +13,14 @@ import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 
 public class ConfigService extends DataProducerService implements IConfigService 
 {
-	MetaDataProducer metaProducer;
-	
+	ISTMEntryKey key;
 	
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.osgi.DataProducerService#init()
 	 */
 	public void init( )
 	{
-		metaProducer = new MetaDataProducer( createDataKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_META, FXProducerServiceConstants.CONFIG ), stm );
+		key = createDataKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_META, FXProducerServiceConstants.CONFIG );
 		super.init();
 	}
 	
@@ -39,7 +38,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 	{
 		String val = inQuery.get( DataConstants.FIELD_QUERY_KEY );
 		if( val.equals( DataConstants.STATE_TYPE_META ) )
-			inSubscriber.deliverKey( metaProducer.getKey(), inTag );
+			inSubscriber.deliverKey( key, inTag );
 		else
 			inSubscriber.queryNotAvailible( inTag );
 	}
@@ -52,7 +51,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 	{
 		if( DataConstants.STATE_TYPE_META.equals( inDataKey.getType() ) )
 		{
-			return metaProducer;
+			return new MetaDataProducer( key, stm );
 		}
 		
 		return null;
