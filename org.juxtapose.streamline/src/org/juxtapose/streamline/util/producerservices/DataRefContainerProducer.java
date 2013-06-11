@@ -9,10 +9,12 @@ import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 
 public class DataRefContainerProducer extends STMEntryProducer
 {
-
-	public DataRefContainerProducer( ISTMEntryKey inKey, ISTM inSTM )
+	final ISTMEntryKey[] startKeys;
+	
+	public DataRefContainerProducer( ISTMEntryKey inKey, ISTM inSTM, ISTMEntryKey... inKeys )
 	{
 		super( inKey, inSTM );
+		startKeys = inKeys;
 	}
 
 	@Override
@@ -24,10 +26,21 @@ public class DataRefContainerProducer extends STMEntryProducer
 			public void execute()
 			{
 				setStatus( Status.OK );
+				
+				if( startKeys != null )
+				{
+					for( ISTMEntryKey key : startKeys )
+					{
+						putValue( key.toString(), new DataTypeLazyRef( key ) );
+					}
+				}
 			}
 		});
 	}
 	
+	/**
+	 * @param inKey
+	 */
 	protected void addReference( final ISTMEntryKey... inKey )
 	{
 		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
@@ -41,6 +54,14 @@ public class DataRefContainerProducer extends STMEntryProducer
 				}
 			}
 		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.STMEntryProducer#stop()
+	 */
+	protected void stop()
+	{
+		
 	}
 
 }
