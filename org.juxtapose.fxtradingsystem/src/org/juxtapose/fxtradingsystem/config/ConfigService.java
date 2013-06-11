@@ -3,13 +3,17 @@ package org.juxtapose.fxtradingsystem.config;
 import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
+import org.juxtapose.fxtradingsystem.priceengine.PriceEngineKeyConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.producerservices.DataInitializer;
+import org.juxtapose.streamline.util.producerservices.DataRefContainerProducer;
 
 public class ConfigService extends DataProducerService implements IConfigService 
 {
@@ -22,6 +26,12 @@ public class ConfigService extends DataProducerService implements IConfigService
 	{
 		key = createDataKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_META, FXProducerServiceConstants.CONFIG );
 		super.init();
+	}
+	
+	public DataInitializer createDataInitializer( )
+	{
+		DataInitializer initializer = new DataInitializer( stm, this, STMUtil.createDataKey( FXProducerServiceConstants.CONFIG, "CCY", "CCY" ) );
+		return initializer;
 	}
 	
 	@Override
@@ -52,6 +62,10 @@ public class ConfigService extends DataProducerService implements IConfigService
 		if( DataConstants.STATE_TYPE_META.equals( inDataKey.getType() ) )
 		{
 			return new MetaDataProducer( key, stm );
+		}
+		else if( "CCY".equals( inDataKey.getType() ) )
+		{
+			return new DataRefContainerProducer( inDataKey, stm );
 		}
 		
 		return null;
