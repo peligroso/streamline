@@ -23,6 +23,8 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 	
 	protected ArrayList<ISTMEntryListener> listeners = new ArrayList<ISTMEntryListener>();
 	
+	ISTMEntry lastUpdate;
+	
 	public void initialize(  ISTM inSTM, HashMap<String, String> inQuery, String inService )
 	{
 		tag = 1;
@@ -64,11 +66,26 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 		listeners.remove( inListener );
 	}
 
-	public void updateListeners( ISTMEntry inEntry, boolean inFullUpdate )
+	public void updateListeners( ISTMEntryKey inKey, ISTMEntry inEntry, boolean inFullUpdate )
 	{
 		for( ISTMEntryListener listener : listeners )
 		{
-			listener.STMEntryUpdated( inEntry, inFullUpdate );
+			listener.STMEntryUpdated( inKey, inEntry, inFullUpdate );
 		}
+	}
+	
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
+	{
+		lastUpdate = inData;
+	}
+	
+	public ISTMEntryKey getEntryKey()
+	{
+		return key;
+	}
+	
+	public ISTMEntry getLastUpdate()
+	{
+		return lastUpdate;
 	}
 }

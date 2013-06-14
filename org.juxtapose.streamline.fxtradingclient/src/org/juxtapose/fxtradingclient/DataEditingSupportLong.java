@@ -16,6 +16,9 @@ public class DataEditingSupportLong extends DataEditingSupport {
 	 */
 	protected DataType<?> getDataType( Object inValue )
 	{
+		if( inValue == null || "".equals( inValue.toString() ) )
+			return new DataTypeLong( 0l );
+		
 		Long l = Long.parseLong( inValue.toString() );
 		return new DataTypeLong( l );
 	}

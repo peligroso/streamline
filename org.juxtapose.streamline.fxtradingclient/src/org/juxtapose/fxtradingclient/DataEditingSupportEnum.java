@@ -4,6 +4,8 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.TableViewer;
+import org.juxtapose.streamline.util.IInputListener;
+import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.data.DataType;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -19,10 +21,19 @@ public class DataEditingSupportEnum extends DataEditingSupport
 	
 	ComboBoxCellEditor cellEditor;
 	
-	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, InputContainer inInputContainer ) 
+	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer ) 
 	{
 		super( viewer, inKey );
 		items = inInputContainer.getInputObjects();
+		inInputContainer.addInputListener( new IInputListener()
+		{
+			@Override
+			public void inputChanged()
+			{
+				items = inInputContainer.getInputObjects();
+				updateItems( items );
+			}
+		} );
 	}
 	
 	@Override
@@ -71,5 +82,6 @@ public class DataEditingSupportEnum extends DataEditingSupport
 		getViewer().update( element, null );
 		
 	}
+	
 
 }

@@ -1,12 +1,17 @@
 package org.juxtapose.fxtradingclient;
 
+import java.awt.event.ContainerListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.tools.STMUtil;
+import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryListener;
 import org.juxtapose.streamline.util.STMEntrySubscriber;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
@@ -14,9 +19,11 @@ import org.juxtapose.streamline.util.data.DataTypeNull;
 
 import com.trifork.clj_ds.IPersistentMap;
 
-public class ContainerSubscriber extends STMEntrySubscriber
+public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntryListener
 {
 	HashMap<String, STMEntrySubscriber> entryToSubscribers = new HashMap<String, STMEntrySubscriber>();
+	
+	ArrayList<ISTMContainerListener> containerListeners = new ArrayList<ISTMContainerListener>();
 
 	@Override
 	public void queryNotAvailible( Object inTag )
@@ -46,18 +53,21 @@ public class ContainerSubscriber extends STMEntrySubscriber
 				}
 
 				@Override
-				public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
+				public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
 				{
+					super.updateData( inKey, inData, inFullUpdate );
 					System.out.println("got reference data for "+inData.getDataMap());
+					updateListeners( inKey, inData, inFullUpdate );
 				}
 			};
 			
 			entryToSubscribers.put( lRef.get().toString(), subscriber );
+			subscriber.addListener( this );
 			subscriber.initialize( stm, lRef.get() );
 		}
 	}
 		
-	private void doFirstUpdate( ISTMEntry inData )
+	private void doFullUpdate( ISTMEntry inData )
 	{
 		Iterator<Entry<String, DataType<?>>> iter = inData.getDataMap().iterator();
 		
@@ -81,16 +91,62 @@ public class ContainerSubscriber extends STMEntrySubscriber
 	}
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
 	{	
-		if( inFirstUpdate )
+		if( inFullUpdate )
 		{
-			doFirstUpdate( inData );
+			doFullUpdate( inData );
 		}
 		else
 		{
 			doPartialUpdate( inData);
 		}
+		
 	}
+	
+	public void addContainerListener( ISTMContainerListener inContainerListener )
+	{
+		assert !containerListeners.contains( inContainerListener ) : "Listener is already added to container";
+		
+		containerListeners.add( inContainerListener );
+		
+		for( STMEntrySubscriber subscriber : entryToSubscribers.values() )
+		{
+			ISTMEntry entry = subscriber.getLastUpdate();
+			if( STMUtil.isStatusOk( entry ))
+			{
+				inContainerListener.onContainerRefAdded( subscriber.getEntryKey(), entry );
+			}
+		}
+	}
+	
+	public void removeContainerListener( ISTMContainerListener inContainerListener )
+	{
+		assert containerListeners.contains( inContainerListener ) : "Listener is not attached to container";
+		
+		containerListeners.remove( inContainerListener );
+	}
+
+	@Override
+	public void STMEntryUpdated( ISTMEntryKey inKey, ISTMEntry inEntry, boolean inFullUpdate )
+	{
+		if( STMUtil.isStatusUpdatedToOk( inEntry, inFullUpdate ))
+			updateListeners( inKey,  inEntry );
+	}
+	
+	/**
+	 * @param inKey
+	 * @param inEntry
+	 */
+	private void updateListeners( ISTMEntryKey inKey, ISTMEntry inEntry )
+	{
+		System.out.println("updatign reference listenrs");
+		for( ISTMContainerListener listener : containerListeners )
+		{
+			listener.onContainerRefAdded( inKey, inEntry );
+		}
+	}
+	
+	
 
 }

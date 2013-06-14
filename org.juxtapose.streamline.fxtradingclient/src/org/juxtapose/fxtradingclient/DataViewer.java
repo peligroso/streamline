@@ -2,6 +2,7 @@ package org.juxtapose.fxtradingclient;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
@@ -17,11 +18,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.util.ISTMContainerListener;
+import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryListener;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
@@ -33,22 +40,33 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 1 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class DataViewer extends Composite
+public class DataViewer extends Composite implements ISTMContainerListener
 {
-	public DataViewer( Composite parent, int style, IPersistentMap<String, DataType<?>> inData, String inTypeKey ) 
+	String typeKey;
+	TableViewer viewer;
+	MetaDataControl metaDataControl;
+	
+	public DataViewer( Composite parent, int style, IPersistentMap<String, DataType<?>> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
 	{
 		super( parent, style );
 		
+		typeKey = inTypeKey;
+		metaDataControl = inMetaDataControl;
+		
 		setLayout( new FillLayout() );
-		createViewer( this, inData, inTypeKey );
+		createViewer( this, inData );
+		
+		ContainerSubscriber containerSub = metaDataControl.getContainerSubscriber( typeKey );
+		containerSub.addContainerListener( this );
+		
 	}
 
-	TableViewer viewer;
 	
-	private void createViewer(Composite parent, IPersistentMap<String, DataType<?>> inData, String inTypeKey ) 
+	
+	private void createViewer(Composite parent, IPersistentMap<String, DataType<?>> inData ) 
 	{
 	    viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-	    createColumns(parent, viewer, inTypeKey, inData);
+	    createColumns(parent, viewer, inData);
 	    final Table table = viewer.getTable();
 	    table.setHeaderVisible(true);
 	    table.setLinesVisible(true);
@@ -102,16 +120,9 @@ public class DataViewer extends Composite
 	 * @param viewer
 	 * @param inData
 	 */
-	private void createColumns(final Composite parent, final TableViewer viewer, String inTableType, IPersistentMap<String, DataType<?>> inData) 
+	private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, DataType<?>> inData) 
 	{
-		DataType<?> type = inData.valAt( inTableType );
-		if( type == null || !(type instanceof DataTypeHashMap) )
-		{
-			return;
-		}
-		
-		IPersistentMap<String, DataType<?>> typeData = ((DataTypeHashMap)type).get();
-	    Iterator<Map.Entry<String, DataType<?>>> iter = typeData.iterator();
+	    Iterator<Map.Entry<String, DataType<?>>> iter = inData.iterator();
 	    
 	    int i = 0;
 	    
@@ -152,19 +163,22 @@ public class DataViewer extends Composite
 	    			else
 	    			{
 	    				//value is a predefined type
-	    				DataType<?> data = inData.valAt( valStr );
-	    				if( data instanceof DataTypeArrayList )
-	    				{
-	    					PersistentArrayList<? extends DataType<?>> list = ((DataTypeArrayList)data).get();
-	    					String items[] = new String[list.size()];
-	    					
-	    					for( int j = 0; j < list.size(); j++ )
-	    					{
-	    						String stringData = list.get( j ).toString();
-	    						items[j] = stringData;
-	    					}
-	    					col.setEditingSupport( new DataEditingSupportEnum( viewer, key, items ) );
-	    				}
+	    				InputContainer input = metaDataControl.getInputContainer( valStr );
+	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input ) );
+	    				
+//	    				DataType<?> data = inData.valAt( valStr );
+//	    				if( data instanceof DataTypeArrayList )
+//	    				{
+//	    					PersistentArrayList<? extends DataType<?>> list = ((DataTypeArrayList)data).get();
+//	    					String items[] = new String[list.size()];
+//	    					
+//	    					for( int j = 0; j < list.size(); j++ )
+//	    					{
+//	    						String stringData = list.get( j ).toString();
+//	    						items[j] = stringData;
+//	    					}
+//	    					
+//	    				}
 	    				
 	    			}
 	    		}
@@ -174,14 +188,17 @@ public class DataViewer extends Composite
 	    		}
 	    		else if( val instanceof DataTypeArrayList )
 	    		{
-	    			PersistentArrayList<DataType<?>> list = (PersistentArrayList<DataType<?>>)val.get(); 
-	    			String[] items = new String[list.size()];
-	    			
-	    			for( int x = 0; x < list.size(); x++ )
-	    				items[x] = list.get( x ).toString();
-	    			
-	    			val.get();
-	    			col.setEditingSupport( new DataEditingSupportEnum( viewer, key, items ) );
+	    			InputContainer input = metaDataControl.getInputContainer( key );
+    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input ) );
+    				
+//	    			PersistentArrayList<DataType<?>> list = (PersistentArrayList<DataType<?>>)val.get(); 
+//	    			String[] items = new String[list.size()];
+//	    			
+//	    			for( int x = 0; x < list.size(); x++ )
+//	    				items[x] = list.get( x ).toString();
+//	    			
+//	    			val.get();
+//	    			col.setEditingSupport( new DataEditingSupportEnum( viewer, key, items ) );
 	    		}
 	    	}
 	    	i++;
@@ -198,4 +215,44 @@ public class DataViewer extends Composite
 	    column.setMoveable(true);
 	    return viewerColumn;
 	  }
+
+
+
+	@Override
+	public void onContainerRefAdded( final ISTMEntryKey inKey, final ISTMEntry inEntry )
+	{
+		getDisplay().asyncExec( new Runnable(){
+
+			@Override
+			public void run()
+			{
+				ViewDataObject viewObject = new ViewDataObject( inEntry.getDataMap() );
+				viewer.add( viewObject );
+			}
+			
+		});
+		
+	}
+
+
+
+	@Override
+	public void onContainerRefUpdated( ISTMEntryKey inKey, ISTMEntry inEntry )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void onContainerRefRemoved( ISTMEntryKey inKey, ISTMEntry inEntry )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
 }

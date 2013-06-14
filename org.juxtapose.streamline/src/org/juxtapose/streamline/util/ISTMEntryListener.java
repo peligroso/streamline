@@ -1,6 +1,9 @@
 package org.juxtapose.streamline.util;
 
+import org.juxtapose.streamline.producer.ISTMEntryKey;
+
+
 public interface ISTMEntryListener
 {
-	public void STMEntryUpdated( ISTMEntry inEntry, boolean inFullUpdate );
+	public void STMEntryUpdated( ISTMEntryKey inKey, ISTMEntry inEntry, boolean inFullUpdate );
 }

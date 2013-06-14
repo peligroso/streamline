@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.eclipse.swt.SWT;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.tools.DataConstants;
@@ -18,6 +17,8 @@ import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
+import com.trifork.clj_ds.IPersistentMap;
+
 public class MetaDataControl extends STMEntrySubscriber
 {
 	boolean metaDataInitiated = false;
@@ -25,6 +26,7 @@ public class MetaDataControl extends STMEntrySubscriber
 	final EditView editView;
 	
 	HashMap<String, ContainerSubscriber> typeToContainer = new HashMap<String, ContainerSubscriber>();
+	HashMap<String, InputContainer> typeToInput = new HashMap<String, InputContainer>();
 	
 	public MetaDataControl( EditView inView )
 	{
@@ -40,6 +42,8 @@ public class MetaDataControl extends STMEntrySubscriber
 		stm.logInfo( "Config data recieved for meta data "+inData.getDataMap() );
 		
 		Iterator<Entry<String, DataType<?>>> iter = inData.getDataMap().iterator();
+		
+		HashMap<String, IPersistentMap<String, DataType<?>>> viewsToBeCreated = new HashMap<String, IPersistentMap<String, DataType<?>>>();
 		
 		while( iter.hasNext() )
 		{
@@ -59,6 +63,8 @@ public class MetaDataControl extends STMEntrySubscriber
 				}
 				
 				EnumInput enumInput = new EnumInput( enumValues.toArray( new String[]{} ) );
+				
+				typeToInput.put( entry.getKey(), enumInput );
 			}
 			else if( value instanceof DataTypeHashMap )
 			{
@@ -72,8 +78,9 @@ public class MetaDataControl extends STMEntrySubscriber
 				
 				typeToContainer.put( fieldKey, containerSub );
 				
-				editView.addViewer( fieldKey, inData.getDataMap() );
+				typeToInput.put( entry.getKey(), refInput );
 				
+				viewsToBeCreated.put( entry.getKey(), ((DataTypeHashMap)value).get() );
 //				parent.getDisplay().asyncExec( new Runnable()
 //				{
 //					@Override
@@ -88,6 +95,13 @@ public class MetaDataControl extends STMEntrySubscriber
 		}
 		
 		metaDataInitiated = true;
+		
+		for( Entry<String, IPersistentMap<String, DataType<?>>> viewInstruction : viewsToBeCreated.entrySet() )
+		{
+			String fieldKey = viewInstruction.getKey();
+			IPersistentMap<String, DataType<?>> value = viewInstruction.getValue();
+			editView.addViewer( fieldKey, value, this );
+		}
 //		
 //				viewer = new DataViewer( parent, SWT.NONE, inData.getDataMap(), "CCY" );
 //				parent.layout();
@@ -110,6 +124,16 @@ public class MetaDataControl extends STMEntrySubscriber
 //			}
 //		});
 		
+	}
+	
+	public InputContainer getInputContainer( String inType )
+	{
+		return typeToInput.get( inType );
+	}
+	
+	public ContainerSubscriber getContainerSubscriber( String inType )
+	{
+		return typeToContainer.get( inType );
 	}
 
 	@Override

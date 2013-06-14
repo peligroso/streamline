@@ -87,4 +87,14 @@ public class STMUtil
 		
 		return dataValue.get().equals( Status.OK );
 	}
+	
+	public static boolean isStatusOk( ISTMEntry inEntry)
+	{
+		DataType<?> dataValue = inEntry.getValue( DataConstants.FIELD_STATUS );
+		if( dataValue == null )
+			return false;
+		
+		return dataValue.get().equals( Status.OK );
+	}
+	
 }

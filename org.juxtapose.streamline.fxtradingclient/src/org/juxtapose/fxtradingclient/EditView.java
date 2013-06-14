@@ -190,7 +190,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 		
 	}
 	
-	public void addViewer( final String inFieldKey, final IPersistentMap<String, DataType<?>> inData )
+	public void addViewer( final String inFieldKey, final IPersistentMap<String, DataType<?>> inData, final MetaDataControl inMetaDataControl )
 	{
 		parent.getDisplay().asyncExec( new Runnable()
 		{
@@ -199,7 +199,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 			{
 				Button b = new Button(parent, SWT.PUSH);
 				
-				final DataViewer viewer = new DataViewer( parent, SWT.NONE, inData, inFieldKey );
+				final DataViewer viewer = new DataViewer( parent, SWT.NONE, inData, inFieldKey, inMetaDataControl );
 				typeToViewer.put( inFieldKey, viewer );
 				
 				b.addSelectionListener( new SelectionAdapter(){
