@@ -14,6 +14,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.NullEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.ReferenceEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.RequestMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
@@ -28,6 +29,7 @@ import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
@@ -36,6 +38,7 @@ import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.google.protobuf.ByteString;
 import com.trifork.clj_ds.IPersistentMap;
+
 
 /**
  * @author Pontus Jörgne
@@ -210,6 +213,42 @@ public class PreMarshaller
 		return messBuilder.build();
 	}
 	
+	/**
+	 * @param inTag
+	 * @param inVariable
+	 * @param inData
+	 * @return
+	 */
+	public static Message createRequestMessage( int inTag, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	{
+		
+		RequestMessage.Builder builder = RequestMessage.newBuilder();
+		builder.setTag( inTag );
+		builder.setService( inService );
+		
+		if( inVariable != null)
+			builder.setVariable( inVariable );
+		
+		if( inData != null )
+		{
+			DataMap.Builder dataMapBuilder = DataMap.newBuilder();
+			parseMapValues( inData, dataMapBuilder );
+			
+			builder.setData( dataMapBuilder.build() );
+		}
+		
+		Message.Builder messBuilder = Message.newBuilder();
+		messBuilder.setType( Message.Type.RequestMessage );
+		messBuilder.setRequestMessage( builder.build() );
+		
+		
+		return messBuilder.build();
+	}
+	
+	/**
+	 * @param inKey
+	 * @return
+	 */
 	public static DataKey createDataKey( ISTMEntryKey inKey )
 	{
 		DataKey.Builder dataKeyB = DataKey.newBuilder();
@@ -230,6 +269,11 @@ public class PreMarshaller
 		return dataKeyB.build();
 	}
 	
+	/**
+	 * @param inKey
+	 * @param inData
+	 * @param inBuilder
+	 */
 	public static void parseValueToMap( String inKey, DataType<?> inData, DataMap.Builder inBuilder )
 	{
 		if( inData instanceof DataTypeString )
@@ -304,15 +348,26 @@ public class PreMarshaller
 		else if( inData instanceof DataTypeRef )
 		{
 			ISTMEntryKey entryKey = ((DataTypeRef)inData).get();
-			DataKey key = createDataKey( entryKey );
-			
-			ReferenceEntry.Builder refBuilder = ReferenceEntry.newBuilder();
-			
-			refBuilder.setField( inKey );
-			refBuilder.setKey( key );
-			
-			inBuilder.addRefEntries( refBuilder.build() );
+			parseReference( inKey, entryKey, inBuilder, false );
 		}
+		else if( inData instanceof DataTypeLazyRef )
+		{
+			ISTMEntryKey entryKey = ((DataTypeLazyRef)inData).get();
+			parseReference( inKey, entryKey, inBuilder, true );
+		}
+	}
+	
+	private static void parseReference( String inFieldKey, ISTMEntryKey entryKey, DataMap.Builder inBuilder, boolean inLazy )
+	{
+		ReferenceEntry.Builder refBuilder = ReferenceEntry.newBuilder();
+		
+		DataKey key = createDataKey( entryKey );
+		
+		refBuilder.setField( inFieldKey );
+		refBuilder.setKey( key );
+		refBuilder.setLazy( inLazy );
+		
+		inBuilder.addRefEntries( refBuilder.build() );
 	}
 	/**
 	 * @param inDataMap
@@ -374,4 +429,6 @@ public class PreMarshaller
 		
 		inData.addStringEntries( strEntryBuilder.build() );
 	}
+	
+
 }

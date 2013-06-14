@@ -23,7 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             name="View"
-            class="org.juxtapose.fxtradingclient.View"
+            class="org.juxtapose.fxtradingclient.EditView"
             id="org.juxtapose.fxtradingclient.view">
       </view>
    </extension>

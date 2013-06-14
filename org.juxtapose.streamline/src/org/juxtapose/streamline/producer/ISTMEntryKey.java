@@ -10,4 +10,5 @@ public interface ISTMEntryKey
 	public String getType( );
 	public String getSingleValue();
 	public Set<String> getKeys();
+	public String toString();
 }

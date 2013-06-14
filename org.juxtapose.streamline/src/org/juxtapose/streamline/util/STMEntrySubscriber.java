@@ -1,5 +1,6 @@
 package org.juxtapose.streamline.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -20,6 +21,8 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 	
 	protected ISTMEntryKey key;
 	
+	protected ArrayList<ISTMEntryListener> listeners = new ArrayList<ISTMEntryListener>();
+	
 	public void initialize(  ISTM inSTM, HashMap<String, String> inQuery, String inService )
 	{
 		tag = 1;
@@ -27,6 +30,14 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 		query = inQuery;
 		service = inService;
 		stm.getDataKey( inService, this, tag, inQuery );
+	}
+	
+	public void initialize(  ISTM inSTM, ISTMEntryKey inKey )
+	{
+		stm = inSTM;
+		service = inKey.getService();
+		key = inKey;
+		stm.subscribeToData( key, this );
 	}
 	
 
@@ -42,6 +53,22 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 		key = inDataKey;
 		stm.subscribeToData( key, this );
 	}
+	
+	public void addListener( ISTMEntryListener inListener )
+	{
+		listeners.add( inListener );
+	}
+	
+	public void removeListener( ISTMEntryListener inListener )
+	{
+		listeners.remove( inListener );
+	}
 
-
+	public void updateListeners( ISTMEntry inEntry, boolean inFullUpdate )
+	{
+		for( ISTMEntryListener listener : listeners )
+		{
+			listener.STMEntryUpdated( inEntry, inFullUpdate );
+		}
+	}
 }

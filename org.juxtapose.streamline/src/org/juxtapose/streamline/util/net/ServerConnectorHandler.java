@@ -18,20 +18,27 @@ import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.protocol.message.PostMarshaller;
 import org.juxtapose.streamline.protocol.message.PreMarshaller;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.RequestMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
+
+import com.trifork.clj_ds.IPersistentMap;
+import com.trifork.clj_ds.PersistentHashMap;
 
 /**
  * @author Pontus Jörgne
  * May 27, 2012
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements ISTMEntryRequestSubscriber
+public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler implements ISTMEntryRequestSubscriber, ISTMRequestor
 {	
 	final ISTM stm;
 	
@@ -93,6 +100,22 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		}
     		
     		stm.subscribeToData( key, this );
+    	}
+    	else if( message.getType() == Message.Type.RequestMessage )
+    	{
+    		RequestMessage rm = message.getRequestMessage();
+    		String service = rm.getService();
+    		int tag = rm.getTag();
+    		String variable = rm.getVariable();
+    		
+    		IPersistentMap<String, DataType<?>> data = PersistentHashMap.EMPTY; 
+    		if( rm.hasData() )
+    		{
+    			DataMap dataMap = rm.getData();
+    			data = PostMarshaller.parseDataMap( dataMap, data );
+    		}
+    		
+    		stm.request( service, tag, this, variable, data );
     	}
     	else
     	{
@@ -165,7 +188,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	 * @see org.juxtapose.streamline.util.ISTMEntrySubscriber#updateData(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.util.ISTMEntry, boolean)
 	 */
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate ) 
 	{
 		//We dont care about initializing update since the client is already in state initializing
 		if( inData.getStatus() == Status.ON_REQUEST )
@@ -174,7 +197,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 		Integer ref = refStore.getRefFromKey( inKey );
 		notNull( ref, "Reference for key : "+inKey+" not found" );
 		
-		boolean fullUpdate = fullUpdateSent.remove( inKey );
+		boolean fullUpdate = fullUpdateSent.remove( inKey ) || inFullUpdate;
 		Message mess = PreMarshaller.createUpdateMessage( ref, inData, fullUpdate );
 		
 		clientChannel.write( mess );
@@ -212,6 +235,20 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	public int getPriority() 
 	{
 		return IExecutor.LOW;
+	}
+
+	@Override
+	public void reply( int inTag, IPersistentMap<String, DataType<?>> inData )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void requestError( int inTag, String inError )
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -58,7 +58,7 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 
 	public void linkStaticData()
 	{
-		stm.commit( new STMTransaction( entryKey, SpotPriceProducer.this, 1, 0 )
+		stm.commit( new STMTransaction( entryKey, SpotPriceProducer.this, 1, 0, false )
 		{
 			@Override
 			public void execute()
@@ -110,14 +110,14 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFullUpdate )
 	{
 		if( reutersDataKey == null || bloombergDataKey == null )
 			return;
 		
 		if( inData.getStatus() == Status.OK )
 		{
-			stm.commit( new DataTransaction( entryKey, SpotPriceProducer.this )
+			stm.commit( new DataTransaction( entryKey, SpotPriceProducer.this, true )
 			{
 				@Override
 				public void execute()

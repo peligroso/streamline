@@ -229,7 +229,7 @@ public class NonBlockingSTM extends STM
 			/**Incomplete stateTransition does not go out as an update to subscribers**/
 			if( inTransaction.isCompleteStateTransition() )
 			{
-				newData.updateSubscribers( dataKey );
+				newData.updateSubscribers( dataKey, inTransaction.isFullUpdate() );
 			}
 		}
 		

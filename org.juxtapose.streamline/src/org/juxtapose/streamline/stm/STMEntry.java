@@ -60,18 +60,18 @@ final class STMEntry implements ISTMEntry
 		completeVersion = inCompleteUpdate;
 	}
 	
-	public void updateSubscribers( ISTMEntryKey inKey )
+	public void updateSubscribers( ISTMEntryKey inKey, boolean inFullUpdate )
 	{
 		for( int i = 0; i < highPrioSubscribers.size(); i++ )
 		{
 			ISTMEntrySubscriber subscriber = highPrioSubscribers.get( i );
-			subscriber.updateData( inKey, this, false );
+			subscriber.updateData( inKey, this, inFullUpdate );
 		}
 		
 		for( int i = 0; i < lowPrioSubscribers.size(); i++ )
 		{
 			ISTMEntrySubscriber subscriber = lowPrioSubscribers.get( i );
-			subscriber.updateData( inKey, this, false );
+			subscriber.updateData( inKey, this, inFullUpdate );
 		}
 	}
 	

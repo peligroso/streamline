@@ -17,23 +17,36 @@ public class DataEditingSupportEnum extends DataEditingSupport
 {
 	String[] items;
 	
-	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, String[] inItems ) 
+	ComboBoxCellEditor cellEditor;
+	
+	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, InputContainer inInputContainer ) 
 	{
 		super( viewer, inKey );
-		items = inItems;
+		items = inInputContainer.getInputObjects();
 	}
 	
 	@Override
 	protected CellEditor getCellEditor(Object element) 
 	{
-		return new ComboBoxCellEditor(( (TableViewer) getViewer() ).getTable(), items);
+		cellEditor = new ComboBoxCellEditor(( (TableViewer) getViewer() ).getTable(), items);
+		return cellEditor;
+	}
+	
+	public void updateItems( String[] inItems )
+	{
+		cellEditor.setItems( inItems );
 	}
 	
 	@Override
 	protected Object getValue(Object element) 
 	{
 		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
-		String val = map.valAt( key ).get().toString();
+		DataType<?> dVal = map.valAt( key );
+		
+		if( dVal == null )
+			return -1;
+		
+		String val = dVal.get().toString();
 		
 		for( int i = 0; i < items.length; i++ )
 		{

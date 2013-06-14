@@ -25,7 +25,7 @@ public class DataRefContainerProducer extends STMEntryProducer
 	@Override
 	protected void start()
 	{
-		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0, true )
 		{
 			@Override
 			public void execute()
@@ -48,23 +48,23 @@ public class DataRefContainerProducer extends STMEntryProducer
 	 */
 	protected void addReference( final ISTMEntryKey... inKey )
 	{
-		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0, false )
 		{
 			@Override
 			public void execute()
 			{
 				for( ISTMEntryKey key : inKey )
 				{
-					putValue( inKey.toString(), new DataTypeLazyRef( key ) );
+					putValue( key.toString(), new DataTypeLazyRef( key ) );
 				}
 			}
 		});
 	}
 	
-	protected void addData( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
+	public void addEntry( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
 	{
 		stm.publish( inKey, this, Status.OK, inData, new HashSet<String>() );
-		addReference( entryKey );
+		addReference( inKey );
 	}
 	
 	/* (non-Javadoc)

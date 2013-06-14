@@ -7,5 +7,5 @@ import static org.juxtapose.streamline.tools.STMUtil.*;
 
 public class KeyConstants
 {
-	public static ISTMEntryKey PRODUCER_SERVICE_KEY = createDataKey( STM_SERVICE_KEY, STMAssertionUtil.PRODUCER_SERVICES, STMAssertionUtil.PRODUCER_SERVICES );
+	public static ISTMEntryKey PRODUCER_SERVICE_KEY = createEntryKey( STM_SERVICE_KEY, STMAssertionUtil.PRODUCER_SERVICES, STMAssertionUtil.PRODUCER_SERVICES );
 }

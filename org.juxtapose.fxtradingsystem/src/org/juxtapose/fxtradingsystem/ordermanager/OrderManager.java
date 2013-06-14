@@ -71,7 +71,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	}
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
 		{
@@ -253,7 +253,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				
 				if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SPOT ))
 				{
-					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createEntryKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 						new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2}, 
 						new String[]{id, inMessage.ccy1, inMessage.ccy2 } );
 					
@@ -261,7 +261,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_FWD ))
 				{
-					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createEntryKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate } );
 					
@@ -269,7 +269,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				}
 				else if( inMessage.orderType.equals( FXDataConstants.STATE_INSTRUMENT_SWAP ))
 				{
-					key = createDataKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
+					key = createEntryKey( getServiceId(), FXDataConstants.STATE_TYPE_RFQ, 
 							new String[]{FXDataConstants.FIELD_ID, FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_NEAR_SWAP, FXDataConstants.FIELD_FAR_SWAP}, 
 							new String[]{id, inMessage.ccy1, inMessage.ccy2, inMessage.nearDate, inMessage.farDate } );
 					

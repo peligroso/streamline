@@ -44,7 +44,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	@Override
 	protected void start()
 	{
-		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this, 1, 0 )
+		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this, 1, 0, true )
 		{
 			@Override
 			public void execute()
@@ -87,12 +87,12 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 		return;
 	}
 	
-	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final ISTMEntry inData, boolean inFullUpdate )
 	{
 		if( inData.getStatus() == Status.ON_REQUEST )
 			return;
 		
-		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this )
+		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this, inFullUpdate )
 		{
 			@Override
 			public void execute()

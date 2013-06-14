@@ -9,6 +9,9 @@ message Message
 		SubscribeMessage = 3;
 		UnSubscribeMessage = 4; 
 		UpdateMessage = 5; 
+		
+		RequestMessage = 6;
+		ReplyMessage = 7;
 	}
 	
 	required Type type = 1;
@@ -18,6 +21,9 @@ message Message
 	optional SubscribeMessage subscribeMessage = 4;
 	optional UnsubscribeMessage unsubscribeMessage = 5;
 	optional UpdateMessage updateMessage = 6;
+	
+	optional RequestMessage requestMessage = 7;
+	optional ReplyMessage responseMessage = 8;
 
 }
 
@@ -119,6 +125,7 @@ message ReferenceEntry
 {
 	required string field = 1;
 	required DataKey key = 2;
+	required bool lazy = 3;
 }
 
 
@@ -138,5 +145,22 @@ message DataMap
 message StringMap
 {
 	repeated StringEntry stringEntries = 1;
+}
+
+message RequestMessage
+{
+	required string service = 1;
+	required string variable = 2;
+	required int32 tag = 3;
+	
+	optional DataMap data = 4;
+}
+
+message ReplyMessage
+{
+	required string variable = 1;
+	required int32 tag = 2;
+	
+	optional DataMap data = 3;
 }
 

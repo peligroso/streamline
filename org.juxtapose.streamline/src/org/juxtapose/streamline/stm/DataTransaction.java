@@ -7,9 +7,9 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
 public abstract class DataTransaction extends STMTransaction
 {
 
-	public DataTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer )
+	public DataTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, boolean inFullUpdate )
 	{
-		super( inDataKey, inProducer, 0, 0 );
+		super( inDataKey, inProducer, 0, 0, inFullUpdate );
 	}
 
 	public void updateReferenceValue( Integer inKey, DataTypeRef inDataTypeRef )

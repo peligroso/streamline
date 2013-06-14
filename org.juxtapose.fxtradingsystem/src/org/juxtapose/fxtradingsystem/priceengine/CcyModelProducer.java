@@ -33,7 +33,7 @@ public class CcyModelProducer extends STMEntryProducer
 	@Override
 	public void start()
 	{
-		stm.commit( new STMTransaction( PriceEngineKeyConstants.CCY_MODEL_KEY, CcyModelProducer.this, 2, 0 )
+		stm.commit( new STMTransaction( PriceEngineKeyConstants.CCY_MODEL_KEY, CcyModelProducer.this, 2, 0, true )
 		{
 			@Override
 			public void execute()
@@ -109,7 +109,7 @@ public class CcyModelProducer extends STMEntryProducer
 					}
 				}
 				
-				stm.commit( new STMTransaction( PriceEngineKeyConstants.CCY_MODEL_KEY, CcyModelProducer.this, 0, 0 )
+				stm.commit( new STMTransaction( PriceEngineKeyConstants.CCY_MODEL_KEY, CcyModelProducer.this, 0, 0, false )
 				{
 					@Override
 					public void execute()

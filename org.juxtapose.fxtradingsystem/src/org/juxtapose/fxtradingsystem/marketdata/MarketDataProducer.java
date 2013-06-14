@@ -70,7 +70,7 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 	
 	public void parseQuote( final QPMessage inQuote )
 	{
-		stm.commit( new DataTransaction(entryKey, this )
+		stm.commit( new DataTransaction(entryKey, this, true )
 		{
 			@Override
 			public void execute()

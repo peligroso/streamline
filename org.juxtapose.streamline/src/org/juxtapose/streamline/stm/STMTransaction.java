@@ -34,7 +34,9 @@ import com.trifork.clj_ds.IPersistentMap;
  */
 public abstract class STMTransaction
 {
-	private final ISTMEntryKey m_dataKey;	
+	private final ISTMEntryKey entryKey;
+	private final boolean isFullUpdate;
+	
 	private IPersistentMap<String, DataType<?>> m_stateInstruction;
 	
 	private final Set<String> m_deltaState = new HashSet<String>();
@@ -54,16 +56,18 @@ public abstract class STMTransaction
 	/**
 	 * @param inDataKey
 	 */
-	public STMTransaction( ISTMEntryKey inDataKey, int inAddedRefenrence, int inRemovedReferences ) 
+	public STMTransaction( ISTMEntryKey inEntryKey, int inAddedRefenrence, int inRemovedReferences, boolean inIsFullUpdate ) 
 	{
-		m_dataKey = Preconditions.notNull( inDataKey );
+		entryKey = Preconditions.notNull( inEntryKey );
+		isFullUpdate = inIsFullUpdate;
 		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
 		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
 	}
 	
-	public STMTransaction( ISTMEntryKey inDataKey ) 
+	public STMTransaction( ISTMEntryKey inEntryKey, boolean inIsFullUpdate ) 
 	{
-		m_dataKey = Preconditions.notNull( inDataKey );
+		entryKey = Preconditions.notNull( inEntryKey );
+		isFullUpdate = inIsFullUpdate;
 		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
 		removedDataReferences = new ArrayList<String>( 8 );
 	}
@@ -72,10 +76,11 @@ public abstract class STMTransaction
 	 * @param inDataKey
 	 * @param inProducer
 	 */
-	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, int inAddedRefenrence, int inRemovedReferences ) 
+	public STMTransaction( ISTMEntryKey inEntryKey, ISTMEntryProducer inProducer, int inAddedRefenrence, int inRemovedReferences, boolean inIsFullUpdate ) 
 	{
-		m_dataKey = Preconditions.notNull( inDataKey );
+		entryKey = Preconditions.notNull( inEntryKey );
 		m_producer = inProducer;
+		isFullUpdate = inIsFullUpdate;
 		
 		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
 		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
@@ -85,10 +90,11 @@ public abstract class STMTransaction
 	 * @param inDataKey
 	 * @param inProducer
 	 */
-	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer ) 
+	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, boolean inIsFullUpdate ) 
 	{
-		m_dataKey = Preconditions.notNull( inDataKey );
+		entryKey = Preconditions.notNull( inDataKey );
 		m_producer = inProducer;
+		isFullUpdate = inIsFullUpdate;
 		
 		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
 		removedDataReferences = new ArrayList<String>( 8 );
@@ -193,7 +199,7 @@ public abstract class STMTransaction
 	 */
 	protected ISTMEntryKey getDataKey()
 	{
-		return m_dataKey;
+		return entryKey;
 	}
 	
 	public ISTMEntryProducer producedBy()
@@ -217,6 +223,9 @@ public abstract class STMTransaction
 		return removedDataReferences;
 	}
 	
+	/**
+	 * @param inStatus
+	 */
 	public void setStatus( Status inStatus )
 	{
 		putValue( DataConstants.FIELD_STATUS, new DataTypeStatus( inStatus ) );
@@ -256,5 +265,10 @@ public abstract class STMTransaction
 	public boolean containesReferenceInstructions()
 	{
 		return containesReferenceInstructions;
+	}
+	
+	public boolean isFullUpdate()
+	{
+		return isFullUpdate;
 	}
 }

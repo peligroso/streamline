@@ -40,7 +40,7 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	@Override
 	protected void start()
 	{
-		stm.commit( new STMTransaction( entryKey, RFQProducer.this, 1, 0 )
+		stm.commit( new STMTransaction( entryKey, RFQProducer.this, 1, 0, true )
 		{
 			@Override
 			public void execute()
@@ -72,7 +72,7 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	{
 		if( inTag.equals( priceTag ))
 		{
-			stm.commit( new STMTransaction( entryKey, RFQProducer.this, 1, 0 )
+			stm.commit( new STMTransaction( entryKey, RFQProducer.this, 1, 0, false )
 			{
 				@Override
 				public void execute()

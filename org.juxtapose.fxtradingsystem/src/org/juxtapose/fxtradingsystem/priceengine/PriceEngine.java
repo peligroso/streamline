@@ -9,6 +9,7 @@ import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
+import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.data.DataType;
@@ -52,7 +53,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 			String ccy1 = inQuery.get( FXDataConstants.FIELD_CCY1 );
 			String ccy2 = inQuery.get( FXDataConstants.FIELD_CCY2 );
 		
-			inSubscriber.deliverKey(  createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
+			inSubscriber.deliverKey(  createEntryKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_PRICE, new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT},new String[]{ccy1, ccy2, instrumentType} ), inTag);
 		}
 		else
 		{
@@ -101,9 +102,9 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	 * @see org.juxtapose.streamline.util.IDataSubscriber#updateData(java.lang.String, org.juxtapose.streamline.util.IPublishedData, boolean)
 	 */
 	@Override
-	public void updateData( ISTMEntryKey iKey, ISTMEntry inData, boolean inFirstUpdate)
+	public void updateData( ISTMEntryKey iKey, ISTMEntry inData, boolean inFullUpdate)
 	{
-		DataType<?> dataValue = inFirstUpdate ? inData.getValue( FXProducerServiceConstants.ORDER_MANAGER ) : inData.getValue( FXProducerServiceConstants.ORDER_MANAGER );
+		DataType<?> dataValue = inData.getValue( FXProducerServiceConstants.ORDER_MANAGER );
 		if( dataValue != null )
 		{
 			stm.logInfo( "OrderService is registered with status: "+dataValue);

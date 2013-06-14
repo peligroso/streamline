@@ -21,7 +21,7 @@ public interface ISTMEntry {
 	public boolean hasSubscribers();
 	public IPersistentMap<String, DataType<?>> getDataMap();
 	public ISTMEntry setUpdatedData(IPersistentMap<String, DataType<?>> stateInstruction, Set<String> deltaState, boolean completeUpdate);
-	public void updateSubscribers(ISTMEntryKey dataKey);
+	public void updateSubscribers(ISTMEntryKey dataKey, boolean inFullUpdate);
 	public ISTMEntry putDataValue( String inKey, DataType<?> inValue )throws Exception;
 	public Status getStatus();
 	public long getSequenceID();

@@ -68,7 +68,7 @@ public class RemoteServiceTracker extends RemoteServiceProxy implements ISTMEntr
 	}
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate ) 
 	{
 		// TODO Auto-generated method stub
 		

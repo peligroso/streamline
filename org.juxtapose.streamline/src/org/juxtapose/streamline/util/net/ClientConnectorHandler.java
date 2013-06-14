@@ -19,6 +19,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import static org.juxtapose.streamline.tools.Preconditions.*;
@@ -46,8 +47,13 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	
 	HashMap<ISTMEntryKey, RemoteProxyEntryProducer> keyToSubscriber = new HashMap<ISTMEntryKey, RemoteProxyEntryProducer>();
 	
+	/**TICKET This needs to be handled more appropriately with a unique request id mapped to the individual clients request tag**/
 	Integer tagInc = 0;
+	
 	HashMap<Integer, Object> tagRefToTag = new HashMap<Integer, Object>();
+	
+	HashMap<Integer, Object> requestToTag = new HashMap<Integer, Object>();
+	
 	
 	public ClientConnectorHandler( ISTM inSTM ) 
 	{
@@ -115,6 +121,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     	{
     		UpdateMessage update = message.getUpdateMessage();
     		int reference = update.getReference();
+    		boolean fullUpdate = update.hasFullupdate() ? update.getFullupdate() : true;
     		
     		ISTMEntryKey key = refStore.getKeyFromRef( reference );
     		
@@ -137,7 +144,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
     		map = PostMarshaller.parseDataMap( data, map );
     		
-    		producer.updateData( key, map, true );
+    		producer.updateData( key, map, fullUpdate );
     	}
 	}
 
@@ -212,6 +219,19 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		
 		
 		channel.write( subMessage );
+	}
+	
+	/**
+	 * @param inTag
+	 * @param inRequestor
+	 * @param inVariable
+	 * @param inData
+	 */
+	public void request( int inTag, ISTMRequestor inRequestor, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	{
+		requestToTag.put( inTag, inRequestor );
+		Message mess = PreMarshaller.createRequestMessage( inTag, inService, inVariable, inData );
+		channel.write( mess );
 	}
 	
 	/* (non-Javadoc)

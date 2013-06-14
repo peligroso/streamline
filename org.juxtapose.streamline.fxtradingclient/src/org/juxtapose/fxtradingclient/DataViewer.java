@@ -80,6 +80,23 @@ public class DataViewer extends Composite
 		  viewer.setInput( inData );
 	  }
 	  
+	  public ViewDataObject[] getObjects()
+	  {
+		  ViewDataObject[] objects = new ViewDataObject[viewer.getTable().getItemCount()];
+		 for( int i = 0; i < viewer.getTable().getItemCount(); i++)
+		 {
+			 objects[i] = (ViewDataObject)viewer.getElementAt( i );
+		 }
+		 return objects;  
+	  }
+	  
+	  public void addEntry()
+	  {
+		  ViewDataObject viewObject = new ViewDataObject( PersistentHashMap.EMPTY );
+		  viewer.add( viewObject );
+	  }
+	  	
+	  
 	/**
 	 * @param parent
 	 * @param viewer

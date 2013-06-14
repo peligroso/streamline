@@ -10,6 +10,7 @@ import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 
@@ -32,4 +33,5 @@ public interface ISTM extends IExecutor
 	public ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );
 	public ISTMEntry getData( String inKey );
 	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
+	public void request( String inService, int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData );
 }

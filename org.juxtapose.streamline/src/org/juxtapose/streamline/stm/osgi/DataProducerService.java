@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.stm.osgi;
 
+import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_NOT_SUPPORTED;
+
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
@@ -7,10 +9,14 @@ import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 import org.juxtapose.streamline.util.producerservices.IDataInitializerListener;
 import org.osgi.service.component.ComponentContext;
+
+import com.trifork.clj_ds.IPersistentMap;
 
 /**
  * @author Pontus Jörgne
@@ -78,5 +84,10 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 	public int getPriority()
 	{
 		return IExecutor.LOW;
+	}
+	
+	public void request( int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	{
+		inRequestor.requestError( inTag, REQUEST_NOT_SUPPORTED );
 	}
 }

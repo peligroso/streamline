@@ -143,7 +143,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	 */
 	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData )
 	{
-		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0, false )
 		{
 			@Override
 			public void execute()
@@ -195,7 +195,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	
 	protected void setStatus( final Status inStatus )
 	{
-		stm.commit( new STMTransaction( entryKey, STMEntryProducer.this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, STMEntryProducer.this, 0, 0, false )
 		{
 			@Override
 			public void execute()

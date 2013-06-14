@@ -52,7 +52,7 @@ public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryReque
 	}
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
 	{
 		// TODO Auto-generated method stub
 		
@@ -72,7 +72,7 @@ public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryReque
 		
 		if( swapDataKey != null && spotDataKey != null )
 		{
-			stm.commit( new STMTransaction( entryKey, FwdPriceProducer.this, 2, 0 )
+			stm.commit( new STMTransaction( entryKey, FwdPriceProducer.this, 2, 0, false )
 			{
 				@Override
 				public void execute()

@@ -32,7 +32,7 @@ public class MetaDataProducer extends STMEntryProducer
 	@Override
 	protected void start()
 	{
-		stm.commit( new DataTransaction( entryKey, MetaDataProducer.this )
+		stm.commit( new DataTransaction( entryKey, MetaDataProducer.this, true )
 		{
 			@Override
 			public void execute()

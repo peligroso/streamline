@@ -29,6 +29,7 @@ import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeStatus;
@@ -115,11 +116,11 @@ public class PostMarshaller
 		
 		if( keys.length == 1 && DataConstants.FIELD_SINGLE_VALUE_DATA_KEY.equals( keys[0] ))
 		{
-			return createDataKey( inKey.getService(), inKey.getType(), vals[0] );
+			return createEntryKey( inKey.getService(), inKey.getType(), vals[0] );
 		}
 		else
 		{
-			return createDataKey( inKey.getService(), inKey.getType(), keys, vals );
+			return createEntryKey( inKey.getService(), inKey.getType(), keys, vals );
 		}
 		
 	}
@@ -214,10 +215,11 @@ public class PostMarshaller
 			{
 				String field = refEntry.getField();
 				DataKey key = refEntry.getKey();
+				boolean lazy = refEntry.getLazy();
 				
 				ISTMEntryKey entryKey = parseKey( key );
 				
-				inParseObject.update( field, new DataTypeRef( entryKey ) );
+				inParseObject.update( field, lazy ? new DataTypeLazyRef( entryKey ) : new DataTypeRef( entryKey ) );
 			}
 		}
 	}

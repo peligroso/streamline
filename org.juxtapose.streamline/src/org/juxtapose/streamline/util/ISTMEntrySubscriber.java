@@ -6,6 +6,6 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 
 public interface ISTMEntrySubscriber
 {
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate );
+	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate );
 	public int getPriority();
 }

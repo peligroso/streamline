@@ -22,7 +22,7 @@ public abstract class DependencyTransaction extends STMTransaction
 	
 	public DependencyTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, int inAddedDependencies, int inRemovedDependencies )
 	{
-		super( inDataKey, inProducer, 8, 8 );
+		super( inDataKey, inProducer, 8, 8, false );
 		addedDependencies = new HashMap<String, TemporaryController>(inAddedDependencies);
 		removedDependencies = new ArrayList<String>( inRemovedDependencies );
 	}

@@ -34,7 +34,11 @@ public class DataEditingSupport extends EditingSupport
 	protected Object getValue(Object element) 
 	{
 		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
-		return map.valAt( key ).get().toString();
+		DataType<?> val = map.valAt( key );
+		if( val == null )
+			return "";
+		
+		return val.get().toString();
 	}
 
 	@Override

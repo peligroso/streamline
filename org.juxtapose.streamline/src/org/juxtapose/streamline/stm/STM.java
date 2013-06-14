@@ -19,6 +19,7 @@ import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
+import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeString;
@@ -27,6 +28,7 @@ import org.juxtapose.streamline.util.net.ServerConnector;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 import com.trifork.clj_ds.IPersistentMap;
+import static org.juxtapose.streamline.tools.STMMessageConstants.*;
 
 /**
  * @author Pontus Jörgne
@@ -88,7 +90,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			logError( "Producer "+inProducerService.getServiceId()+" already exists" );
 			return;
 		}
-		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
+		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0, false )
 		{
 			@Override
 			public void execute()
@@ -105,7 +107,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 */
 	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status newStatus )
 	{
-		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0 )
+		commit( new STMTransaction( KeyConstants.PRODUCER_SERVICE_KEY, this, 0, 0, false )
 		{
 			@Override
 			public void execute()
@@ -535,10 +537,12 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			else
 			{
 				entry = createEmptyData( inStatus, inProducer );
-				entry.addSubscriber( inProducer );
+				entry = entry.addSubscriber( inProducer );
 			}
 
-			entry.setUpdatedData( inData, new HashSet<String>(), true );
+			entry = entry.setUpdatedData( inData, new HashSet<String>(), true );
+			
+			keyToData.put( inDataKey.getKey(), entry );
 		}
 		catch( Throwable t )
 		{
@@ -548,6 +552,23 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		{
 			unlock( inDataKey.getKey() );
 		}
+	}
+	
+	public void request( String inService, int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	{
+		ISTMEntryProducerService producerService = idToProducerService.get( inService );
+		if( producerService == null )
+		{
+			logError( PRODUCER_NOT_EXISTS  );
+			return;
+		}
+		
+		producerService.request( inTag, inRequestor, inVariable, inData );
+	}
+	
+	public void request( int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	{
+		inRequestor.requestError( inTag, REQUEST_NOT_SUPPORTED );
 	}
 	
 	

@@ -36,9 +36,9 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 	 * @param inData
 	 * @param inFirstUpdate
 	 */
-	public void updateData( ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData, boolean inFirstUpdate )
+	public void updateData( ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData, boolean inFullUpdate )
 	{
-		stm.commit( new STMTransaction( inKey, this )
+		stm.commit( new STMTransaction( inKey, this, inFullUpdate )
 		{
 			@Override
 			public void execute()

@@ -50,6 +50,9 @@ public class STMEntryKey implements ISTMEntryKey
 		singleValue = inSingleValue;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString()
 	{
 		return key.toString();

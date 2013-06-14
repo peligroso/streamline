@@ -21,7 +21,7 @@ public class STMUtil
 	 * @param inKeyValues
 	 * @return
 	 */
-	public static ISTMEntryKey createDataKey( String inServiceKey, String inType, String[] inKeys, String[] inValues )
+	public static ISTMEntryKey createEntryKey( String inServiceKey, String inType, String[] inKeys, String[] inValues )
 	{
 		if( inKeys.length != inValues.length )
 			throw new IllegalArgumentException("Key-value pairs must be even ");
@@ -53,19 +53,38 @@ public class STMUtil
 	 * @param inSingleValue
 	 * @return
 	 */
-	public static ISTMEntryKey createDataKey( String inServiceKey, String inType, String inSingleValue )
+	public static ISTMEntryKey createEntryKey( String inServiceKey, String inType, String inSingleValue )
 	{
 		String key = inServiceKey+SERVICE_KEY_DELIM+inType+SERVICE_KEY_DELIM+FIELD_SINGLE_VALUE_DATA_KEY+EQUALS+inSingleValue;
 		
 		return new STMEntryKey( inServiceKey, inType, inSingleValue, key ); 
 	}
 	
-	public static boolean isStatusUpdatedToOk( String inServiceKey, ISTMEntry inEntry )
+	/**
+	 * @param inServiceKey
+	 * @param inEntry
+	 * @return
+	 */
+	public static boolean isServiceStatusUpdatedToOk( String inServiceKey, ISTMEntry inEntry )
 	{
 		DataType<?> dataValue = inEntry.getUpdatedValue( inServiceKey );
 		if( dataValue == null )
 			return false;
 		
 		return dataValue.get().equals( Status.OK.toString() );
+	}
+	
+	/**
+	 * @param inEntry
+	 * @param inFullUpdate
+	 * @return
+	 */
+	public static boolean isStatusUpdatedToOk( ISTMEntry inEntry, boolean inFullUpdate )
+	{
+		DataType<?> dataValue = inFullUpdate ? inEntry.getValue( DataConstants.FIELD_STATUS ) : inEntry.getUpdatedValue( DataConstants.FIELD_STATUS );
+		if( dataValue == null )
+			return false;
+		
+		return dataValue.get().equals( Status.OK );
 	}
 }

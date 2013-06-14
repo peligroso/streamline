@@ -31,7 +31,7 @@ public class LiquidityService extends DataProducerService implements IAggregator
 			String ccy2 = inQuery.get( FXDataConstants.FIELD_CCY2 );
 			String source = inQuery.get( FXDataConstants.FIELD_SOURCE );
 		
-			inSubscriber.deliverKey(  createDataKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_LIQUIDITY, 
+			inSubscriber.deliverKey(  createEntryKey( getServiceId(), PriceEngineDataConstants.STATE_TYPE_LIQUIDITY, 
 					new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2, FXDataConstants.FIELD_INSTRUMENT, FXDataConstants.FIELD_SOURCE},
 					new String[]{ccy1, ccy2, instrumentType, source} ), inTag);
 		}
@@ -58,7 +58,7 @@ public class LiquidityService extends DataProducerService implements IAggregator
 	}
 
 	@Override
-	public void updateData(ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate) 
+	public void updateData(ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate) 
 	{
 		
 	}
