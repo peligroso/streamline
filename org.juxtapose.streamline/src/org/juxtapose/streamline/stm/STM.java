@@ -20,10 +20,13 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeString;
 import org.juxtapose.streamline.util.net.ClientConnector;
 import org.juxtapose.streamline.util.net.ServerConnector;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
+
+import com.trifork.clj_ds.IPersistentMap;
 
 /**
  * @author Pontus Jörgne
@@ -41,7 +44,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	
 	private IExecutor executor;
 	
-	private IPublishedDataFactory dataFactory;
+	private ISTMEntryFactory entryFactory;
 	
 	private ServerConnector serverConnector;
 	private ClientConnector clientConnector;
@@ -178,9 +181,9 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	/**
 	 * @param inDataFactory
 	 */
-	public void setDataFactory( IPublishedDataFactory inDataFactory )
+	public void setDataFactory( ISTMEntryFactory inDataFactory )
 	{
-		dataFactory = inDataFactory;
+		entryFactory = inDataFactory;
 	}
 	
 	/**
@@ -191,12 +194,12 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 */
 	public ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber )
 	{
-		if( dataFactory == null )
+		if( entryFactory == null )
 		{
 			logError( "Datafactory has not been initiated" );
 			System.exit(1);
 		}
-		return dataFactory.createData(inStatus, inProducer, inSubscriber);
+		return entryFactory.createData(inStatus, inProducer, inSubscriber);
 	}
 	
 	/**
@@ -206,12 +209,12 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 */
 	protected ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer )
 	{
-		if( dataFactory == null )
+		if( entryFactory == null )
 		{
 			logError( "Datafactory has not been initiated" );
 			System.exit(1);
 		}
-		return dataFactory.createData(inStatus, inProducer );
+		return entryFactory.createData(inStatus, inProducer );
 	}
 	
 	/* (non-Javadoc)
@@ -317,4 +320,237 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	{
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.stm.impl.STM#subscribe(org.juxtapose.streamline.util.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
+	 */
+	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
+	{
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		if( producerService == null )
+		{
+			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
+			return;
+		}
+		
+		ISTMEntryProducer producer = null;
+		ISTMEntry newData = null;
+		int newPriority = -1;
+		HashSet<TemporaryController> dependencies = null;
+		
+		lock( inDataKey.getKey() );
+		
+		try
+		{
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
+			{
+				//First subscriber
+				producer = producerService.getDataProducer( inDataKey );
+
+				//REVISIT Potentially we should not notify subscribers for certain newDatas and just wait for the initial update instead.
+				newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
+				keyToData.put( inDataKey.getKey(), newData );
+
+				if( inSubscriber.getPriority() == IExecutor.HIGH )
+					producer.setPriority( IExecutor.HIGH );
+			}
+			else
+			{
+				newData = existingData.addSubscriber( inSubscriber );
+				keyToData.put( inDataKey.getKey(), newData );
+				
+				if( newData.getPriority() != existingData.getPriority() && existingData.getPriority() != IExecutor.HIGH )
+				{
+					newPriority = newData.getPriority();
+					newData.getProducer().setPriority( newPriority );
+					dependencies = newData.getProducer().getDependencyControllers();
+				}
+			}
+
+		}catch( Throwable t )
+		{
+			logError( t.getMessage(), t );
+		}
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+		
+		if( dependencies != null )
+		{
+			for( TemporaryController tc : dependencies )
+			{
+				tc.setPriority( newPriority );
+			}
+		}
+		
+		if( newData != null )
+			inSubscriber.updateData( inDataKey, newData, true );
+
+		if( producer != null )
+			producer.init();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.stm.exp.ISTM#unsubscribeToData(org.juxtapose.streamline.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
+	 */
+	@Override
+	public void unsubscribeToData(ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber)
+	{
+		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
+		if( producerService == null )
+		{
+			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
+			return;
+		}
+		
+		ISTMEntryProducer producer = null;
+		
+		lock( inDataKey.getKey() );
+		
+		try
+		{
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
+			{
+				logError( "Key: "+inDataKey+", Data has already been removed which is unconditional since an existing subscriber is requesting to unsubscribe"  );
+				return;
+			}
+			else
+			{
+				ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
+				if( newData.hasSubscribers() )
+				{
+					keyToData.replace( inDataKey.getKey(), newData );
+				}
+				else
+				{
+					keyToData.remove( inDataKey.getKey() );
+					producer = existingData.getProducer();
+				}
+			}
+
+		}catch( Throwable t )
+		{
+			logError( t.getMessage(), t );
+		}
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+
+		if( producer != null )
+			producer.dispose();
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.stm.ISTM#updateSubscriberPriority(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.util.ISTMEntrySubscriber)
+	 */
+	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
+	{
+		lock( inDataKey.getKey() );
+		
+		ISTMEntryProducer producer = null;
+		int newPriority = 0;
+		
+		HashSet<TemporaryController> dependencies = null;
+		
+		try
+		{
+			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
+
+			if( existingData == null )
+			{
+				//All Subscribers has left the building
+				return;
+			}
+			
+			ISTMEntry newEntry = existingData.changeSubscriberPriority( inSubscriber, inSubscriber.getPriority() );
+			
+			if( newEntry == null )
+			{
+				//Subscriber has left the entry
+				return;
+			}
+			
+			if( existingData.getPriority() == newEntry.getPriority() )
+			{
+				//No side effects
+				return;
+			}
+			
+			newPriority = newEntry.getPriority();
+			producer = newEntry.getProducer();
+			
+			if( producer == null || producer.isDisposed() )
+			{
+				//producer is disposed
+				return;
+			}
+			
+			dependencies = producer.getDependencyControllers();
+		}
+		catch( Throwable t )
+		{
+			logError( t.getMessage(), t );
+		}
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+		
+		if( dependencies != null )
+		{
+			for( TemporaryController tc : dependencies )
+			{
+				tc.setPriority( newPriority );
+			}
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.stm.ISTM#publish(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.producer.ISTMEntryProducer, org.juxtapose.streamline.util.Status, com.trifork.clj_ds.IPersistentMap, java.util.HashSet)
+	 */
+	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, DataType<?>> inData, HashSet<String> inDeltaSet )
+	{
+		lock( inDataKey.getKey() );
+		try
+		{
+			ISTMEntry entry = keyToData.get( inDataKey.getKey() );
+
+			if( entry != null )
+			{
+				//If data already exists it can only be modified by its own producer
+				if( ! entry.getProducer().equals( inProducer ) )
+				{
+					logError( "Producer "+inProducer+" tried to publish a record for Key: "+inDataKey+" That is owned by producer: "+entry.getProducer() );
+					return;
+				}
+			}
+			else
+			{
+				entry = createEmptyData( inStatus, inProducer );
+				entry.addSubscriber( inProducer );
+			}
+
+			entry.setUpdatedData( inData, new HashSet<String>(), true );
+		}
+		catch( Throwable t )
+		{
+			logError( t.getMessage(), t );
+		}
+		finally
+		{
+			unlock( inDataKey.getKey() );
+		}
+	}
+	
+	
+	abstract protected void lock( String inKey );
+	abstract protected void unlock( String inKey );
 }

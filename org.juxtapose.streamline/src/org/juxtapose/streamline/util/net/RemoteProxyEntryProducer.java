@@ -94,7 +94,7 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 	@Override
 	protected void start() 
 	{
-		clientConnector.subscribe( this, dataKey );
+		clientConnector.subscribe( this, entryKey );
 	}
 	
 	protected void stop()

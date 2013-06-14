@@ -90,7 +90,7 @@ public class SwapPriceProducer  extends STMEntryProducer implements ISTMEntryReq
 		
 		if( inData.getStatus() == Status.OK )
 		{
-			stm.commit( new DataTransaction( dataKey, SwapPriceProducer.this )
+			stm.commit( new DataTransaction( entryKey, SwapPriceProducer.this )
 			{
 				@Override
 				public void execute()

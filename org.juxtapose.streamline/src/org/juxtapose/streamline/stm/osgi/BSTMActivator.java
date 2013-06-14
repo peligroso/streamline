@@ -3,7 +3,7 @@ package org.juxtapose.streamline.stm.osgi;
 import org.juxtapose.streamline.producer.executor.BlockingQueueExecutor;
 import org.juxtapose.streamline.producer.executor.StickyHashDisruptorExecutor;
 import org.juxtapose.streamline.stm.BlockingSTM;
-import org.juxtapose.streamline.stm.IPublishedDataFactory;
+import org.juxtapose.streamline.stm.ISTMEntryFactory;
 import org.osgi.service.component.ComponentContext;
 
 public class BSTMActivator extends BlockingSTM
@@ -20,7 +20,7 @@ public class BSTMActivator extends BlockingSTM
 			try
 			{
 				Class<?> c = Class.forName( classStr );
-				IPublishedDataFactory dataFactory =  (IPublishedDataFactory)c.newInstance();
+				ISTMEntryFactory dataFactory =  (ISTMEntryFactory)c.newInstance();
 				
 				setDataFactory( dataFactory );
 			} 

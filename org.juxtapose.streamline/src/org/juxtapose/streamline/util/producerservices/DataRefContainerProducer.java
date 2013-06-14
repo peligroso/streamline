@@ -1,11 +1,16 @@
 package org.juxtapose.streamline.util.producerservices;
 
+import java.util.HashSet;
+
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
+
+import com.trifork.clj_ds.IPersistentMap;
 
 public class DataRefContainerProducer extends STMEntryProducer
 {
@@ -20,7 +25,7 @@ public class DataRefContainerProducer extends STMEntryProducer
 	@Override
 	protected void start()
 	{
-		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
 		{
 			@Override
 			public void execute()
@@ -43,7 +48,7 @@ public class DataRefContainerProducer extends STMEntryProducer
 	 */
 	protected void addReference( final ISTMEntryKey... inKey )
 	{
-		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
 		{
 			@Override
 			public void execute()
@@ -54,6 +59,12 @@ public class DataRefContainerProducer extends STMEntryProducer
 				}
 			}
 		});
+	}
+	
+	protected void addData( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
+	{
+		stm.publish( inKey, this, Status.OK, inData, new HashSet<String>() );
+		addReference( entryKey );
 	}
 	
 	/* (non-Javadoc)

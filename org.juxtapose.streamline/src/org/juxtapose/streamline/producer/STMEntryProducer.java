@@ -26,7 +26,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	private final HashMap<String, ReferenceLink> keyToReferensLinks = new HashMap<String, ReferenceLink>();
 	
 	
-	protected final ISTMEntryKey dataKey;
+	protected final ISTMEntryKey entryKey;
 	protected final ISTM stm;
 	
 	/**
@@ -36,7 +36,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	public STMEntryProducer( ISTMEntryKey inKey, ISTM inSTM )
 	{
 		super( IExecutor.LOW );
-		dataKey = inKey;
+		entryKey = inKey;
 		stm = inSTM;
 	}
 	
@@ -49,7 +49,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	public STMEntryProducer( ISTMEntryKey inKey, ISTM inSTM, int inPriority )
 	{
 		super( inPriority );
-		dataKey = inKey;
+		entryKey = inKey;
 		stm = inSTM;
 	}
 	/**
@@ -121,7 +121,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	{
 		if( dependencies.containsKey( inKey ))
 		{
-			stm.logError( "Dependency for "+inKey+" is already added to "+dataKey );
+			stm.logError( "Dependency for "+inKey+" is already added to "+entryKey );
 			return;
 		}
 		dependencies.put( inKey, inController );
@@ -143,7 +143,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	 */
 	public void referencedDataUpdated( final String inFieldKey, final ReferenceLink inLink, final ISTMEntry inData )
 	{
-		stm.commit( new STMTransaction( dataKey, this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, this, 0, 0 )
 		{
 			@Override
 			public void execute()
@@ -195,7 +195,7 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 	
 	protected void setStatus( final Status inStatus )
 	{
-		stm.commit( new STMTransaction( dataKey, STMEntryProducer.this, 0, 0 )
+		stm.commit( new STMTransaction( entryKey, STMEntryProducer.this, 0, 0 )
 		{
 			@Override
 			public void execute()

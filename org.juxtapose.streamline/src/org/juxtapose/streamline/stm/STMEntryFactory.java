@@ -20,7 +20,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 17 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class STMEntryFactory implements IPublishedDataFactory
+public class STMEntryFactory implements ISTMEntryFactory
 {
 	/**
 	 * @param inStatus

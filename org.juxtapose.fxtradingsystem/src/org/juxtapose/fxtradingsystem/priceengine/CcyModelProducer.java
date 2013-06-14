@@ -82,7 +82,7 @@ public class CcyModelProducer extends STMEntryProducer
 	
 	public void checkStatus()
 	{
-		ISTMEntry data = stm.getData( dataKey.getKey() );
+		ISTMEntry data = stm.getData( entryKey.getKey() );
 		if( data != null )
 		{
 			if( data.getStatus() == Status.ON_REQUEST )

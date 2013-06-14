@@ -118,7 +118,7 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	
 	private final void parseQuote( final QPMessage inQuote )
 	{
-		stm.commit( new DataTransaction(dataKey, this )
+		stm.commit( new DataTransaction(entryKey, this )
 		{
 			@Override
 			public void execute()
@@ -199,7 +199,7 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 		if( inData.getStatus() == Status.ON_REQUEST )
 			return;
 		
-		stm.commit( new STMTransaction( dataKey, LiquidityPoolProducer.this )
+		stm.commit( new STMTransaction( entryKey, LiquidityPoolProducer.this )
 		{
 			@Override
 			public void execute()

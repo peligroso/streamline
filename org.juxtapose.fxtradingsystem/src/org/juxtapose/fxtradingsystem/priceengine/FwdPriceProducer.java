@@ -72,7 +72,7 @@ public class FwdPriceProducer extends STMEntryProducer implements ISTMEntryReque
 		
 		if( swapDataKey != null && spotDataKey != null )
 		{
-			stm.commit( new STMTransaction( dataKey, FwdPriceProducer.this, 2, 0 )
+			stm.commit( new STMTransaction( entryKey, FwdPriceProducer.this, 2, 0 )
 			{
 				@Override
 				public void execute()

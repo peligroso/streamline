@@ -29,7 +29,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	final String farPeriod;
 	final BigDecimal amt;
 	
-	ISTMEntryKey entryKey;
+	ISTMEntryKey subscribeKey;
 	
 	public RFQLiquidityProducer( ISTMEntryKey inKey, ISTM inSTM, String inCcy1, String inCcy2, String inNearPeriod, String inFarPeriod, BigDecimal inAmt )
 	{
@@ -44,7 +44,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	@Override
 	protected void start()
 	{
-		stm.commit( new STMTransaction( dataKey, RFQLiquidityProducer.this, 1, 0 )
+		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this, 1, 0 )
 		{
 			@Override
 			public void execute()
@@ -74,7 +74,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	{
 		if( inTag.equals( priceTag ))
 		{
-			entryKey = inDataKey;
+			subscribeKey = inDataKey;
 			stm.subscribeToData( inDataKey, this );
 		}
 	}
@@ -92,7 +92,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 		if( inData.getStatus() == Status.ON_REQUEST )
 			return;
 		
-		stm.commit( new STMTransaction( dataKey, RFQLiquidityProducer.this )
+		stm.commit( new STMTransaction( entryKey, RFQLiquidityProducer.this )
 		{
 			@Override
 			public void execute()
@@ -181,7 +181,7 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	protected void stop()
 	{
 		super.stop();
-		stm.unsubscribeToData( entryKey, this );
+		stm.unsubscribeToData( subscribeKey, this );
 	}
 	
 }

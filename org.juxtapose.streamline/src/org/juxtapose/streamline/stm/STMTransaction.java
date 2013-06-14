@@ -10,6 +10,7 @@ import java.util.Set;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.Preconditions;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
@@ -55,14 +56,14 @@ public abstract class STMTransaction
 	 */
 	public STMTransaction( ISTMEntryKey inDataKey, int inAddedRefenrence, int inRemovedReferences ) 
 	{
-		m_dataKey = inDataKey;
+		m_dataKey = Preconditions.notNull( inDataKey );
 		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
 		removedDataReferences = inRemovedReferences == 0 ? null : new ArrayList<String>( inRemovedReferences );
 	}
 	
 	public STMTransaction( ISTMEntryKey inDataKey ) 
 	{
-		m_dataKey = inDataKey;
+		m_dataKey = Preconditions.notNull( inDataKey );
 		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );
 		removedDataReferences = new ArrayList<String>( 8 );
 	}
@@ -73,7 +74,7 @@ public abstract class STMTransaction
 	 */
 	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, int inAddedRefenrence, int inRemovedReferences ) 
 	{
-		m_dataKey = inDataKey;
+		m_dataKey = Preconditions.notNull( inDataKey );
 		m_producer = inProducer;
 		
 		addedDataReferences = inAddedRefenrence == 0 ? null : new HashMap<String, DataTypeRef>( inAddedRefenrence );
@@ -86,7 +87,7 @@ public abstract class STMTransaction
 	 */
 	public STMTransaction( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer ) 
 	{
-		m_dataKey = inDataKey;
+		m_dataKey = Preconditions.notNull( inDataKey );
 		m_producer = inProducer;
 		
 		addedDataReferences = new HashMap<String, DataTypeRef>( 8 );

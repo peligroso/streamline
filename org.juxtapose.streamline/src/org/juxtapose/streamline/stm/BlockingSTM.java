@@ -35,7 +35,7 @@ public class BlockingSTM extends STM
 	/**
 	 * @param inKey
 	 */
-	private void lock( String inKey )
+	protected void lock( String inKey )
 	{
 		boolean set = false;
 		
@@ -61,7 +61,7 @@ public class BlockingSTM extends STM
 	/**
 	 * @param inKey
 	 */
-	private void unlock( String inKey )
+	protected void unlock( String inKey )
 	{
 		ReentrantLock lock = m_keyToLock.get( inKey );
 		if( lock != null )
@@ -278,194 +278,5 @@ public class BlockingSTM extends STM
 		}
 	}
 	
-	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
-	{
-		lock( inDataKey.getKey() );
-		
-		ISTMEntryProducer producer = null;
-		int newPriority = 0;
-		
-		HashSet<TemporaryController> dependencies = null;
-		
-		try
-		{
-			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
 
-			if( existingData == null )
-			{
-				//All Subscribers has left the building
-				return;
-			}
-			
-			ISTMEntry newEntry = existingData.changeSubscriberPriority( inSubscriber, inSubscriber.getPriority() );
-			
-			if( newEntry == null )
-			{
-				//Subscriber has left the entry
-				return;
-			}
-			
-			if( existingData.getPriority() == newEntry.getPriority() )
-			{
-				//No side effects
-				return;
-			}
-			
-			newPriority = newEntry.getPriority();
-			producer = newEntry.getProducer();
-			
-			if( producer == null || producer.isDisposed() )
-			{
-				//producer is disposed
-				return;
-			}
-			
-			dependencies = producer.getDependencyControllers();
-		}
-		catch( Throwable t )
-		{
-			logError( t.getMessage(), t );
-		}
-		finally
-		{
-			unlock( inDataKey.getKey() );
-		}
-		
-		if( dependencies != null )
-		{
-			for( TemporaryController tc : dependencies )
-			{
-				tc.setPriority( newPriority );
-			}
-		}
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.juxtapose.streamline.stm.impl.STM#subscribe(org.juxtapose.streamline.util.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
-	 */
-	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber )
-	{
-		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
-		if( producerService == null )
-		{
-			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
-			return;
-		}
-		
-		ISTMEntryProducer producer = null;
-		ISTMEntry newData = null;
-		int newPriority = -1;
-		HashSet<TemporaryController> dependencies = null;
-		
-		lock( inDataKey.getKey() );
-		
-		try
-		{
-			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
-
-			if( existingData == null )
-			{
-				//First subscriber
-				producer = producerService.getDataProducer( inDataKey );
-
-				//REVISIT Potentially we should not notify subscribers for certain newDatas and just wait for the initial update instead.
-				newData = createEmptyData( Status.ON_REQUEST, producer, inSubscriber);
-				keyToData.put( inDataKey.getKey(), newData );
-
-				if( inSubscriber.getPriority() == IExecutor.HIGH )
-					producer.setPriority( IExecutor.HIGH );
-			}
-			else
-			{
-				newData = existingData.addSubscriber( inSubscriber );
-				keyToData.put( inDataKey.getKey(), newData );
-				
-				if( newData.getPriority() != existingData.getPriority() && existingData.getPriority() != IExecutor.HIGH )
-				{
-					newPriority = newData.getPriority();
-					newData.getProducer().setPriority( newPriority );
-					dependencies = newData.getProducer().getDependencyControllers();
-				}
-			}
-
-		}catch( Throwable t )
-		{
-			logError( t.getMessage(), t );
-		}
-		finally
-		{
-			unlock( inDataKey.getKey() );
-		}
-		
-		if( dependencies != null )
-		{
-			for( TemporaryController tc : dependencies )
-			{
-				tc.setPriority( newPriority );
-			}
-		}
-		
-		if( newData != null )
-			inSubscriber.updateData( inDataKey, newData, true );
-
-		if( producer != null )
-			producer.init();
-	}
-
-	
-	
-	/* (non-Javadoc)
-	 * @see org.juxtapose.streamline.stm.exp.ISTM#unsubscribeToData(org.juxtapose.streamline.producer.IDataKey, org.juxtapose.streamline.util.IDataSubscriber)
-	 */
-	@Override
-	public void unsubscribeToData(ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber)
-	{
-		ISTMEntryProducerService producerService = idToProducerService.get( inDataKey.getService() );
-		if( producerService == null )
-		{
-			logError( "Key: "+inDataKey+" not valid, producer service does not exist"  );
-			return;
-		}
-		
-		ISTMEntryProducer producer = null;
-		
-		lock( inDataKey.getKey() );
-		
-		try
-		{
-			ISTMEntry existingData = keyToData.get( inDataKey.getKey() );
-
-			if( existingData == null )
-			{
-				logError( "Key: "+inDataKey+", Data has already been removed which is unconditional since an existing subscriber is requesting to unsubscribe"  );
-				return;
-			}
-			else
-			{
-				ISTMEntry newData = existingData.removeSubscriber( inSubscriber );
-				if( newData.hasSubscribers() )
-				{
-					keyToData.replace( inDataKey.getKey(), newData );
-				}
-				else
-				{
-					keyToData.remove( inDataKey.getKey() );
-					producer = existingData.getProducer();
-				}
-			}
-
-		}catch( Throwable t )
-		{
-			logError( t.getMessage(), t );
-		}
-		finally
-		{
-			unlock( inDataKey.getKey() );
-		}
-
-		if( producer != null )
-			producer.dispose();
-		
-	}
 }

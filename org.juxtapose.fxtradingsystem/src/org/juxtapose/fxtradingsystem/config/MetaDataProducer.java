@@ -26,13 +26,13 @@ public class MetaDataProducer extends STMEntryProducer
 	
 	public ISTMEntryKey getKey()
 	{
-		return dataKey;
+		return entryKey;
 	}
 
 	@Override
 	protected void start()
 	{
-		stm.commit( new DataTransaction( dataKey, MetaDataProducer.this )
+		stm.commit( new DataTransaction( entryKey, MetaDataProducer.this )
 		{
 			@Override
 			public void execute()

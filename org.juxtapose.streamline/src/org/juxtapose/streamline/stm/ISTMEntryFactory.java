@@ -10,7 +10,7 @@ import org.juxtapose.streamline.util.Status;
  * 17 okt 2011
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public interface IPublishedDataFactory
+public interface ISTMEntryFactory
 {
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer );
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );

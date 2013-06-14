@@ -32,10 +32,10 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 	{
 		super( inKey, inSTM );
 		
-		source = dataKey.getValue( MarketDataConstants.FIELD_SOURCE );
-		ccy1 = dataKey.getValue( MarketDataConstants.FIELD_CCY1 );
-		ccy2 = dataKey.getValue( MarketDataConstants.FIELD_CCY2 );
-		period = dataKey.getValue( MarketDataConstants.FIELD_PERIOD );
+		source = entryKey.getValue( MarketDataConstants.FIELD_SOURCE );
+		ccy1 = entryKey.getValue( MarketDataConstants.FIELD_CCY1 );
+		ccy2 = entryKey.getValue( MarketDataConstants.FIELD_CCY2 );
+		period = entryKey.getValue( MarketDataConstants.FIELD_PERIOD );
 	}
 	@Override
 	protected void start()
@@ -70,7 +70,7 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 	
 	public void parseQuote( final QPMessage inQuote )
 	{
-		stm.commit( new DataTransaction(dataKey, this )
+		stm.commit( new DataTransaction(entryKey, this )
 		{
 			@Override
 			public void execute()

@@ -1,5 +1,6 @@
 package org.juxtapose.streamline.stm;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -10,6 +11,9 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataType;
+
+import com.trifork.clj_ds.IPersistentMap;
 
 public interface ISTM extends IExecutor
 {
@@ -17,6 +21,7 @@ public interface ISTM extends IExecutor
 	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status newStatus );
 	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void unsubscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
+	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, DataType<?>> inData, HashSet<String> inDeltaSet );
 	public void commit( STMTransaction inTransaction );
 	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery);
 	public void logInfo( String inMessage );
