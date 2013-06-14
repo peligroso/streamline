@@ -7,14 +7,15 @@ import java.util.HashMap;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
@@ -22,13 +23,21 @@ import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
+import org.juxtapose.streamline.util.data.DataTypeHashMap;
+import org.juxtapose.streamline.util.data.DataTypeLong;
+import org.juxtapose.streamline.util.data.DataTypeString;
+
+import com.trifork.clj_ds.IPersistentMap;
+import com.trifork.clj_ds.PersistentHashMap;
 
 public class View extends ViewPart implements ISTMEntryRequestSubscriber
 {
 	public static final String ID = "org.juxtapose.fxtradingclient.view";
 
-	private TableViewer viewer;
+	private DataViewer viewer;
+	private Composite parent;
 
 	ISTM stm;
 	
@@ -58,8 +67,8 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 		}
 	}
 
-	class ViewLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+	class ViewLabelProvider extends LabelProvider implements ITableLabelProvider 
+	{
 		public String getColumnText(Object obj, int index) {
 			return getText(obj);
 		}
@@ -78,13 +87,15 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
-	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
+	public void createPartControl(Composite parent) 
+	{
+//		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+//		viewer.setContentProvider(new ViewContentProvider());
+//		viewer.setLabelProvider(new ViewLabelProvider());
 		// Provide the input to the ContentProvider
-		viewer.setInput(new String[] {"One", "Two", "Three"});
+		
+		this.parent = parent;
 		
 		stm = STMStatic.getSTM();
 		
@@ -96,11 +107,11 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		viewer.getControl().setFocus();
+//		viewer.getControl().setFocus();
 	}
 
 	@Override
-	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFirstUpdate ) 
+	public void updateData( final ISTMEntryKey inKey, final ISTMEntry inData, final boolean inFirstUpdate ) 
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ) && !subscribedMetaData )
 		{
@@ -114,13 +125,37 @@ public class View extends ViewPart implements ISTMEntryRequestSubscriber
 			}
 			else if( isStatusUpdatedToOk( FXProducerServiceConstants.PRICE_ENGINE, inData ))
 			{
-				PriceSubscriber ps = new PriceSubscriber( stm );
+//				PriceSubscriber ps = new PriceSubscriber( stm );
 			}
 			DataType<?> peVal = inData.getUpdatedValue( FXProducerServiceConstants.PRICE_ENGINE );
 		}
-		else if( inKey.equals( configMetaKey ))
+		else if( inKey.equals( configMetaKey ) && inData.getStatus() == Status.OK )
 		{
 			stm.logInfo( "Config data recieved for meta data "+inData.getDataMap() );
+			
+			parent.getDisplay().asyncExec( new Runnable(){
+
+				@Override
+				public void run() 
+				{
+					viewer = new DataViewer( parent, SWT.NONE, inData.getDataMap(), "CCY" );
+					parent.layout();
+					parent.update();
+					
+//					IPersistentMap<String, DataType<?>> testPrice = PersistentHashMap.EMPTY;
+//					testPrice = testPrice.assoc( FXDataConstants.FIELD_DECIMALS, new DataTypeLong(4l) );
+//					testPrice = testPrice.assoc( FXDataConstants.FIELD_PIP, new DataTypeLong(10000l) );
+//					testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY1, new DataTypeString("EUR") );
+//					testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY2, new DataTypeString("SEK") );
+//					viewer.setInput( new ViewDataObject[]{ new ViewDataObject(testPrice) } );
+					
+					IPersistentMap<String, DataType<?>> testCcy = PersistentHashMap.EMPTY;
+					testCcy = testCcy.assoc( "NAME", new DataTypeString("European currency") );
+					testCcy = testCcy.assoc( "DC", new DataTypeString("30_360_Accual") );
+					testCcy = testCcy.assoc( "ISO", new DataTypeString("EUR") );
+					viewer.setInput( new ViewDataObject[]{ new ViewDataObject(testCcy) } );
+				}
+			});
 		}
 	}
 

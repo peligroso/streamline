@@ -1,5 +1,6 @@
 package org.juxtapose.fxtradingsystem.config;
 
+import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.DataTransaction;
@@ -51,10 +52,10 @@ public class MetaDataProducer extends STMEntryProducer
 				
 				//PRICE
 				IPersistentMap<String, DataType<?>> priceMap = PersistentHashMap.emptyMap();
-				priceMap = priceMap.assoc( "CCY1", new DataTypeString("CCY") );
-				priceMap = priceMap.assoc( "CCY2", new DataTypeString("CCY2") );
-				priceMap = priceMap.assoc( "PIP", new DataTypeLong(0l) );
-				priceMap = priceMap.assoc( "DEC", new DataTypeLong(0l) );
+				priceMap = priceMap.assoc( FXDataConstants.FIELD_CCY1, new DataTypeString("CCY") );
+				priceMap = priceMap.assoc( FXDataConstants.FIELD_CCY2, new DataTypeString("CCY") );
+				priceMap = priceMap.assoc( FXDataConstants.FIELD_PIP, new DataTypeLong(0l) );
+				priceMap = priceMap.assoc( FXDataConstants.FIELD_DECIMALS, new DataTypeLong(0l) );
 				
 				putValue( "PRC", new DataTypeHashMap(priceMap) );
 				

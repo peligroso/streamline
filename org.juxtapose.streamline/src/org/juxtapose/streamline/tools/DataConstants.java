@@ -8,11 +8,13 @@ public class DataConstants
 	
 	public static final String FIELD_STATUS 				= "#S";
 	
-	public static final String FIELD_TYPE 					= "T";
+	public static final String FIELD_TYPE 					= "#T";
 	
-	public static final String FIELD_TIMESTAMP 				= "TM";
+	public static final String FIELD_TIMESTAMP 				= "#TS";
 	
 	
-	public static final String STATE_TYPE_META 				= "M";
+	public static final String STATE_TYPE_META 				= "%M";
+	
+	public static final String STATE_TYPE_CONTAINER 		= "%C";
 	
 }
