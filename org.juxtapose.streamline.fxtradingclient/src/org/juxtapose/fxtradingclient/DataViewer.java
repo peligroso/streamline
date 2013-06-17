@@ -80,13 +80,13 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    // Set the sorter for the table
 
 	    // Layout the viewer
-	    GridData gridData = new GridData();
-	    gridData.verticalAlignment = GridData.FILL;
-	    gridData.horizontalSpan = 2;
-	    gridData.grabExcessHorizontalSpace = true;
-	    gridData.grabExcessVerticalSpace = true;
-	    gridData.horizontalAlignment = GridData.FILL;
-	    viewer.getControl().setLayoutData(gridData);
+//	    GridData gridData = new GridData();
+//	    gridData.verticalAlignment = GridData.FILL;
+//	    gridData.horizontalSpan = 2;
+//	    gridData.grabExcessHorizontalSpace = true;
+//	    gridData.grabExcessVerticalSpace = true;
+//	    gridData.horizontalAlignment = GridData.FILL;
+//	    viewer.getControl().setLayoutData(gridData);
 	  }
 
 	  public TableViewer getViewer() {

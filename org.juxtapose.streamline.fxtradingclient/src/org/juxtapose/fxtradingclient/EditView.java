@@ -14,9 +14,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -44,7 +49,7 @@ import com.trifork.clj_ds.PersistentHashMap;
 
 public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, ISTMRequestor
 {
-	public static final String ID = "org.juxtapose.fxtradingclient.view";
+	public static final String ID = "org.juxtapose.fxtradingclient.editview";
 
 	private HashMap<String, DataViewer> typeToViewer = new HashMap<String, DataViewer>();
 	private Composite parent;
@@ -53,6 +58,8 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 	
 	private ISTMEntryKey configMetaKey; 
 	boolean subscribedMetaData = false;
+	
+	TabFolder tabFolder;
 	
 	
 	/**
@@ -93,6 +100,40 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 					ISharedImages.IMG_OBJ_ELEMENT);
 		}
 	}
+	
+	private void createMenu( Composite inComp )
+	{
+		Composite menuComp = new Composite( inComp, SWT.NONE );
+		menuComp.setLayout( new RowLayout() );
+		
+		Button syncButt = new Button( parent, SWT.PUSH );
+		syncButt.setText( "Synch" );
+		syncButt.addSelectionListener( new SelectionAdapter()
+		{
+			public void widgetSelected( SelectionEvent sev )
+			{
+				uploadRecord();
+			}
+		});
+		
+		Button newButt = new Button(parent, SWT.PUSH);
+		newButt.addSelectionListener( new SelectionAdapter(){
+			public void widgetSelected( SelectionEvent sev )
+			{
+				TabItem[] items = tabFolder.getSelection();
+				
+				if( items != null && items.length != 0 )
+				{
+					DataViewer viewer = (DataViewer)items[0].getControl();
+					viewer.addEntry();
+				}
+//				
+			}
+		});
+		
+		newButt.setText( "New Entry" );
+		
+	}
 
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize
@@ -110,15 +151,19 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 		
 		stm = STMStatic.getSTM();
 		
-		Button syncButt = new Button( parent, SWT.PUSH );
-		syncButt.setText( "Synch" );
-		syncButt.addSelectionListener( new SelectionAdapter()
-		{
-			public void widgetSelected( SelectionEvent sev )
-			{
-				uploadRecord();
-			}
-		});
+		parent.setLayout( new GridLayout(1, false) );
+		
+		createMenu( parent );
+		
+		tabFolder = new TabFolder(parent, SWT.NONE);
+		
+		GridData tabData = new GridData();
+		tabData.grabExcessHorizontalSpace = true;
+		tabData.grabExcessVerticalSpace = true;
+		tabData.horizontalAlignment = GridData.FILL;
+		tabData.verticalAlignment = GridData.FILL;
+
+		tabFolder.setLayoutData(tabData);
 		
 		stm.subscribeToData( KeyConstants.PRODUCER_SERVICE_KEY, this);
 		
@@ -197,17 +242,22 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 			@Override
 			public void run() 
 			{
-				Button b = new Button(parent, SWT.PUSH);
+				TabItem viewTabItem = new TabItem(tabFolder, SWT.NONE);
 				
-				final DataViewer viewer = new DataViewer( parent, SWT.NONE, inData, inFieldKey, inMetaDataControl );
+//				Button b = new Button(parent, SWT.PUSH);
+				
+				final DataViewer viewer = new DataViewer( tabFolder, SWT.NONE, inData, inFieldKey, inMetaDataControl );
 				typeToViewer.put( inFieldKey, viewer );
 				
-				b.addSelectionListener( new SelectionAdapter(){
-					public void widgetSelected( SelectionEvent sev )
-					{
-						viewer.addEntry();
-					}
-				});
+//				b.addSelectionListener( new SelectionAdapter(){
+//					public void widgetSelected( SelectionEvent sev )
+//					{
+//						viewer.addEntry();
+//					}
+//				});
+				
+				viewTabItem.setControl(viewer);
+				viewTabItem.setText(inFieldKey);
 				
 				parent.layout();
 				parent.update();
