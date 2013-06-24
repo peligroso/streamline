@@ -12,6 +12,8 @@ public class DataConstants
 	
 	public static final String FIELD_TIMESTAMP 				= "#TS";
 	
+	public static final String FIELD_KEYS 				= "#K";
+	
 	
 	public static final String STATE_TYPE_META 				= "%M";
 	

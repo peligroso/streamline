@@ -132,7 +132,11 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    	
 	    	final String key = entry.getKey();
 	    	
-	    	if( !DataConstants.FIELD_STATUS.equals(key) )
+	    	if( DataConstants.FIELD_KEYS.equals(key) )
+	    	{
+	    		
+	    	}
+	    	else if( !DataConstants.FIELD_STATUS.equals(key) )
 	    	{
 	    		DataType<?> val = entry.getValue();
 	    		TableViewerColumn col = createTableViewerColumn(key, 100, i);

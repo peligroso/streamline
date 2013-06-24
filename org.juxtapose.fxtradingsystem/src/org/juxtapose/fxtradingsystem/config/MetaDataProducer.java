@@ -5,6 +5,7 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataType;
@@ -48,6 +49,10 @@ public class MetaDataProducer extends STMEntryProducer
 				ccyMap = ccyMap.assoc( "DC", new DataTypeString("DC") );
 				ccyMap = ccyMap.assoc( "NAME", new DataTypeString("") );
 				
+				DataTypeString[] keys = new DataTypeString[]{ new DataTypeString( "ISO" ) };
+				PersistentArrayList<DataTypeString> keyList = new PersistentArrayList<DataTypeString>( keys );
+				ccyMap = ccyMap.assoc( DataConstants.FIELD_KEYS, new DataTypeArrayList( keyList ) );
+				
 				putValue( "CCY", new DataTypeHashMap(ccyMap) );
 				
 				//PRICE
@@ -56,6 +61,10 @@ public class MetaDataProducer extends STMEntryProducer
 				priceMap = priceMap.assoc( FXDataConstants.FIELD_CCY2, new DataTypeString("CCY") );
 				priceMap = priceMap.assoc( FXDataConstants.FIELD_PIP, new DataTypeLong(0l) );
 				priceMap = priceMap.assoc( FXDataConstants.FIELD_DECIMALS, new DataTypeLong(0l) );
+				
+				keys = new DataTypeString[]{ new DataTypeString( FXDataConstants.FIELD_CCY1 ), new DataTypeString( FXDataConstants.FIELD_CCY2 ) };
+				keyList = new PersistentArrayList<DataTypeString>( keys );
+				priceMap = priceMap.assoc( DataConstants.FIELD_KEYS, new DataTypeArrayList( keyList ) );
 				
 				putValue( "PRC", new DataTypeHashMap(priceMap) );
 				
