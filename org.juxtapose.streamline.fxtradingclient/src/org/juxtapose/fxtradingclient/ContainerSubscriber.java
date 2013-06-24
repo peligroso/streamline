@@ -102,6 +102,8 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 			doPartialUpdate( inData);
 		}
 		
+		updateListeners( inKey, inData, inFullUpdate );
+		
 	}
 	
 	public void addContainerListener( ISTMContainerListener inContainerListener )

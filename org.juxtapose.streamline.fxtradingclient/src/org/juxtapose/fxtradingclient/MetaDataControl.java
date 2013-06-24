@@ -19,6 +19,11 @@ import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
 
+/**
+ * @author Pontus Jörgne
+ * 15 jun 2013
+ * Copyright (c) Pontus Jörgne. All rights reserved
+ */
 public class MetaDataControl extends STMEntrySubscriber
 {
 	boolean metaDataInitiated = false;
@@ -28,11 +33,17 @@ public class MetaDataControl extends STMEntrySubscriber
 	HashMap<String, ContainerSubscriber> typeToContainer = new HashMap<String, ContainerSubscriber>();
 	HashMap<String, InputContainer> typeToInput = new HashMap<String, InputContainer>();
 	
+	/**
+	 * @param inView
+	 */
 	public MetaDataControl( EditView inView )
 	{
 		editView = inView;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.util.STMEntrySubscriber#updateData(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.util.ISTMEntry, boolean)
+	 */
 	@Override
 	public void updateData( ISTMEntryKey inKey, ISTMEntry inData, boolean inFullUpdate )
 	{

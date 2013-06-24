@@ -4,6 +4,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.swt.widgets.Display;
 import org.juxtapose.streamline.util.IInputListener;
 import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.data.DataType;
@@ -21,10 +22,14 @@ public class DataEditingSupportEnum extends DataEditingSupport
 	
 	ComboBoxCellEditor cellEditor;
 	
-	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer ) 
+	Display display;
+	
+	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer, Display inDisplay ) 
 	{
 		super( viewer, inKey );
 		items = inInputContainer.getInputObjects();
+		display = inDisplay;
+		
 		inInputContainer.addInputListener( new IInputListener()
 		{
 			@Override
@@ -43,9 +48,19 @@ public class DataEditingSupportEnum extends DataEditingSupport
 		return cellEditor;
 	}
 	
-	public void updateItems( String[] inItems )
+	public void updateItems( final String[] inItems )
 	{
-		cellEditor.setItems( inItems );
+		display.asyncExec( new Runnable()
+		{
+			@Override
+			public void run() 
+			{
+				if( cellEditor != null)
+					cellEditor.setItems( inItems );	
+			}
+			
+		});
+		
 	}
 	
 	@Override

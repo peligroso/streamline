@@ -164,7 +164,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    			{
 	    				//value is a predefined type
 	    				InputContainer input = metaDataControl.getInputContainer( valStr );
-	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input ) );
+	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay() ) );
 	    				
 //	    				DataType<?> data = inData.valAt( valStr );
 //	    				if( data instanceof DataTypeArrayList )
@@ -189,7 +189,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    		else if( val instanceof DataTypeArrayList )
 	    		{
 	    			InputContainer input = metaDataControl.getInputContainer( key );
-    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input ) );
+    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay() ) );
     				
 //	    			PersistentArrayList<DataType<?>> list = (PersistentArrayList<DataType<?>>)val.get(); 
 //	    			String[] items = new String[list.size()];
