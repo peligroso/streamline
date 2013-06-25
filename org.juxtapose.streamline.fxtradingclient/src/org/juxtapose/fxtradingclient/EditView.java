@@ -246,7 +246,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 				
 //				Button b = new Button(parent, SWT.PUSH);
 				
-				final DataViewer viewer = new DataViewer( tabFolder, SWT.NONE, inData, inFieldKey, inMetaDataControl );
+				final DataViewer viewer = new DataViewer( FXProducerServiceConstants.CONFIG, tabFolder, SWT.NONE, inData, inFieldKey, inMetaDataControl );
 				typeToViewer.put( inFieldKey, viewer );
 				
 //				b.addSelectionListener( new SelectionAdapter(){
