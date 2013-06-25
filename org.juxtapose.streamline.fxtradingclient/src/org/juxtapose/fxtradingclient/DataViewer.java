@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.juxtapose.fxtradingclient.tools.ImageConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.tools.CollectionMethods;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
@@ -131,6 +132,8 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	 */
 	private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, DataType<?>> inData) 
 	{
+		DataTypeArrayList keyList = (DataTypeArrayList)inData.valAt( DataConstants.FIELD_KEYS );
+		
 	    Iterator<Map.Entry<String, DataType<?>>> iter = inData.iterator();
 	    
 	    int i = 0;
@@ -171,23 +174,23 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    			String valStr = ((DataTypeString)val).get();
 	    			if( valStr.isEmpty() )
 	    			{
-	    				col.setEditingSupport( new DataEditingSupport( viewer, key ) );
+	    				col.setEditingSupport( new DataEditingSupport( viewer, key, CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
 	    			}
 	    			else
 	    			{
 	    				//value is a predefined type
 	    				InputContainer input = metaDataControl.getInputContainer( valStr );
-	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay() ) );
+	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
 	    			}
 	    		}
 	    		else if( val instanceof DataTypeLong )
 	    		{
-	    			col.setEditingSupport( new DataEditingSupportLong( viewer, key ) );
+	    			col.setEditingSupport( new DataEditingSupportLong( viewer, key, CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
 	    		}
 	    		else if( val instanceof DataTypeArrayList )
 	    		{
 	    			InputContainer input = metaDataControl.getInputContainer( key );
-    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay() ) );
+    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
 	    		}
 	    	}
 	    	i++;

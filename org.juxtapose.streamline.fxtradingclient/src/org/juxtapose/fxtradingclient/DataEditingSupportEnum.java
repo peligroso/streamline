@@ -24,9 +24,9 @@ public class DataEditingSupportEnum extends DataEditingSupport
 	
 	Display display;
 	
-	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer, Display inDisplay ) 
+	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer, Display inDisplay, boolean inKeyField ) 
 	{
-		super( viewer, inKey );
+		super( viewer, inKey, inKeyField );
 		items = inInputContainer.getInputObjects();
 		display = inDisplay;
 		

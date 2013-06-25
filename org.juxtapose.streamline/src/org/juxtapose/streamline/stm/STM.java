@@ -538,9 +538,9 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			{
 				entry = createEmptyData( inStatus, inProducer );
 				entry = entry.addSubscriber( inProducer );
+				
+				entry = entry.setUpdatedData( inData, new HashSet<String>(), true );
 			}
-
-			entry = entry.setUpdatedData( inData, new HashSet<String>(), true );
 			
 			keyToData.put( inDataKey.getKey(), entry );
 		}

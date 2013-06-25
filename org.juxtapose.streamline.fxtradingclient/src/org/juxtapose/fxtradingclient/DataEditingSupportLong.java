@@ -6,9 +6,9 @@ import org.juxtapose.streamline.util.data.DataTypeLong;
 
 public class DataEditingSupportLong extends DataEditingSupport {
 
-	public DataEditingSupportLong( ColumnViewer viewer, String inKey ) 
+	public DataEditingSupportLong( ColumnViewer viewer, String inKey, boolean inKeyField ) 
 	{
-		super( viewer, inKey );
+		super( viewer, inKey, inKeyField );
 	}
 	
 	/* (non-Javadoc)

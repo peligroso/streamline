@@ -13,11 +13,13 @@ import com.trifork.clj_ds.IPersistentMap;
 public class DataEditingSupport extends EditingSupport 
 {
 	protected final String key;
+	boolean keyField;
 	
-	public DataEditingSupport( ColumnViewer viewer, String inKey ) 
+	public DataEditingSupport( ColumnViewer viewer, String inKey, boolean inKeyField ) 
 	{
 		super( viewer );
 		key = inKey;
+		keyField = inKeyField;
 	}
 	
 	@Override
@@ -26,8 +28,9 @@ public class DataEditingSupport extends EditingSupport
 	}
 
 	@Override
-	protected boolean canEdit(Object element) {
-		return true;
+	protected boolean canEdit(Object element) 
+	{
+		return !keyField || ((ViewDataObject)element).getKey() == null;
 	}
 
 	@Override
