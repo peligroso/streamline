@@ -6,6 +6,5 @@ import com.trifork.clj_ds.IPersistentMap;
 
 public interface ISTMRequestor
 {
-	public void reply( int inTag, IPersistentMap<String, DataType<?>> inData);
-	public void requestError( int inTag, String inError );
+	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, DataType<?>> inData);
 }

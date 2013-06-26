@@ -76,7 +76,7 @@ public class DataInitializer implements ISTMEntrySubscriber
 	
 	public void init()
 	{
-		for( ISTMEntryKey key : keys )
+		for( ISTMEntryKey key : keys.toArray( new ISTMEntryKey[]{} ) )
 		{
 			stm.subscribeToData( key, this );
 		}

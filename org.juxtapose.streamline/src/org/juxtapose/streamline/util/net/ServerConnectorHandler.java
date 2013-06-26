@@ -106,6 +106,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		RequestMessage rm = message.getRequestMessage();
     		String service = rm.getService();
     		int tag = rm.getTag();
+    		long type = rm.getType();
     		String variable = rm.getVariable();
     		
     		IPersistentMap<String, DataType<?>> data = PersistentHashMap.EMPTY; 
@@ -115,7 +116,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     			data = PostMarshaller.parseDataMap( dataMap, data );
     		}
     		
-    		stm.request( service, tag, this, variable, data );
+    		stm.request( service, tag, type, this, variable, data );
     	}
     	else
     	{
@@ -238,14 +239,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	}
 
 	@Override
-	public void reply( int inTag, IPersistentMap<String, DataType<?>> inData )
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void requestError( int inTag, String inError )
+	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, DataType<?>> inData )
 	{
 		// TODO Auto-generated method stub
 		

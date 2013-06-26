@@ -49,7 +49,7 @@ public class DataEditingSupport extends EditingSupport
 	{
 		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
 		map = map.assoc( key, getDataType( value ) );
-		((ViewDataObject)element).updateData(map);
+		((ViewDataObject)element).updateData(map, key);
 		getViewer().update( element, null );
 	}
 	

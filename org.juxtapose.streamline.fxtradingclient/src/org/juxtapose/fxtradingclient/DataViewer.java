@@ -241,18 +241,19 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			@Override
 			public void run()
 			{
-				ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, inEntry.getDataMap(), metaData );
+				ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, inEntry.getDataMap(), metaData, inKey );
 				
 				for( ViewDataObject existingObject : viewObjects )
 				{
-					if( existingObject.getKey() != null && viewObject.getKey().equals( existingObject.getKey() ) )
+					if( existingObject.getKey() != null && inKey.equals( existingObject.getKey() ) )
 					{
 						existingObject.setData( inEntry.getDataMap() );
-						viewer.update( existingObject, new String[]{} );
+						viewer.update( existingObject, new String[]{"NAME"} );
 						return;
 					}
 				}
 				viewer.add( viewObject );
+				viewObjects.add( viewObject );
 			}
 			
 		});
@@ -260,6 +261,10 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	}
 
 
+	public String getType()
+	{
+		return typeKey;
+	}
 
 	@Override
 	public void onContainerRefUpdated( ISTMEntryKey inKey, ISTMEntry inEntry )

@@ -15,6 +15,7 @@ import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
@@ -554,7 +555,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		}
 	}
 	
-	public void request( String inService, int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
 	{
 		ISTMEntryProducerService producerService = idToProducerService.get( inService );
 		if( producerService == null )
@@ -563,12 +564,12 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			return;
 		}
 		
-		producerService.request( inTag, inRequestor, inVariable, inData );
+		producerService.request( inTag, inType, inRequestor, inVariable, inData );
 	}
 	
-	public void request( int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
 	{
-		inRequestor.requestError( inTag, REQUEST_NOT_SUPPORTED );
+		inRequestor.reply( inTag, DataConstants.RESPONSE_TYPE_ERROR,  REQUEST_NOT_SUPPORTED, null );
 	}
 	
 	

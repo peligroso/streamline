@@ -33,5 +33,5 @@ public interface ISTM extends IExecutor
 	public ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );
 	public ISTMEntry getData( String inKey );
 	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
-	public void request( String inService, int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData );
+	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData );
 }

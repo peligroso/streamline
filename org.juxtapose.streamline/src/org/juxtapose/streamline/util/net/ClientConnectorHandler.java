@@ -227,10 +227,10 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	 * @param inVariable
 	 * @param inData
 	 */
-	public void request( int inTag, ISTMRequestor inRequestor, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
 	{
 		requestToTag.put( inTag, inRequestor );
-		Message mess = PreMarshaller.createRequestMessage( inTag, inService, inVariable, inData );
+		Message mess = PreMarshaller.createRequestMessage( inTag, inType, inService, inVariable, inData );
 		channel.write( mess );
 	}
 	

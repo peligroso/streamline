@@ -219,7 +219,7 @@ public class PreMarshaller
 	 * @param inData
 	 * @return
 	 */
-	public static Message createRequestMessage( int inTag, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public static Message createRequestMessage( int inTag, long inType, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
 	{
 		
 		RequestMessage.Builder builder = RequestMessage.newBuilder();
@@ -235,6 +235,7 @@ public class PreMarshaller
 			parseMapValues( inData, dataMapBuilder );
 			
 			builder.setData( dataMapBuilder.build() );
+			builder.setType( inType );
 		}
 		
 		Message.Builder messBuilder = Message.newBuilder();

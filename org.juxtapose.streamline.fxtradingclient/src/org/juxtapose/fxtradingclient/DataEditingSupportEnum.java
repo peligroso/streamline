@@ -93,7 +93,7 @@ public class DataEditingSupportEnum extends DataEditingSupport
 		
 		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
 		map = map.assoc( key, getDataType( val ) );
-		((ViewDataObject)element).updateData(map);
+		((ViewDataObject)element).updateData(map, key);
 		getViewer().update( element, null );
 		
 	}

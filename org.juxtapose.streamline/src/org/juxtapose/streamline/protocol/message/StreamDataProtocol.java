@@ -12419,7 +12419,11 @@ public final class StreamDataProtocol {
     boolean hasTag();
     int getTag();
     
-    // optional .DataMap data = 4;
+    // required int64 type = 4;
+    boolean hasType();
+    long getType();
+    
+    // optional .DataMap data = 5;
     boolean hasData();
     org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap getData();
     org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMapOrBuilder getDataOrBuilder();
@@ -12527,11 +12531,21 @@ public final class StreamDataProtocol {
       return tag_;
     }
     
-    // optional .DataMap data = 4;
-    public static final int DATA_FIELD_NUMBER = 4;
+    // required int64 type = 4;
+    public static final int TYPE_FIELD_NUMBER = 4;
+    private long type_;
+    public boolean hasType() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    public long getType() {
+      return type_;
+    }
+    
+    // optional .DataMap data = 5;
+    public static final int DATA_FIELD_NUMBER = 5;
     private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap data_;
     public boolean hasData() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+      return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap getData() {
       return data_;
@@ -12544,6 +12558,7 @@ public final class StreamDataProtocol {
       service_ = "";
       variable_ = "";
       tag_ = 0;
+      type_ = 0L;
       data_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -12560,6 +12575,10 @@ public final class StreamDataProtocol {
         return false;
       }
       if (!hasTag()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasType()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -12586,7 +12605,10 @@ public final class StreamDataProtocol {
         output.writeInt32(3, tag_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(4, data_);
+        output.writeInt64(4, type_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(5, data_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -12611,7 +12633,11 @@ public final class StreamDataProtocol {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, data_);
+          .computeInt64Size(4, type_);
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, data_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -12744,12 +12770,14 @@ public final class StreamDataProtocol {
         bitField0_ = (bitField0_ & ~0x00000002);
         tag_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
+        type_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000008);
         if (dataBuilder_ == null) {
           data_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance();
         } else {
           dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
       
@@ -12803,6 +12831,10 @@ public final class StreamDataProtocol {
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
+        result.type_ = type_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000010;
+        }
         if (dataBuilder_ == null) {
           result.data_ = data_;
         } else {
@@ -12833,6 +12865,9 @@ public final class StreamDataProtocol {
         if (other.hasTag()) {
           setTag(other.getTag());
         }
+        if (other.hasType()) {
+          setType(other.getType());
+        }
         if (other.hasData()) {
           mergeData(other.getData());
         }
@@ -12850,6 +12885,10 @@ public final class StreamDataProtocol {
           return false;
         }
         if (!hasTag()) {
+          
+          return false;
+        }
+        if (!hasType()) {
           
           return false;
         }
@@ -12900,7 +12939,12 @@ public final class StreamDataProtocol {
               tag_ = input.readInt32();
               break;
             }
-            case 34: {
+            case 32: {
+              bitField0_ |= 0x00000008;
+              type_ = input.readInt64();
+              break;
+            }
+            case 42: {
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.Builder subBuilder = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.newBuilder();
               if (hasData()) {
                 subBuilder.mergeFrom(getData());
@@ -13008,12 +13052,33 @@ public final class StreamDataProtocol {
         return this;
       }
       
-      // optional .DataMap data = 4;
+      // required int64 type = 4;
+      private long type_ ;
+      public boolean hasType() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      public long getType() {
+        return type_;
+      }
+      public Builder setType(long value) {
+        bitField0_ |= 0x00000008;
+        type_ = value;
+        onChanged();
+        return this;
+      }
+      public Builder clearType() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        type_ = 0L;
+        onChanged();
+        return this;
+      }
+      
+      // optional .DataMap data = 5;
       private org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap data_ = org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.Builder, org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMapOrBuilder> dataBuilder_;
       public boolean hasData() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
+        return ((bitField0_ & 0x00000010) == 0x00000010);
       }
       public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap getData() {
         if (dataBuilder_ == null) {
@@ -13032,7 +13097,7 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         return this;
       }
       public Builder setData(
@@ -13043,12 +13108,12 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         return this;
       }
       public Builder mergeData(org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap value) {
         if (dataBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+          if (((bitField0_ & 0x00000010) == 0x00000010) &&
               data_ != org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.getDefaultInstance()) {
             data_ =
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.newBuilder(data_).mergeFrom(value).buildPartial();
@@ -13059,7 +13124,7 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         return this;
       }
       public Builder clearData() {
@@ -13069,11 +13134,11 @@ public final class StreamDataProtocol {
         } else {
           dataBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
       public org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap.Builder getDataBuilder() {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000010;
         onChanged();
         return getDataFieldBuilder().getBuilder();
       }
@@ -13865,13 +13930,13 @@ public final class StreamDataProtocol {
       " \003(\0132\n.NullEntry\022%\n\016hashMapEntries\030\007 \003(\013" +
       "2\r.HashMapEntry\022#\n\nrefEntries\030\010 \003(\0132\017.Re" +
       "ferenceEntry\022\016\n\006status\030\t \001(\005\"0\n\tStringMa" +
-      "p\022#\n\rstringEntries\030\001 \003(\0132\014.StringEntry\"X" +
+      "p\022#\n\rstringEntries\030\001 \003(\0132\014.StringEntry\"f" +
       "\n\016RequestMessage\022\017\n\007service\030\001 \002(\t\022\020\n\010var" +
-      "iable\030\002 \002(\t\022\013\n\003tag\030\003 \002(\005\022\026\n\004data\030\004 \001(\0132\010" +
-      ".DataMap\"E\n\014ReplyMessage\022\020\n\010variable\030\001 \002" +
-      "(\t\022\013\n\003tag\030\002 \002(\005\022\026\n\004data\030\003 \001(\0132\010.DataMapB" +
-      "+\n)org.juxtapose.streamline.protocol.mes",
-      "sage"
+      "iable\030\002 \002(\t\022\013\n\003tag\030\003 \002(\005\022\014\n\004type\030\004 \002(\003\022\026" +
+      "\n\004data\030\005 \001(\0132\010.DataMap\"E\n\014ReplyMessage\022\020" +
+      "\n\010variable\030\001 \002(\t\022\013\n\003tag\030\002 \002(\005\022\026\n\004data\030\003 " +
+      "\001(\0132\010.DataMapB+\n)org.juxtapose.streamlin",
+      "e.protocol.message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -14027,7 +14092,7 @@ public final class StreamDataProtocol {
           internal_static_RequestMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_RequestMessage_descriptor,
-              new java.lang.String[] { "Service", "Variable", "Tag", "Data", },
+              new java.lang.String[] { "Service", "Variable", "Tag", "Type", "Data", },
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.RequestMessage.class,
               org.juxtapose.streamline.protocol.message.StreamDataProtocol.RequestMessage.Builder.class);
           internal_static_ReplyMessage_descriptor =

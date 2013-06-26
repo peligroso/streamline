@@ -35,6 +35,9 @@ public class ClientViewMethods
 			vals[i] = val.get().toString();
 		}
 		
-		return STMUtil.createEntryKey( inService, inType, fields, vals );
+		if( vals.length == 1 )
+			return STMUtil.createEntryKey( inService, inType, vals[0] );
+		else
+			return STMUtil.createEntryKey( inService, inType, fields, vals );
 	}
 }

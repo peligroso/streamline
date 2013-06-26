@@ -105,9 +105,9 @@ public class RemoteServiceProxy implements ISTMEntryProducerService
 		return producer;
 	}
 	
-	public void request( int inTag, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
 	{
-		clientConnector.request( inTag, inRequestor, serviceID, inVariable, inData );
+		clientConnector.request( inTag, inType, inRequestor, serviceID, inVariable, inData );
 	}
 }
 	

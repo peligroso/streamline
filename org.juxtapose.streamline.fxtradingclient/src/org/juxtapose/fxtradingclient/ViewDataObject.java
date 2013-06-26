@@ -1,18 +1,20 @@
 package org.juxtapose.fxtradingclient;
 
-import java.sql.DatabaseMetaData;
+import static org.juxtapose.fxtradingclient.ViewDataObjectState.*;
+import static org.juxtapose.fxtradingclient.tools.ClientViewMethods.createEntryKey;
+
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.juxtapose.fxtradingclient.tools.ClientViewMethods;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.tools.DataConstants;
-import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeArrayList;
 
 import com.trifork.clj_ds.IPersistentMap;
+import com.trifork.clj_ds.PersistentHashMap;
 
 /**
  * @author Pontus Jörgne
@@ -21,9 +23,8 @@ import com.trifork.clj_ds.IPersistentMap;
  */
 public class ViewDataObject 
 {
-	static int idInc;
+	ViewDataObjectState state;
 	
-	int id;
 	IPersistentMap<String, DataType<?>> metaData;
 	IPersistentMap<String, DataType<?>> data;
 	
@@ -34,9 +35,10 @@ public class ViewDataObject
 	
 	ISTMEntryKey entryKey;
 	
+	HashSet<String> updatedKeys = new HashSet<String>();
+	
 	public ViewDataObject( String inService, String inType, IPersistentMap<String, DataType<?>> inData, IPersistentMap<String, DataType<?>> inMetaData )
 	{
-		id = idInc++;
 		data = inData;
 		metaData = inMetaData;
 		
@@ -47,14 +49,37 @@ public class ViewDataObject
 		if( listType != null )
 			keyList = (PersistentArrayList<DataType<?>>) listType.get();
 		
-		entryKey = ClientViewMethods.createEntryKey( service, type, keyList, inData );
+		entryKey = createEntryKey( service, type, keyList, inData );
+		
+		state = CREATED;
+		updatedKeys.clear();
 	}
 	
-	public void updateData( IPersistentMap<String, DataType<?>> inData )
+	public ViewDataObject( String inService, String inType, IPersistentMap<String, DataType<?>> inData, IPersistentMap<String, DataType<?>> inMetaData, ISTMEntryKey inEntryKey )
 	{
 		data = inData;
+		metaData = inMetaData;
 		
-		entryKey = ClientViewMethods.createEntryKey( service, type, keyList, inData );
+		service = inService;
+		type = inType;
+		
+		DataTypeArrayList listType = (DataTypeArrayList)inMetaData.valAt( DataConstants.FIELD_KEYS );
+		if( listType != null )
+			keyList = (PersistentArrayList<DataType<?>>) listType.get();
+		
+		entryKey = inEntryKey;
+		
+		state = MIRROR;
+		updatedKeys.clear();
+	}
+	
+	public void updateData( IPersistentMap<String, DataType<?>> inData, String inKey )
+	{
+		data = inData;
+		entryKey = createEntryKey( service, type, keyList, inData );
+		
+		state = state == MIRROR ? UPDATED : state;
+		updatedKeys.add( inKey );
 	}
 	
 	public IPersistentMap<String, DataType<?>> getData()
@@ -86,13 +111,34 @@ public class ViewDataObject
 	public void setData( IPersistentMap<String, DataType<?>> inData )
 	{
 		data = inData;
+		entryKey = createEntryKey( service, type, keyList, inData );
 		
-		entryKey = ClientViewMethods.createEntryKey( service, type, keyList, inData );
+		updatedKeys.clear();
+		state = MIRROR;
 	}
 	
 	public ISTMEntryKey getKey()
 	{
 		return entryKey;
+	}
+	
+	public ViewDataObjectState getState()
+	{
+		return state;
+	}
+	
+	public IPersistentMap<String, DataType<?>> getUpdateData()
+	{
+		IPersistentMap<String, DataType<?>> updateData = PersistentHashMap.EMPTY;
+		
+		for( String key : updatedKeys )
+		{
+			DataType<?> dt = data.valAt( key );
+			if( dt != null )
+				updateData = updateData.assoc( key, dt );
+		}
+		
+		return updateData;
 	}
 	
 }

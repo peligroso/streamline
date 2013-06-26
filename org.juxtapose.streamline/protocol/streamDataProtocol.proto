@@ -152,8 +152,9 @@ message RequestMessage
 	required string service = 1;
 	required string variable = 2;
 	required int32 tag = 3;
+	required int64 type = 4;
 	
-	optional DataMap data = 4;
+	optional DataMap data = 5;
 }
 
 message ReplyMessage

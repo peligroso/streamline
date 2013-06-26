@@ -1,6 +1,8 @@
 package org.juxtapose.streamline.util.producerservices;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.STMEntryProducer;
@@ -67,6 +69,23 @@ public class DataRefContainerProducer extends STMEntryProducer
 		addReference( inKey );
 	}
 	
+	public void updateEntry( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
+	{
+		stm.commit( new STMTransaction( inKey, this, 0, 0, true )
+		{
+			@Override
+			public void execute()
+			{
+				Iterator<Map.Entry<String, DataType<?>>> iter = inData.iterator();
+				
+				while( iter.hasNext() )
+				{
+					Map.Entry<String, DataType<?>> entry = iter.next();
+					putValue( entry.getKey(), entry.getValue() );
+				}
+			}
+		});
+	}
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.producer.STMEntryProducer#stop()
 	 */

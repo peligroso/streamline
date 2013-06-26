@@ -42,6 +42,7 @@ import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeArrayList;
 import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLong;
+import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -171,16 +172,32 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 	
 	private void uploadRecord()
 	{
-		DataViewer ccyViewer = typeToViewer.get( "CCY" );
-		ViewDataObject[] objects = ccyViewer.getObjects();
+		TabItem[] selectedItems = tabFolder.getSelection();
+		
+		if( selectedItems == null || selectedItems.length == 0 )
+			return;
+		
+		TabItem selected = selectedItems[0];
+		
+		DataViewer viewer = (DataViewer)selected.getControl();
+		ViewDataObject[] objects = viewer.getObjects();
 		
 		if( objects == null )
 			return;
 		
 		for( ViewDataObject obj : objects )
 		{
-			IPersistentMap<String, DataType<?>> data = obj.getData();
-			stm.request( FXProducerServiceConstants.CONFIG, 1, this, "CCY", data );
+			if( obj.getState() == ViewDataObjectState.CREATED )
+			{
+				IPersistentMap<String, DataType<?>> data = obj.getData();
+				stm.request( FXProducerServiceConstants.CONFIG, 1, DataConstants.REQUEST_TYPE_CREATE, this, viewer.getType(), data );
+			}
+			else if( obj.getState() == ViewDataObjectState.UPDATED )
+			{
+				IPersistentMap<String, DataType<?>> data = obj.getUpdateData();
+				data = data.assoc( DataConstants.FIELD_KEYS, new DataTypeRef( obj.getKey() ) );
+				stm.request( FXProducerServiceConstants.CONFIG, 1, DataConstants.REQUEST_TYPE_UPDATE, this, viewer.getType(), data );
+			}
 		}
 	}
 	
@@ -272,16 +289,10 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 	}
 
 	@Override
-	public void reply( int inTag, IPersistentMap<String, DataType<?>> inData )
+	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, DataType<?>> inData )
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void requestError( int inTag, String inError )
-	{
-		// TODO Auto-generated method stub
-		
-	}
 }
