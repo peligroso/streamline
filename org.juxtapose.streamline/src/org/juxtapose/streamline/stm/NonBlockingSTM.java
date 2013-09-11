@@ -4,32 +4,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
-import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.trifork.clj_ds.IPersistentMap;
-/**
- * @author Pontus Jörgne
- * Jan 2, 2012
- * Copyright (c) Pontus Jörgne. All rights reserved
- * 
- * NonBlockngSTM is experimental ant not complete. It exhibits strange behavior and does not support DataTypeRef
- * Use BlockingSTM
- */
 
 /**
  * @author Pontus Jörgne
@@ -140,7 +125,7 @@ public class NonBlockingSTM extends STM
 			{
 				return;
 			}
-			IPersistentMap<String, DataType<?>> inst = inTransaction.getStateInstruction();
+			IPersistentMap<String, Object> inst = inTransaction.getStateInstruction();
 			Set<String> delta = inTransaction.getDeltaState();
 			if( !existingData.isCompleteVersion() )
 			{

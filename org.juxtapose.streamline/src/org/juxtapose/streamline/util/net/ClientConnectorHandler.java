@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.util.net;
 
+import static org.juxtapose.streamline.tools.Preconditions.notNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +23,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessag
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import static org.juxtapose.streamline.tools.Preconditions.*;
 
-import com.sun.istack.internal.NotNull;
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
 
@@ -107,7 +106,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     		}
     		
     		DataMap data = subMess.getData();
-    		IPersistentMap<String, DataType<?>> pData = null;
+    		IPersistentMap<String, Object> pData = null;
     		
     		if( data != null )
     		{
@@ -141,7 +140,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
     			return;
     		}
     		
-    		IPersistentMap<String, DataType<?>> map =  PersistentHashMap.emptyMap();
+    		IPersistentMap<String, Object> map =  PersistentHashMap.emptyMap();
     		map = PostMarshaller.parseDataMap( data, map );
     		
     		producer.updateData( key, map, fullUpdate );
@@ -175,7 +174,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	 * @param inTag
 	 * @param inData
 	 */
-	public void queryResponse( Status inStatus, ISTMEntryKey inKey, Integer inRef, Integer inTag, IPersistentMap<String, DataType<?>> inData  )
+	public void queryResponse( Status inStatus, ISTMEntryKey inKey, Integer inRef, Integer inTag, IPersistentMap<String, Object> inData  )
 	{
 		Object tag = tagRefToTag.remove( inTag );
 		
@@ -227,7 +226,7 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 	 * @param inVariable
 	 * @param inData
 	 */
-	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inService, String inVariable, IPersistentMap<String, Object> inData )
 	{
 		requestToTag.put( inTag, inRequestor );
 		Message mess = PreMarshaller.createRequestMessage( inTag, inType, inService, inVariable, inData );

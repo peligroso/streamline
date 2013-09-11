@@ -5,14 +5,12 @@ import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_NOT_SUP
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
 import org.juxtapose.streamline.producer.executor.Executable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 import org.juxtapose.streamline.util.producerservices.IDataInitializerListener;
 import org.osgi.service.component.ComponentContext;
@@ -87,7 +85,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 		return IExecutor.LOW;
 	}
 	
-	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData  )
 	{
 		inRequestor.reply( inTag, DataConstants.RESPONSE_TYPE_ERROR, REQUEST_NOT_SUPPORTED, null );
 	}

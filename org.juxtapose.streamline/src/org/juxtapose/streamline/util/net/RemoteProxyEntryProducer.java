@@ -5,15 +5,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.STMEntryProducer;
-import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.stm.TemporaryController;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
@@ -36,19 +32,19 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 	 * @param inData
 	 * @param inFirstUpdate
 	 */
-	public void updateData( ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData, boolean inFullUpdate )
+	public void updateData( ISTMEntryKey inKey, final IPersistentMap<String, Object> inData, boolean inFullUpdate )
 	{
 		stm.commit( new STMTransaction( inKey, this, inFullUpdate )
 		{
 			@Override
 			public void execute()
 			{
-				Iterator<Map.Entry<String, DataType<?>>> iterator = inData.iterator();
+				Iterator<Map.Entry<String, Object>> iterator = inData.iterator();
 				while( iterator.hasNext() )
 				{
-					Map.Entry<String, DataType<?>> entry = iterator.next();
+					Map.Entry<String, Object> entry = iterator.next();
 
-					if( entry.getValue() instanceof DataTypeNull )
+					if( entry instanceof DataTypeNull )
 					{
 						try
 						{
@@ -61,7 +57,7 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 					}
 					else
 					{
-						DataType<?> data = entry.getValue();
+						Object data = entry.getValue();
 						if( data instanceof DataTypeRef )
 						{
 							addReference( entry.getKey(), (DataTypeRef)data );

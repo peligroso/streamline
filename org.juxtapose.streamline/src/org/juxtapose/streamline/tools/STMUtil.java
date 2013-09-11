@@ -3,12 +3,10 @@ package org.juxtapose.streamline.tools;
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_SINGLE_VALUE_DATA_KEY;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 
 public class STMUtil
 {
@@ -68,11 +66,11 @@ public class STMUtil
 	 */
 	public static boolean isServiceStatusUpdatedToOk( String inServiceKey, ISTMEntry inEntry )
 	{
-		DataType<?> dataValue = inEntry.getUpdatedValue( inServiceKey );
+		Object dataValue = inEntry.getUpdatedValue( inServiceKey );
 		if( dataValue == null )
 			return false;
 		
-		return dataValue.get().equals( Status.OK.toString() );
+		return dataValue.equals( Status.OK.toString() );
 	}
 	
 	/**
@@ -82,20 +80,20 @@ public class STMUtil
 	 */
 	public static boolean isStatusUpdatedToOk( ISTMEntry inEntry, boolean inFullUpdate )
 	{
-		DataType<?> dataValue = inFullUpdate ? inEntry.getValue( DataConstants.FIELD_STATUS ) : inEntry.getUpdatedValue( DataConstants.FIELD_STATUS );
+		Object dataValue = inFullUpdate ? inEntry.getValue( DataConstants.FIELD_STATUS ) : inEntry.getUpdatedValue( DataConstants.FIELD_STATUS );
 		if( dataValue == null )
 			return false;
 		
-		return dataValue.get().equals( Status.OK );
+		return dataValue.equals( Status.OK );
 	}
 	
 	public static boolean isStatusOk( ISTMEntry inEntry)
 	{
-		DataType<?> dataValue = inEntry.getValue( DataConstants.FIELD_STATUS );
+		Object dataValue = inEntry.getValue( DataConstants.FIELD_STATUS );
 		if( dataValue == null )
 			return false;
 		
-		return dataValue.get().equals( Status.OK );
+		return dataValue.equals( Status.OK );
 	}
 	
 }

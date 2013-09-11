@@ -6,7 +6,6 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.util.IInputListener;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryListener;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 
 public class ReferenceInput implements InputContainer, ISTMEntryListener
@@ -36,7 +35,7 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 	{
 		for( String updatedValue : inEntry.getDeltaSet() )
 		{
-			DataType<?> value = inEntry.getValue( updatedValue );
+			Object value = inEntry.getValue( updatedValue );
 			if( value instanceof DataTypeLazyRef )
 			{
 				ISTMEntryKey key = ((DataTypeLazyRef)value).get();

@@ -4,15 +4,11 @@ import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants
 import static org.juxtapose.fxtradingsystem.priceengine.PriceEngineDataConstants.STATE_USD;
 
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
-import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import org.juxtapose.streamline.producer.executor.IExecutor;
+import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeLong;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 /**
  * @author Pontus Jörgne
@@ -42,12 +38,12 @@ public class CcyProducer extends STMEntryProducer
 			public void execute()
 			{
 				setStatus( Status.OK );
-				putValue(FXDataConstants.FIELD_PIP, new DataTypeLong(10000L) );
-				putValue(FXDataConstants.FIELD_DECIMALS, new DataTypeLong(5L) );
+				putValue(FXDataConstants.FIELD_PIP, 10000L );
+				putValue(FXDataConstants.FIELD_DECIMALS, 5L );
 				if( ccy.equals(STATE_EUR))
-					putValue(FXDataConstants.FIELD_BASE_CCY, new DataTypeString(STATE_USD) );
+					putValue(FXDataConstants.FIELD_BASE_CCY, STATE_USD );
 				else
-					putValue(FXDataConstants.FIELD_BASE_CCY, new DataTypeString(STATE_EUR) );
+					putValue(FXDataConstants.FIELD_BASE_CCY, STATE_EUR );
 			}
 		});
 	}

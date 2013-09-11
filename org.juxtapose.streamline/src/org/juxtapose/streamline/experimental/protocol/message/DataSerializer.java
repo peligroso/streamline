@@ -3,18 +3,12 @@ package org.juxtapose.streamline.experimental.protocol.message;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
@@ -63,7 +57,7 @@ public class DataSerializer
 	
 	public static final void main( String... inArg )
 	{
-//		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
+//		IPersistentMap<String, Object> map = PersistentHashMap.emptyMap();
 //		map = map.assoc( "1", new DataTypeLong( 12l ) );
 //		map = map.assoc( "2", new DataTypeBoolean( true ) );
 //		map = map.assoc( "3", new DataTypeString("hej och hå") );
@@ -72,7 +66,7 @@ public class DataSerializer
 //		map = map.assoc( "1", new DataTypeLong( -123456789l ) );
 //		map = map.assoc( "6", new DataTypeBigDecimal( new BigDecimal( -0.0023456789, new MathContext( 5, RoundingMode.HALF_EVEN) )));
 //		
-//		IPersistentMap<String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+//		IPersistentMap<String, Object> subMap = PersistentHashMap.emptyMap();
 //		subMap = subMap.assoc( "1", new DataTypeLong( 1l ) );
 //		subMap = subMap.assoc( "2", new DataTypeBoolean( false ) );
 //		
@@ -85,17 +79,17 @@ public class DataSerializer
 //		
 //		map = unSerializeData( bytes );
 //		
-//		Iterator<Map.Entry<String,DataType<?>>> iter = map.iterator();
+//		Iterator<Map.Entry<String,Object>> iter = map.iterator();
 //		
 //		while( iter.hasNext() )
 //		{
-//			Map.Entry<String,DataType<?>> entry = iter.next();
+//			Map.Entry<String,Object> entry = iter.next();
 //			if( entry.getValue() instanceof DataTypeRef )
 //			{
-//				Iterator<Map.Entry<String,DataType<?>>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
+//				Iterator<Map.Entry<String,Object>> subIter = ((DataTypeRef)entry.getValue()).getReferenceData().getDataMap().iterator();
 //				while( subIter.hasNext() )
 //				{
-//					Map.Entry<String,DataType<?>> subEntry = subIter.next();
+//					Map.Entry<String,Object> subEntry = subIter.next();
 //					System.out.println("---key: "+subEntry.getKey()+" has value: "+subEntry.getValue());
 //				}
 //			}
@@ -272,27 +266,27 @@ public class DataSerializer
 	 * @param inDataEntry
 	 * @return
 	 */
-	public static final byte[] serializeDataEntry( byte[] inField, DataType<?> inDataEntry )
+	public static final byte[] serializeDataEntry( byte[] inField, Object inDataEntry )
 	{
-		if( inDataEntry instanceof DataTypeBigDecimal )
+		if( inDataEntry instanceof BigDecimal )
 		{
-			return serializeBigDecimal(inField, ((DataTypeBigDecimal)inDataEntry).get() );
+			return serializeBigDecimal(inField, ((BigDecimal)inDataEntry) );
 		}
-		else if( inDataEntry instanceof DataTypeBoolean )
+		else if( inDataEntry instanceof Boolean )
 		{
-			return serializeBoolean( inField, ((DataTypeBoolean)inDataEntry).get() );
+			return serializeBoolean( inField, ((Boolean)inDataEntry) );
 		}
-		else if( inDataEntry instanceof DataTypeLong )
+		else if( inDataEntry instanceof Long )
 		{
-			return serializeLong( inField, ((DataTypeLong)inDataEntry).get() );
+			return serializeLong( inField, ((Long)inDataEntry) );
 		}
 		else if( inDataEntry instanceof DataTypeRef )
 		{
 			return serializeRef( inField, (DataTypeRef)inDataEntry );
 		}
-		else if( inDataEntry instanceof DataTypeString )
+		else if( inDataEntry instanceof String )
 		{
-			return serializeString( inField, ((DataTypeString)inDataEntry).get() );
+			return serializeString( inField, ((String)inDataEntry) );
 		}
 		else if( inDataEntry instanceof DataTypeNull )
 		{
@@ -307,9 +301,9 @@ public class DataSerializer
 	 * @param inData
 	 * @return
 	 */
-	public static final byte[] serializeData( IPersistentMap<String, DataType<?>> inData )
+	public static final byte[] serializeData( IPersistentMap<String, Object> inData )
 	{
-		Iterator<Map.Entry<String,DataType<?>>> iter = inData.iterator();
+		Iterator<Map.Entry<String,Object>> iter = inData.iterator();
 		
 		byte[][] byteArrays = new byte[inData.count()][];
 		
@@ -317,7 +311,7 @@ public class DataSerializer
 		int totalBytes = 0;
 		while( iter.hasNext() )
 		{
-			Map.Entry<String,DataType<?>> entry = iter.next();
+			Map.Entry<String,Object> entry = iter.next();
 			
 			byte[] fieldBytes = serializeString( entry.getKey() );
 			
@@ -340,9 +334,9 @@ public class DataSerializer
 		return bytes;
 	}
 	
-	public static final IPersistentMap<String, DataType<?>> unSerializeData( byte[] inBytes )
+	public static final IPersistentMap<String, Object> unSerializeData( byte[] inBytes )
 	{
-		IPersistentMap<String, DataType<?>> map = PersistentHashMap.emptyMap();
+		IPersistentMap<String, Object> map = PersistentHashMap.emptyMap();
 		
 		int cursor = 0;
 		
@@ -360,12 +354,12 @@ public class DataSerializer
 			
 			if( inBytes[cursor] == BOOLEAN_TRUE )
 			{
-				map = map.assoc( field, new DataTypeBoolean( true ) );
+				map = map.assoc( field, new Boolean( true ) );
 				cursor++;
 			}
 			else if( inBytes[cursor] == BOOLEAN_FALSE )
 			{
-				map = map.assoc( field, new DataTypeBoolean( false ) );
+				map = map.assoc( field, new Boolean( false ) );
 				cursor++;
 			}
 			else if( isNumber( inBytes[cursor] ))
@@ -375,7 +369,7 @@ public class DataSerializer
 				
 				cursor+= length+1;
 				
-				map = map.assoc( field, new DataTypeLong( number ));
+				map = map.assoc( field, new Long( number ));
 			}
 			else if( inBytes[cursor] == STRING )
 			{
@@ -389,7 +383,7 @@ public class DataSerializer
 				
 				cursor += charBytes.length;
 				
-				map = map.assoc( field, new DataTypeString( str ) );
+				map = map.assoc( field, new String( str ) );
 			}
 			else if( inBytes[cursor] == BIG_DEC )
 			{
@@ -404,7 +398,7 @@ public class DataSerializer
 				cursor += bdBytes.length;
 				
 				int scale = (int)numberFromByteArray( inBytes, cursor, 4, null );
-				DataTypeBigDecimal bd = new DataTypeBigDecimal( new BigDecimal(bi, scale) );
+				BigDecimal bd = new BigDecimal(bi, scale);
 				
 				cursor += 4;
 				
@@ -418,7 +412,7 @@ public class DataSerializer
 				
 				byte[] mapBytes = ArrayUtils.subarray( inBytes, cursor, cursor+mapLenght );
 				
-				IPersistentMap<String, DataType<?>> subMap = unSerializeData( mapBytes );
+				IPersistentMap<String, Object> subMap = unSerializeData( mapBytes );
 //				PublishedData pd = new PublishedData(subMap, new HashSet(), null, null, null, 1, true);
 //				
 //				DataTypeRef ref = new DataTypeRef(null, pd);

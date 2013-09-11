@@ -7,11 +7,8 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -24,10 +21,7 @@ import org.juxtapose.streamline.tools.CollectionMethods;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeLong;
-import org.juxtapose.streamline.util.data.DataTypeString;
+import org.juxtapose.streamline.util.PersistentArrayList;
 
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
@@ -45,12 +39,12 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	TableViewer viewer;
 	MetaDataControl metaDataControl;
 	
-	IPersistentMap<String, DataType<?>> metaData;
+	IPersistentMap<String, Object> metaData;
 	
 	Set<ViewDataObject> viewObjects = new HashSet<ViewDataObject>();
 	
 	
-	public DataViewer( String inServiceKey, Composite parent, int style, IPersistentMap<String, DataType<?>> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
+	public DataViewer( String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
 	{
 		super( parent, style );
 		
@@ -71,7 +65,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 	
 	
-	private void createViewer(Composite parent, IPersistentMap<String, DataType<?>> inData ) 
+	private void createViewer(Composite parent, IPersistentMap<String, Object> inData ) 
 	{
 	    viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 	    createColumns(parent, viewer, inData);
@@ -130,17 +124,17 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	 * @param viewer
 	 * @param inData
 	 */
-	private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, DataType<?>> inData) 
+	private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, Object> inData) 
 	{
-		DataTypeArrayList keyList = (DataTypeArrayList)inData.valAt( DataConstants.FIELD_KEYS );
+		PersistentArrayList<Object> keyList = (PersistentArrayList<Object>)inData.valAt( DataConstants.FIELD_KEYS );
 		
-	    Iterator<Map.Entry<String, DataType<?>>> iter = inData.iterator();
+	    Iterator<Map.Entry<String, Object>> iter = inData.iterator();
 	    
 	    int i = 0;
 	    
 	    while( iter.hasNext() )
 	    {
-	    	Map.Entry<String, DataType<?>> entry = iter.next();
+	    	Map.Entry<String, Object> entry = iter.next();
 	    	
 	    	final String key = entry.getKey();
 	    	
@@ -150,7 +144,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    	}
 	    	else if( !DataConstants.FIELD_STATUS.equals(key) )
 	    	{
-	    		DataType<?> val = entry.getValue();
+	    		Object val = entry.getValue();
 	    		TableViewerColumn col = createTableViewerColumn(key, 100, i);
 	    		
 	    		col.setLabelProvider(new ColumnLabelProvider() 
@@ -159,38 +153,38 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	    		      public String getText(Object element) 
 	    		      {
 	    		    	ViewDataObject viewObj = (ViewDataObject)element;
-	    		    	IPersistentMap<String, DataType<?>> map = viewObj.getData();
-	    		    	DataType<?> data = map.valAt( key );
+	    		    	IPersistentMap<String, Object> map = viewObj.getData();
+	    		    	Object data = map.valAt( key );
 	    		    	
 	    		    	if( data == null )
 	    		    		return "";
 	    		    	
-	    		    	return data.get().toString();
+	    		    	return data.toString();
 	    		      }
 	    		    });
 	    		
-	    		if( val instanceof DataTypeString )
+	    		if( val instanceof String )
 	    		{
-	    			String valStr = ((DataTypeString)val).get();
+	    			String valStr = (String)val;
 	    			if( valStr.isEmpty() )
 	    			{
-	    				col.setEditingSupport( new DataEditingSupport( viewer, key, CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
+	    				col.setEditingSupport( new DataEditingSupport( viewer, key, CollectionMethods.contains( keyList, key ) ) );
 	    			}
 	    			else
 	    			{
 	    				//value is a predefined type
 	    				InputContainer input = metaDataControl.getInputContainer( valStr );
-	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
+	    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, key ) ) );
 	    			}
 	    		}
-	    		else if( val instanceof DataTypeLong )
+	    		else if( val instanceof Long )
 	    		{
-	    			col.setEditingSupport( new DataEditingSupportLong( viewer, key, CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
+	    			col.setEditingSupport( new DataEditingSupportLong( viewer, key, CollectionMethods.contains( keyList, key ) ) );
 	    		}
-	    		else if( val instanceof DataTypeArrayList )
+	    		else if( val instanceof PersistentArrayList<?> )
 	    		{
 	    			InputContainer input = metaDataControl.getInputContainer( key );
-    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, new DataTypeString(key) ) ) );
+    				col.setEditingSupport( new DataEditingSupportEnum( viewer, key, input, parent.getDisplay(), CollectionMethods.contains( keyList, key ) ) );
 	    		}
 	    	}
 	    	i++;

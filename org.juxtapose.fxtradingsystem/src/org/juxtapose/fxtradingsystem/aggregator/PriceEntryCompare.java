@@ -1,12 +1,11 @@
 package org.juxtapose.fxtradingsystem.aggregator;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 
 import org.juxtapose.streamline.util.PersistentArrayList;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 
-public class PriceEntryCompare implements Comparator<DataTypeArrayList>
+public class PriceEntryCompare implements Comparator<PersistentArrayList<?>>
 {
 	boolean bid;
 
@@ -16,18 +15,18 @@ public class PriceEntryCompare implements Comparator<DataTypeArrayList>
 	}
 
 	@Override
-	public int compare( DataTypeArrayList o1, DataTypeArrayList o2 )
+	public int compare( PersistentArrayList<?> o1, PersistentArrayList<?> o2 )
 	{
-		PersistentArrayList<DataTypeBigDecimal> arr1 = (PersistentArrayList<DataTypeBigDecimal>)o1.get();
-		PersistentArrayList<DataTypeBigDecimal> arr2 = (PersistentArrayList<DataTypeBigDecimal>)o2.get();
+		PersistentArrayList<BigDecimal> arr1 = (PersistentArrayList<BigDecimal>)o1;
+		PersistentArrayList<BigDecimal> arr2 = (PersistentArrayList<BigDecimal>)o2;
 
 		if( arr1 == null || arr1.size() == 0 || arr2 == null || arr2.size() == 0 )
 			return 0;
 
 		if( bid )
-			return arr1.get( 0 ).get().compareTo( arr2.get( 0 ).get() );
+			return arr1.get( 0 ).compareTo( arr2.get( 0 ) );
 		else
-			return arr2.get( 0 ).get().compareTo( arr1.get( 0 ).get() );
+			return arr2.get( 0 ).compareTo( arr1.get( 0 ) );
 	}
 }
 

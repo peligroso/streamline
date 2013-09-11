@@ -3,8 +3,6 @@ package org.juxtapose.fxtradingclient;
 import static org.juxtapose.streamline.tools.STMUtil.isServiceStatusUpdatedToOk;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -19,34 +17,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
-import org.juxtapose.streamline.tools.STMEntryKey;
-import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
-import org.juxtapose.streamline.util.PersistentArrayList;
-import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeHashMap;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
-import com.trifork.clj_ds.PersistentHashMap;
 
 public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, ISTMRequestor
 {
@@ -189,12 +175,12 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 		{
 			if( obj.getState() == ViewDataObjectState.CREATED )
 			{
-				IPersistentMap<String, DataType<?>> data = obj.getData();
+				IPersistentMap<String, Object> data = obj.getData();
 				stm.request( FXProducerServiceConstants.CONFIG, 1, DataConstants.REQUEST_TYPE_CREATE, this, viewer.getType(), data );
 			}
 			else if( obj.getState() == ViewDataObjectState.UPDATED )
 			{
-				IPersistentMap<String, DataType<?>> data = obj.getUpdateData();
+				IPersistentMap<String, Object> data = obj.getUpdateData();
 				data = data.assoc( DataConstants.FIELD_KEYS, new DataTypeRef( obj.getKey() ) );
 				stm.request( FXProducerServiceConstants.CONFIG, 1, DataConstants.REQUEST_TYPE_UPDATE, this, viewer.getType(), data );
 			}
@@ -226,7 +212,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 			{
 //				PriceSubscriber ps = new PriceSubscriber( stm );
 			}
-			DataType<?> peVal = inData.getUpdatedValue( FXProducerServiceConstants.PRICE_ENGINE );
+			Object peVal = inData.getUpdatedValue( FXProducerServiceConstants.PRICE_ENGINE );
 		}
 		
 	}
@@ -252,7 +238,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 		
 	}
 	
-	public void addViewer( final String inFieldKey, final IPersistentMap<String, DataType<?>> inData, final MetaDataControl inMetaDataControl )
+	public void addViewer( final String inFieldKey, final IPersistentMap<String, Object> inData, final MetaDataControl inMetaDataControl )
 	{
 		parent.getDisplay().asyncExec( new Runnable()
 		{
@@ -289,7 +275,7 @@ public class EditView extends ViewPart implements ISTMEntryRequestSubscriber, IS
 	}
 
 	@Override
-	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, DataType<?>> inData )
+	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, Object> inData )
 	{
 		// TODO Auto-generated method stub
 		

@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 
 public class PriceEngineUtil
 {
@@ -53,14 +51,14 @@ public class PriceEngineUtil
 		if( inData == null )
 			return null;
 		
-		DataType<?> bid = inData.getValue( FXDataConstants.FIELD_BID );
-		DataType<?> ask = inData.getValue( FXDataConstants.FIELD_ASK );
+		Object bid = inData.getValue( FXDataConstants.FIELD_BID );
+		Object ask = inData.getValue( FXDataConstants.FIELD_ASK );
 		
 		if( bid == null || ask == null )
 			return null;
 
-		BigDecimal bidVal = (BigDecimal)bid.get();
-		BigDecimal askVal = (BigDecimal)ask.get();
+		BigDecimal bidVal = (BigDecimal)bid;
+		BigDecimal askVal = (BigDecimal)ask;
 		
 		return new BigDecimal[]{bidVal, askVal};
 	}
@@ -74,11 +72,11 @@ public class PriceEngineUtil
 		if( inData == null )
 			return null;
 		
-		DataTypeLong dec = (DataTypeLong)inData.getValue( FXDataConstants.FIELD_DECIMALS );
+		Long dec = (Long)inData.getValue( FXDataConstants.FIELD_DECIMALS );
 		
 		if( dec == null )
 			return null;
 
-		return dec.get();
+		return dec;
 	}
 }

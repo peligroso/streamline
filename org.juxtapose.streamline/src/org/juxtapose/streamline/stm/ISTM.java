@@ -12,7 +12,6 @@ import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -22,7 +21,7 @@ public interface ISTM extends IExecutor
 	public void updateProducerStatus( final ISTMEntryProducerService inProducerService, final Status newStatus );
 	public void subscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
 	public void unsubscribeToData( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
-	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, DataType<?>> inData, HashSet<String> inDeltaSet );
+	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, Object> inData, HashSet<String> inDeltaSet );
 	public void commit( STMTransaction inTransaction );
 	public void getDataKey(String inProducerService, ISTMEntryRequestSubscriber inSubscriber, Object inTag, Map<String, String> inQuery);
 	public void logInfo( String inMessage );
@@ -33,5 +32,5 @@ public interface ISTM extends IExecutor
 	public ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );
 	public ISTMEntry getData( String inKey );
 	public void updateSubscriberPriority( ISTMEntryKey inDataKey, ISTMEntrySubscriber inSubscriber );
-	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData );
+	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData );
 }

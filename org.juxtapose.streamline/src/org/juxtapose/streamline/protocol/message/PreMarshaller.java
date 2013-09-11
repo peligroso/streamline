@@ -1,5 +1,6 @@
 package org.juxtapose.streamline.protocol.message;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -24,17 +25,9 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessag
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
-import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeStatus;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.google.protobuf.ByteString;
 import com.trifork.clj_ds.IPersistentMap;
@@ -112,7 +105,7 @@ public class PreMarshaller
 	 */
 	public static Message createUpdateMessage( int inRef, ISTMEntry inEntry, boolean inFullUpdate, ISTMEntryKey inKey )
 	{
-		IPersistentMap<String, DataType<?>> dataMap = inEntry.getDataMap();
+		IPersistentMap<String, Object> dataMap = inEntry.getDataMap();
 		
 		UpdateMessage.Builder builder = UpdateMessage.newBuilder();
 		builder.setReference( inRef );
@@ -219,7 +212,7 @@ public class PreMarshaller
 	 * @param inData
 	 * @return
 	 */
-	public static Message createRequestMessage( int inTag, long inType, String inService, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public static Message createRequestMessage( int inTag, long inType, String inService, String inVariable, IPersistentMap<String, Object> inData )
 	{
 		
 		RequestMessage.Builder builder = RequestMessage.newBuilder();
@@ -275,36 +268,36 @@ public class PreMarshaller
 	 * @param inData
 	 * @param inBuilder
 	 */
-	public static void parseValueToMap( String inKey, DataType<?> inData, DataMap.Builder inBuilder )
+	public static void parseValueToMap( String inKey, Object inData, DataMap.Builder inBuilder )
 	{
-		if( inData instanceof DataTypeString )
+		if( inData instanceof String )
 		{
 			StringEntry.Builder strBuilder = StringEntry.newBuilder();
 			strBuilder.setField( inKey );
-			strBuilder.setData( ((DataTypeString)inData).get() );
+			strBuilder.setData( (String)inData );
 			inBuilder.addStringEntries( strBuilder.build() );
 		}
-		else if( inData instanceof DataTypeBigDecimal )
+		else if( inData instanceof BigDecimal )
 		{
-			DataTypeBigDecimal bd = (DataTypeBigDecimal)inData;
+			BigDecimal bd = (BigDecimal)inData;
 			BigDecimalEntry.Builder bdBuilder = BigDecimalEntry.newBuilder();
 			bdBuilder.setField( inKey );
-			bdBuilder.setScale( bd.get().scale());
-			bdBuilder.setIntBytes( ByteString.copyFrom( bd.get().unscaledValue().toByteArray() ));
+			bdBuilder.setScale( bd.scale());
+			bdBuilder.setIntBytes( ByteString.copyFrom( bd.unscaledValue().toByteArray() ));
 			inBuilder.addBDEntries( bdBuilder.build() );
 		}
-		if( inData instanceof DataTypeLong )
+		if( inData instanceof Long )
 		{
 			LongEntry.Builder longBuilder = LongEntry.newBuilder();
 			longBuilder.setField( inKey );
-			longBuilder.setData( ((DataTypeLong)inData).get() );
+			longBuilder.setData( ((Long)inData) );
 			inBuilder.addLongEntries( longBuilder.build() );
 		}
-		if( inData instanceof DataTypeBoolean)
+		if( inData instanceof Boolean)
 		{
 			BooleanEntry.Builder booleanBuilder = BooleanEntry.newBuilder();
 			booleanBuilder.setField( inKey );
-			booleanBuilder.setData( ((DataTypeBoolean)inData).get() );
+			booleanBuilder.setData( ((Boolean)inData) );
 			inBuilder.addBoolEntries( booleanBuilder.build() );
 		}
 		if( inData instanceof DataTypeNull )
@@ -313,38 +306,38 @@ public class PreMarshaller
 			nullBuilder.setField( inKey );
 			inBuilder.addNullEntries( nullBuilder.build() );
 		}
-		if( inData instanceof DataTypeHashMap )
+		if( inData instanceof IPersistentMap<?, ?> )
 		{
 			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
 			dataMapBuilder.setField( inKey );
 			
-			DataTypeHashMap hashMap = (DataTypeHashMap)inData;
+			IPersistentMap<String, Object> hashMap = (IPersistentMap<String, Object>)inData;
 			DataMap.Builder hashMapBuilder = DataMap.newBuilder();
 			
-			parseMapValues( hashMap.get(), hashMapBuilder );
+			parseMapValues( hashMap, hashMapBuilder );
 			
 			dataMapBuilder.setData( hashMapBuilder.build() );
 			
 			inBuilder.addHashMapEntries( dataMapBuilder.build() );
 		}
-		if( inData instanceof DataTypeArrayList )
+		if( inData instanceof PersistentArrayList<?> )
 		{
 			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
 			dataMapBuilder.setField( inKey );
 			dataMapBuilder.setList( true );
 			
-			DataTypeArrayList list = (DataTypeArrayList)inData;
+			PersistentArrayList<Object> list = (PersistentArrayList<Object>)inData;
 			DataMap.Builder hashMapBuilder = DataMap.newBuilder();
 			
-			parseListValues( (PersistentArrayList<DataType<?>>) list.get(), hashMapBuilder );
+			parseListValues( (PersistentArrayList<Object>) list, hashMapBuilder );
 			
 			dataMapBuilder.setData( hashMapBuilder.build() );
 			
 			inBuilder.addHashMapEntries( dataMapBuilder.build() );
 		}
-		else if( inData instanceof DataTypeStatus )
+		else if( inData instanceof Status )
 		{
-			inBuilder.setStatus( ((DataTypeStatus)inData).get().ordinal() );
+			inBuilder.setStatus( ((Status)inData).ordinal() );
 		}
 		else if( inData instanceof DataTypeRef )
 		{
@@ -374,36 +367,36 @@ public class PreMarshaller
 	 * @param inDataMap
 	 * @param inBuilder
 	 */
-	public static void parseMapValues( IPersistentMap<String, DataType<?>> inDataMap, DataMap.Builder inBuilder )
+	public static void parseMapValues( IPersistentMap<String, Object> inDataMap, DataMap.Builder inBuilder )
 	{
-		Iterator<Map.Entry<String, DataType<?>>> iterator = inDataMap.iterator();
+		Iterator<Map.Entry<String, Object>> iterator = inDataMap.iterator();
 		
 		while( iterator.hasNext() )
 		{
-			Map.Entry<String, DataType<?>> entry = iterator.next();
+			Map.Entry<String, Object> entry = iterator.next();
 			
 			parseValueToMap( entry.getKey(), entry.getValue(), inBuilder );
 		}
 	}
 	
-	public static void parseDeltaMapValues( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDeltaSet, DataMap.Builder inBuilder )
+	public static void parseDeltaMapValues( IPersistentMap<String, Object> inDataMap, Set<String> inDeltaSet, DataMap.Builder inBuilder )
 	{
 		Iterator<String> iterator = inDeltaSet.iterator();
 		
 		while( iterator.hasNext() )
 		{
 			String key = iterator.next();
-			DataType<?> val = inDataMap.valAt( key );
+			Object val = inDataMap.valAt( key );
 			
 			parseValueToMap( key, val, inBuilder );
 		}
 	}
 	
-	public static void parseListValues( PersistentArrayList<DataType<?>> inList, DataMap.Builder inBuilder )
+	public static void parseListValues( PersistentArrayList<Object> inList, DataMap.Builder inBuilder )
 	{
 		for( int i = 0; i < inList.size(); i++ )
 		{
-			DataType<?> data = inList.get( i );
+			Object data = inList.get( i );
 			parseValueToMap( Integer.toString( i ), data, inBuilder );
 		}
 	}

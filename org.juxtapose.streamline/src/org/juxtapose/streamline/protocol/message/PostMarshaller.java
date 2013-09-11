@@ -1,5 +1,7 @@
 package org.juxtapose.streamline.protocol.message;
 
+import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -9,7 +11,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
@@ -21,19 +22,10 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.tools.DataConstants;
-import org.juxtapose.streamline.tools.STMEntryKey;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
-import org.juxtapose.streamline.util.data.DataTypeHashMap;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeStatus;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.google.protobuf.ByteString;
 import com.trifork.clj_ds.IPersistentMap;
@@ -48,20 +40,20 @@ public class PostMarshaller
 {
 	public static interface IParseObject
 	{
-		public void update( String inField, DataType<?> inData );
+		public void update( String inField, Object inData );
 	}
 	
 	public static class MapParseObject implements IParseObject
 	{
-		IPersistentMap<String, DataType<?>> map;
+		IPersistentMap<String, Object> map;
 		
-		public MapParseObject( IPersistentMap<String, DataType<?>> inMap )
+		public MapParseObject( IPersistentMap<String, Object> inMap )
 		{
 			map = inMap;
 		}
 
 		@Override
-		public void update( String inField, DataType<?> inData )
+		public void update( String inField, Object inData )
 		{
 			map = map.assoc( inField, inData );			
 		}
@@ -69,15 +61,15 @@ public class PostMarshaller
 	
 	public static class ArrayParseObject implements IParseObject
 	{
-		SortedMap<String, DataType<?>> map;
+		SortedMap<String, Object> map;
 		
-		public ArrayParseObject( SortedMap<String, DataType<?>> inMap )
+		public ArrayParseObject( SortedMap<String, Object> inMap )
 		{
 			map = inMap;
 		}
 
 		@Override
-		public void update( String inField, DataType<?> inData )
+		public void update( String inField, Object inData )
 		{
 			map.put( inField, inData );			
 		}
@@ -136,7 +128,7 @@ public class PostMarshaller
 				String field = entry.getField();
 				String data = entry.getData();
 				
-				inParseObject.update( field, new DataTypeString(data) );
+				inParseObject.update( field, data );
 			}
 		}
 		
@@ -153,7 +145,7 @@ public class PostMarshaller
 				
 				BigDecimal bd = new BigDecimal(bi, scale);
 				
-				inParseObject.update( field, new DataTypeBigDecimal(bd) );
+				inParseObject.update( field, bd );
 			}
 		}
 		
@@ -166,7 +158,7 @@ public class PostMarshaller
 				String field = entry.getField();
 				long value = entry.getData();
 				
-				inParseObject.update( field, new DataTypeLong( value ) );
+				inParseObject.update( field, value );
 			}
 		}
 		
@@ -179,7 +171,7 @@ public class PostMarshaller
 				String field = entry.getField();
 				boolean value = entry.getData();
 				
-				inParseObject.update( field, new DataTypeBoolean(value) );
+				inParseObject.update( field, value );
 			}
 		}
 		
@@ -195,14 +187,14 @@ public class PostMarshaller
 				
 				if( list )
 				{
-					PersistentArrayList<DataType<?>> arr = parseDataList( dMap );
-					inParseObject.update( field, new DataTypeArrayList( arr ) );
+					PersistentArrayList<Object> arr = parseDataList( dMap );
+					inParseObject.update( field, arr );
 				}
 				else
 				{
-					IPersistentMap< String, DataType<?>> subMap = PersistentHashMap.emptyMap();
+					IPersistentMap< String, Object> subMap = PersistentHashMap.emptyMap();
 					subMap = parseDataMap( dMap, subMap );
-					inParseObject.update( field, new DataTypeHashMap(subMap) );
+					inParseObject.update( field, subMap );
 				}
 			}
 		}
@@ -225,16 +217,16 @@ public class PostMarshaller
 	}
 	
 	
-	public static final PersistentArrayList<DataType<?>> parseDataList( DataMap inDataMap )
+	public static final PersistentArrayList<Object> parseDataList( DataMap inDataMap )
 	{
-		PersistentArrayList<DataType<?>> perList = new PersistentArrayList<DataType<?>>();
+		PersistentArrayList<Object> perList = new PersistentArrayList<Object>();
 		
-		TreeMap<String, DataType<?>> sortedMap = new TreeMap<String, DataType<?>>();
+		TreeMap<String, Object> sortedMap = new TreeMap<String, Object>();
 		
 		ArrayParseObject parseObject = new ArrayParseObject( sortedMap );
 		parseData( inDataMap, parseObject );
 		
-		for( Map.Entry<String, DataType<?>> entry : sortedMap.entrySet() )
+		for( Map.Entry<String, Object> entry : sortedMap.entrySet() )
 		{
 			perList = perList.add( entry.getValue() );
 		}
@@ -247,9 +239,9 @@ public class PostMarshaller
 	 * @param inMap
 	 * @return
 	 */
-	public static final IPersistentMap<String, DataType<?>> parseDataMap( DataMap inDataMap, IPersistentMap <String, DataType<?>> inMap )
+	public static final IPersistentMap<String, Object> parseDataMap( DataMap inDataMap, IPersistentMap <String, Object> inMap )
 	{
-		IPersistentMap<String, DataType<?>> map = inMap;
+		IPersistentMap<String, Object> map = inMap;
 		
 		MapParseObject parseObject = new MapParseObject( map );
 		parseData( inDataMap, parseObject );
@@ -261,7 +253,7 @@ public class PostMarshaller
 			Integer status = inDataMap.getStatus();
 			
 			Status st = Status.values()[status];
-			map = map.assoc( DataConstants.FIELD_STATUS, new DataTypeStatus( st ) );
+			map = map.assoc( DataConstants.FIELD_STATUS, st );
 		}
 		
 		return map;

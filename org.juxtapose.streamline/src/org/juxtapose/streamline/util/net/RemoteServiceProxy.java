@@ -1,23 +1,15 @@
 package org.juxtapose.streamline.util.net;
 
-import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_NOT_SUPPORTED;
-
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryProducerService;
-import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
-import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeNull;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -105,7 +97,7 @@ public class RemoteServiceProxy implements ISTMEntryProducerService
 		return producer;
 	}
 	
-	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData )
 	{
 		clientConnector.request( inTag, inType, inRequestor, serviceID, inVariable, inData );
 	}

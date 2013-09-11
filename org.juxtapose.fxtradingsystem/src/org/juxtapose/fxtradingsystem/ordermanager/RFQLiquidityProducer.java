@@ -14,11 +14,8 @@ import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
+import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
@@ -49,13 +46,13 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 			@Override
 			public void execute()
 			{
-				putValue( FXDataConstants.FIELD_CCY1, new DataTypeString( ccy1 ) );
-				putValue( FXDataConstants.FIELD_CCY2, new DataTypeString( ccy2 ) );
+				putValue( FXDataConstants.FIELD_CCY1, ccy1 );
+				putValue( FXDataConstants.FIELD_CCY2, ccy2 );
 				
 				if( nearPeriod != null )
-					putValue( FXDataConstants.FIELD_NEAR_SWAP, new DataTypeString( nearPeriod ));
+					putValue( FXDataConstants.FIELD_NEAR_SWAP, nearPeriod);
 				if( farPeriod != null )
-					putValue( FXDataConstants.FIELD_FAR_SWAP, new DataTypeString( farPeriod ));
+					putValue( FXDataConstants.FIELD_FAR_SWAP, farPeriod);
 			}
 		});
 		
@@ -97,8 +94,8 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 			@Override
 			public void execute()
 			{
-				DataTypeArrayList bidSide = (DataTypeArrayList)inData.getValue( FXDataConstants.FIELD_BID );
-				DataTypeArrayList askSide = (DataTypeArrayList)inData.getValue( FXDataConstants.FIELD_ASK );
+				PersistentArrayList<Object> bidSide = (PersistentArrayList<Object>)inData.getValue( FXDataConstants.FIELD_BID );
+				PersistentArrayList<Object> askSide = (PersistentArrayList<Object>)inData.getValue( FXDataConstants.FIELD_ASK );
 				
 				if( bidSide == null || askSide == null )
 				{
@@ -114,20 +111,20 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 					return;
 				}
 				
-				putValue( FXDataConstants.FIELD_BID, new DataTypeBigDecimal( bid ) );
-				putValue( FXDataConstants.FIELD_ASK, new DataTypeBigDecimal( ask ) );
+				putValue( FXDataConstants.FIELD_BID, bid );
+				putValue( FXDataConstants.FIELD_ASK, ask );
 				
 				putValue( DataConstants.FIELD_TIMESTAMP, inData.getValue( DataConstants.FIELD_TIMESTAMP ) );
 				
-				DataTypeBoolean priced = (DataTypeBoolean)get( FXDataConstants.FIELD_FIRST_UPDATE );
+				Boolean priced = (Boolean)get( FXDataConstants.FIELD_FIRST_UPDATE );
 				
 				if( priced == null )
 				{
-					putValue( FXDataConstants.FIELD_FIRST_UPDATE, new DataTypeBoolean(true) );
+					putValue( FXDataConstants.FIELD_FIRST_UPDATE, new Boolean(true) );
 				}
-				else if( priced.get() )
+				else if( priced )
 				{
-					putValue( FXDataConstants.FIELD_FIRST_UPDATE, new DataTypeBoolean(false) );
+					putValue( FXDataConstants.FIELD_FIRST_UPDATE, new Boolean(false) );
 				}
 				
 				if( getStatus() == Status.ON_REQUEST )
@@ -141,18 +138,18 @@ public class RFQLiquidityProducer extends STMEntryProducer implements ISTMEntryR
 	
 
 	//static aggergator methods
-	private static BigDecimal getBestExecutablePrice( DataTypeArrayList inEntries, BigDecimal inAmt, boolean inBid )
+	private static BigDecimal getBestExecutablePrice( PersistentArrayList<Object> inEntries, BigDecimal inAmt, boolean inBid )
 	{
 		BigDecimal workPrice = BigDecimal.ZERO;
 		BigDecimal amtLeft = inAmt;
 		
 		boolean done = false;
 		
-		for( int i = 0; i < inEntries.get().size(); i++ )
+		for( int i = 0; i < inEntries.size(); i++ )
 		{
-			DataTypeArrayList arrayList = (DataTypeArrayList)inEntries.get().get(i);
-			BigDecimal price = ((DataTypeBigDecimal)arrayList.get().get( 0 )).get();
-			BigDecimal size = ((DataTypeBigDecimal)arrayList.get().get( 1 )).get();
+			PersistentArrayList<Object> arrayList = (PersistentArrayList<Object>)inEntries.get(i);
+			BigDecimal price = (BigDecimal)arrayList.get( 0 );
+			BigDecimal size = (BigDecimal)arrayList.get( 1 );
 			
 			if( size.compareTo( amtLeft ) > 0 )
 			{

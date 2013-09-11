@@ -28,7 +28,6 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
@@ -109,7 +108,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		long type = rm.getType();
     		String variable = rm.getVariable();
     		
-    		IPersistentMap<String, DataType<?>> data = PersistentHashMap.EMPTY; 
+    		IPersistentMap<String, Object> data = PersistentHashMap.EMPTY; 
     		if( rm.hasData() )
     		{
     			DataMap dataMap = rm.getData();
@@ -239,7 +238,7 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
 	}
 
 	@Override
-	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, DataType<?>> inData )
+	public void reply( int inTag, long inType, String inMessage, IPersistentMap<String, Object> inData )
 	{
 		// TODO Auto-generated method stub
 		

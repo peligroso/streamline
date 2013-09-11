@@ -12,19 +12,17 @@ import java.util.Random;
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.marketdata.MarketDataConstants;
-import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.DataProducerDependencyController;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.DependencyTransaction;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.tools.DataConstants;
-import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 /**
@@ -97,11 +95,11 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 	 */
 	public void addPriceUpdate( final Random inRand, STMTransaction inTransaction )
 	{
-		DataTypeBigDecimal bid = new DataTypeBigDecimal( inRand.nextDouble() );
-		DataTypeBigDecimal ask = new DataTypeBigDecimal( inRand.nextDouble() );
+		BigDecimal bid = new BigDecimal( inRand.nextDouble() );
+		BigDecimal ask = new BigDecimal( inRand.nextDouble() );
 
 
-		final DataTypeBigDecimal spread = new DataTypeBigDecimal( ask.get().subtract( bid.get() ) );
+		final BigDecimal spread = ask.subtract( bid );
 
 		inTransaction.putValue(FXDataConstants.FIELD_BID, bid );
 		inTransaction.putValue(FXDataConstants.FIELD_ASK, ask );
@@ -146,17 +144,17 @@ public final class SpotPriceProducer extends STMEntryProducer implements ISTMEnt
 					BigDecimal bid = (reutBidAsk[0].add( bloomBidAsk[0] )).divide( new BigDecimal( 2 ) );
 					BigDecimal ask = (reutBidAsk[1].add( bloomBidAsk[1] )).divide( new BigDecimal( 2 ) );
 
-					DataTypeLong timeStamp = (DataTypeLong)inData.getValue( DataConstants.FIELD_TIMESTAMP );
+					Long timeStamp = (Long)inData.getValue( DataConstants.FIELD_TIMESTAMP );
 
 					putValue( MarketDataConstants.FIELD_TIMESTAMP, timeStamp);
 
 					bid = bid.round( new MathContext( dec.intValue(), RoundingMode.DOWN) );
 					ask = ask.round( new MathContext( dec.intValue(), RoundingMode.UP) );
 
-					final DataTypeBigDecimal spread = new DataTypeBigDecimal( ask.subtract( bid ) );
+					final BigDecimal spread = ask.subtract( bid );
 
-					putValue(FXDataConstants.FIELD_BID, new DataTypeBigDecimal( bid ) );
-					putValue(FXDataConstants.FIELD_ASK, new DataTypeBigDecimal( ask ) );
+					putValue(FXDataConstants.FIELD_BID, bid );
+					putValue(FXDataConstants.FIELD_ASK, ask );
 					putValue(FXDataConstants.FIELD_SPREAD, spread );
 
 				}

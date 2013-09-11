@@ -9,12 +9,9 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BigDecimalEn
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.BooleanEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
-import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.NullEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -42,18 +39,18 @@ public class Test {
 		return keyValues;
 	}
 	
-	public static IPersistentMap<String, DataType<?>> createDataKeyValueMap()
+	public static IPersistentMap<String, Object> createDataKeyValueMap()
 	{
 		Random rand = new Random();
 		
-		IPersistentMap<String, DataType<?>> keyValues = PersistentHashMap.EMPTY;
+		IPersistentMap<String, Object> keyValues = PersistentHashMap.EMPTY;
 		
 		for( int i = 0; i < 200; i++ )
 		{
 			double random = rand.nextDouble();
 
 			String key = "K"+Integer.toString( i );
-			DataTypeBigDecimal value = new DataTypeBigDecimal( random );
+			BigDecimal value = new BigDecimal( random );
 			
 			keyValues = keyValues.assoc(key, value);
 		}
@@ -77,7 +74,7 @@ public class Test {
 		for( int i = 0; i < inIterations; i++ )
 		{
 			long startInit = System.nanoTime();
-			IPersistentMap<String, DataType<?>> keyValues = createDataKeyValueMap();
+			IPersistentMap<String, Object> keyValues = createDataKeyValueMap();
 			
 //			Message mess = PreMarshaller.createUpdateMessage(1, keyValues, true);
 //			

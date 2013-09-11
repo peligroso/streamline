@@ -1,6 +1,5 @@
 package org.juxtapose.fxtradingclient;
 
-import java.awt.event.ContainerListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +12,6 @@ import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryListener;
 import org.juxtapose.streamline.util.STMEntrySubscriber;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 
@@ -32,7 +30,7 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 		
 	}
 	
-	private void fieldUpdated( DataType<?> inValue )
+	private void fieldUpdated( Object inValue )
 	{
 		if( inValue instanceof DataTypeNull )
 		{
@@ -69,23 +67,23 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 		
 	private void doFullUpdate( ISTMEntry inData )
 	{
-		Iterator<Entry<String, DataType<?>>> iter = inData.getDataMap().iterator();
+		Iterator<Entry<String, Object>> iter = inData.getDataMap().iterator();
 		
 		while( iter.hasNext() )
 		{
-			Entry<String, DataType<?>> entry = iter.next();
+			Entry<String, Object> entry = iter.next();
 			fieldUpdated( entry.getValue() );
 		}
 	}
 	
 	private void doPartialUpdate( ISTMEntry inData )
 	{
-		IPersistentMap<String, DataType<?>> data = inData.getDataMap();
+		IPersistentMap<String, Object> data = inData.getDataMap();
 		Set<String> deltaSet = inData.getDeltaSet();
 		
 		for( String s : deltaSet )
 		{
-			DataType<?> value = data.valAt( s );
+			Object value = data.valAt( s );
 			fieldUpdated( value );
 		}
 	}

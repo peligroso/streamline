@@ -3,7 +3,6 @@ package org.juxtapose.fxtradingsystem.constants;
 import java.math.BigDecimal;
 
 import org.juxtapose.streamline.tools.DataConstants;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
 
 public class FXDataConstants extends DataConstants
 {
@@ -73,12 +72,12 @@ public class FXDataConstants extends DataConstants
 	public static final String STATE_SOURCE_GOLDMAN = "GOLDMAN";
 	public static final String STATE_SOURCE_WILDCARD = "*";
 	
-	public static final DataTypeBigDecimal CODE_REUTERS = new DataTypeBigDecimal( BigDecimal.ONE );
-	public static final DataTypeBigDecimal CODE_BLOOMBERG = new DataTypeBigDecimal( new BigDecimal(2) );
-	public static final DataTypeBigDecimal CODE_UBS = new DataTypeBigDecimal( new BigDecimal(3) );
-	public static final DataTypeBigDecimal CODE_GOLDMAN = new DataTypeBigDecimal( new BigDecimal(4) );
+	public static final BigDecimal CODE_REUTERS = BigDecimal.ONE;
+	public static final BigDecimal CODE_BLOOMBERG = new BigDecimal(2);
+	public static final BigDecimal CODE_UBS = new BigDecimal(3);
+	public static final BigDecimal CODE_GOLDMAN = new BigDecimal(4);
 	
-	public static DataTypeBigDecimal getSourceCode( String inSourceName )
+	public static BigDecimal getSourceCode( String inSourceName )
 	{
 		if( STATE_SOURCE_REUTERS.equals( inSourceName ) )
 			return CODE_REUTERS;

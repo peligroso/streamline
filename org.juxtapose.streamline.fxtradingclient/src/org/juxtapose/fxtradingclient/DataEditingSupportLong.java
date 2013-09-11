@@ -1,8 +1,6 @@
 package org.juxtapose.fxtradingclient;
 
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 
 public class DataEditingSupportLong extends DataEditingSupport {
 
@@ -14,13 +12,13 @@ public class DataEditingSupportLong extends DataEditingSupport {
 	/* (non-Javadoc)
 	 * @see org.juxtapose.fxtradingclient.DataEditingSupport#getDataType(java.lang.Object)
 	 */
-	protected DataType<?> getDataType( Object inValue )
+	protected Object getDataType( Object inValue )
 	{
 		if( inValue == null || "".equals( inValue.toString() ) )
-			return new DataTypeLong( 0l );
+			return new Long( 0l );
 		
 		Long l = Long.parseLong( inValue.toString() );
-		return new DataTypeLong( l );
+		return new Long( l );
 	}
 
 }

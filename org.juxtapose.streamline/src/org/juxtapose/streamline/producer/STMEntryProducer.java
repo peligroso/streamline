@@ -9,10 +9,9 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.stm.TemporaryController;
-import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 /**
@@ -148,13 +147,13 @@ public abstract class STMEntryProducer extends TemporaryController implements IS
 			@Override
 			public void execute()
 			{
-				DataType<?> dataAtKey = get( inFieldKey );
+				Object dataAtKey = get( inFieldKey );
 				if( dataAtKey == null || !(dataAtKey instanceof DataTypeRef) )
 				{
 					//Reference has been removed in publishedDataObject
 					return;
 				}
-				ISTMEntryKey key = (ISTMEntryKey)dataAtKey.get();
+				ISTMEntryKey key = ((DataTypeRef)dataAtKey).get();
 				if( !key.equals( inLink.getRef().get() ) )
 				{
 					//Reference has been replaced by another reference

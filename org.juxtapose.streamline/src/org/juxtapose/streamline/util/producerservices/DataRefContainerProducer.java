@@ -9,7 +9,6 @@ import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -63,24 +62,24 @@ public class DataRefContainerProducer extends STMEntryProducer
 		});
 	}
 	
-	public void addEntry( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
+	public void addEntry( final ISTMEntryKey inKey, final IPersistentMap<String, Object> inData )
 	{
 		stm.publish( inKey, this, Status.OK, inData, new HashSet<String>() );
 		addReference( inKey );
 	}
 	
-	public void updateEntry( final ISTMEntryKey inKey, final IPersistentMap<String, DataType<?>> inData )
+	public void updateEntry( final ISTMEntryKey inKey, final IPersistentMap<String, Object> inData )
 	{
 		stm.commit( new STMTransaction( inKey, this, 0, 0, true )
 		{
 			@Override
 			public void execute()
 			{
-				Iterator<Map.Entry<String, DataType<?>>> iter = inData.iterator();
+				Iterator<Map.Entry<String, Object>> iter = inData.iterator();
 				
 				while( iter.hasNext() )
 				{
-					Map.Entry<String, DataType<?>> entry = iter.next();
+					Map.Entry<String, Object> entry = iter.next();
 					putValue( entry.getKey(), entry.getValue() );
 				}
 			}

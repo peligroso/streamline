@@ -2,7 +2,6 @@
 package org.juxtapose.fxtradingsystem.priceengine;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.juxtapose.streamline.producer.STMEntryProducer;
@@ -12,7 +11,6 @@ import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 /**
@@ -87,11 +85,11 @@ public class CcyModelProducer extends STMEntryProducer
 		{
 			if( data.getStatus() == Status.ON_REQUEST )
 			{
-				Iterator<Entry<String, DataType<?>>> iterator = data.getDataMap().iterator();
+				Iterator<Entry<String, Object>> iterator = data.getDataMap().iterator();
 				
 				while( iterator.hasNext() )
 				{
-					Entry<String, DataType<?>> entry = iterator.next();
+					Entry<String, Object> entry = iterator.next();
 					
 					if( entry.getKey().equals( DataConstants.FIELD_STATUS ))
 						continue;

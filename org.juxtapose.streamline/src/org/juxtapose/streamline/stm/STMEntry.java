@@ -8,11 +8,10 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.tools.DataConstants;
-import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
@@ -29,7 +28,7 @@ import com.trifork.clj_ds.IPersistentMap;
  */
 final class STMEntry implements ISTMEntry
 {
-	final IPersistentMap<String, DataType<?>> dataMap;
+	final IPersistentMap<String, Object> dataMap;
 	final Set<String> deltaSet;
 	
 	final PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers;
@@ -49,7 +48,7 @@ final class STMEntry implements ISTMEntry
 	 * @param inProducer
 	 * @param inStatus
 	 */
-	protected STMEntry( IPersistentMap<String, DataType<?>> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inLowPrioSubscribers, PersistentArrayList<ISTMEntrySubscriber> inHighPrioSubscribers, ISTMEntryProducer inProducer, long inSequenceID, boolean inCompleteUpdate ) 
+	protected STMEntry( IPersistentMap<String, Object> inData, Set<String> inChanges, PersistentArrayList<ISTMEntrySubscriber> inLowPrioSubscribers, PersistentArrayList<ISTMEntrySubscriber> inHighPrioSubscribers, ISTMEntryProducer inProducer, long inSequenceID, boolean inCompleteUpdate ) 
 	{
 		dataMap = inData;
 		deltaSet = Collections.unmodifiableSet( inChanges );
@@ -127,9 +126,9 @@ final class STMEntry implements ISTMEntry
 	 * @return
 	 * @throws Exception
 	 */
-	public ISTMEntry putDataValue( String inKey, DataType<?> inValue )throws Exception
+	public ISTMEntry putDataValue( String inKey, Object inValue )throws Exception
 	{
-		IPersistentMap<String, DataType<?>> newMap;
+		IPersistentMap<String, Object> newMap;
 		
 		if( inValue instanceof DataTypeNull )
 			newMap = dataMap.without( inKey );
@@ -144,13 +143,13 @@ final class STMEntry implements ISTMEntry
 	 * @return
 	 * @throws Exception
 	 */
-	public ISTMEntry putDataValues( HashMap<String, DataType<?>> inStateTransitionMap )throws Exception
+	public ISTMEntry putDataValues( HashMap<String, Object> inStateTransitionMap )throws Exception
 	{
-		IPersistentMap<String, DataType<?>> newDataMap = dataMap;
+		IPersistentMap<String, Object> newDataMap = dataMap;
 		
 		for( String key : inStateTransitionMap.keySet() )
 		{
-			DataType<?> value = inStateTransitionMap.get( key );
+			Object value = inStateTransitionMap.get( key );
 			if( value instanceof DataTypeNull )
 				newDataMap = newDataMap.without( key );
 			else if( value instanceof DataTypeRef )
@@ -170,7 +169,7 @@ final class STMEntry implements ISTMEntry
 	 * @param inDataMap
 	 * @return
 	 */
-	public ISTMEntry setDataMap( IPersistentMap<String, DataType<?>> inDataMap )
+	public ISTMEntry setDataMap( IPersistentMap<String, Object> inDataMap )
 	{
 		return new STMEntry( inDataMap, deltaSet, lowPrioSubscribers, highPrioSubscribers, producer, sequenceID+1, completeVersion );
 	}
@@ -179,7 +178,7 @@ final class STMEntry implements ISTMEntry
 	 * @param inDataMap
 	 * @return
 	 */
-	public ISTMEntry setUpdatedData( IPersistentMap<String, DataType<?>> inDataMap, Set<String> inDelta, boolean inCompleteUpdate )
+	public ISTMEntry setUpdatedData( IPersistentMap<String, Object> inDataMap, Set<String> inDelta, boolean inCompleteUpdate )
 	{
 		return new STMEntry( inDataMap, inDelta, lowPrioSubscribers, highPrioSubscribers, producer, (inCompleteUpdate ? sequenceID+1 : sequenceID), inCompleteUpdate );
 	}
@@ -193,7 +192,7 @@ final class STMEntry implements ISTMEntry
 	/**
 	 * @return
 	 */
-	public IPersistentMap<String, DataType<?>> getDataMap()
+	public IPersistentMap<String, Object> getDataMap()
 	{
 		return dataMap;
 	}
@@ -215,7 +214,7 @@ final class STMEntry implements ISTMEntry
 	 * @param inKey
 	 * @return
 	 */
-	public DataType<?> getValue( String inKey )
+	public Object getValue( String inKey )
 	{
 		return dataMap.valAt( inKey );
 	}
@@ -228,7 +227,7 @@ final class STMEntry implements ISTMEntry
 	
 	public Status getStatus()
 	{
-		return (Status)dataMap.valAt( DataConstants.FIELD_STATUS ).get();
+		return (Status)dataMap.valAt( DataConstants.FIELD_STATUS );
 	}
 
 	public long getSequenceID()
@@ -282,7 +281,7 @@ final class STMEntry implements ISTMEntry
 	}
 
 	@Override
-	public DataType<?> getUpdatedValue( String inKey ) 
+	public Object getUpdatedValue( String inKey ) 
 	{
 		if( deltaSet.contains( inKey ))
 			return getValue( inKey );

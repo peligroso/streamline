@@ -12,10 +12,6 @@ import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.STMEntrySubscriber;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeHashMap;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -52,32 +48,32 @@ public class MetaDataControl extends STMEntrySubscriber
 		
 		stm.logInfo( "Config data recieved for meta data "+inData.getDataMap() );
 		
-		Iterator<Entry<String, DataType<?>>> iter = inData.getDataMap().iterator();
+		Iterator<Entry<String, Object>> iter = inData.getDataMap().iterator();
 		
-		HashMap<String, IPersistentMap<String, DataType<?>>> viewsToBeCreated = new HashMap<String, IPersistentMap<String, DataType<?>>>();
+		HashMap<String, IPersistentMap<String, Object>> viewsToBeCreated = new HashMap<String, IPersistentMap<String, Object>>();
 		
 		while( iter.hasNext() )
 		{
-			Entry<String, DataType<?>> entry = iter.next();
-			DataType<?> value = entry.getValue();
+			Entry<String, Object> entry = iter.next();
+			Object value = entry.getValue();
 			
-			if( value instanceof DataTypeArrayList )
+			if( value instanceof PersistentArrayList<?> )
 			{
 				//Enums
-				PersistentArrayList<DataType<?>> list = (PersistentArrayList<DataType<?>>)value.get();
+				PersistentArrayList<?> list = (PersistentArrayList<?>)value;
 				ArrayList<String> enumValues = new ArrayList<String>();
 				
 				for( int i = 0; i < list.size(); i++ )
 				{
-					DataTypeString data = (DataTypeString)list.get(i);
-					enumValues.add( data.get() );
+					String data = (String)list.get(i);
+					enumValues.add( data );
 				}
 				
 				EnumInput enumInput = new EnumInput( enumValues.toArray( new String[]{} ) );
 				
 				typeToInput.put( entry.getKey(), enumInput );
 			}
-			else if( value instanceof DataTypeHashMap )
+			else if( value instanceof IPersistentMap<?, ?> )
 			{
 				//Container value
 				final String fieldKey = entry.getKey();
@@ -91,7 +87,7 @@ public class MetaDataControl extends STMEntrySubscriber
 				
 				typeToInput.put( entry.getKey(), refInput );
 				
-				viewsToBeCreated.put( entry.getKey(), ((DataTypeHashMap)value).get() );
+				viewsToBeCreated.put( entry.getKey(), ((IPersistentMap<String, Object>)value) );
 //				parent.getDisplay().asyncExec( new Runnable()
 //				{
 //					@Override
@@ -107,10 +103,10 @@ public class MetaDataControl extends STMEntrySubscriber
 		
 		metaDataInitiated = true;
 		
-		for( Entry<String, IPersistentMap<String, DataType<?>>> viewInstruction : viewsToBeCreated.entrySet() )
+		for( Entry<String, IPersistentMap<String, Object>> viewInstruction : viewsToBeCreated.entrySet() )
 		{
 			String fieldKey = viewInstruction.getKey();
-			IPersistentMap<String, DataType<?>> value = viewInstruction.getValue();
+			IPersistentMap<String, Object> value = viewInstruction.getValue();
 			editView.addViewer( fieldKey, value, this );
 		}
 //		
@@ -120,14 +116,14 @@ public class MetaDataControl extends STMEntrySubscriber
 //			
 //	}	
 //				
-////				IPersistentMap<String, DataType<?>> testPrice = PersistentHashMap.EMPTY;
+////				IPersistentMap<String, Object> testPrice = PersistentHashMap.EMPTY;
 ////				testPrice = testPrice.assoc( FXDataConstants.FIELD_DECIMALS, new DataTypeLong(4l) );
 ////				testPrice = testPrice.assoc( FXDataConstants.FIELD_PIP, new DataTypeLong(10000l) );
 ////				testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY1, new DataTypeString("EUR") );
 ////				testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY2, new DataTypeString("SEK") );
 ////				viewer.setInput( new ViewDataObject[]{ new ViewDataObject(testPrice) } );
 //				
-//				IPersistentMap<String, DataType<?>> testCcy = PersistentHashMap.EMPTY;
+//				IPersistentMap<String, Object> testCcy = PersistentHashMap.EMPTY;
 //				testCcy = testCcy.assoc( "NAME", new DataTypeString("European currency") );
 //				testCcy = testCcy.assoc( "DC", new DataTypeString("30_360_Accual") );
 //				testCcy = testCcy.assoc( "ISO", new DataTypeString("EUR") );

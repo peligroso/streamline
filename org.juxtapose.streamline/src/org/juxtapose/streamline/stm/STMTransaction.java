@@ -13,9 +13,7 @@ import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.Preconditions;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeStatus;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -37,7 +35,7 @@ public abstract class STMTransaction
 	private final ISTMEntryKey entryKey;
 	private final boolean isFullUpdate;
 	
-	private IPersistentMap<String, DataType<?>> m_stateInstruction;
+	private IPersistentMap<String, Object> m_stateInstruction;
 	
 	private final Set<String> m_deltaState = new HashSet<String>();
 	
@@ -103,7 +101,7 @@ public abstract class STMTransaction
 	/**
 	 * @param inMap
 	 */
-	public void putInitDataState( IPersistentMap<String, DataType<?>> inMap, Status inStatus )
+	public void putInitDataState( IPersistentMap<String, Object> inMap, Status inStatus )
 	{
 		m_stateInstruction = inMap;
 		status = inStatus;
@@ -116,7 +114,7 @@ public abstract class STMTransaction
 	 * @param inKey
 	 * @param inData
 	 */
-	public void putValue( String inKey, DataType<?> inData )
+	public void putValue( String inKey, Object inData )
 	{
 		assert STMAssertionUtil.validateTransactionStack() : "Transaction.addValue was not from called from within a STM commit as required";
 		assert !( inData instanceof DataTypeRef ) : "Reference values should be added via addReference method";
@@ -164,7 +162,7 @@ public abstract class STMTransaction
 		assert STMAssertionUtil.validateTransactionStack() : "Transaction.removeValue was not from called from within a STM commit as required";
 		assert m_deltaState.contains( inKey ) : "Transaction may not add and remove the same field value: "+inKey;
 		
-		DataType<?> removedData = m_stateInstruction.valAt( inKey );
+		Object removedData = m_stateInstruction.valAt( inKey );
 		m_stateInstruction = m_stateInstruction.without( inKey );
 		
 		m_deltaState.add(inKey);
@@ -181,7 +179,7 @@ public abstract class STMTransaction
 	/**
 	 * @return
 	 */
-	protected IPersistentMap<String, DataType<?>> getStateInstruction()
+	protected IPersistentMap<String, Object> getStateInstruction()
 	{
 		return m_stateInstruction;
 	}
@@ -228,7 +226,7 @@ public abstract class STMTransaction
 	 */
 	public void setStatus( Status inStatus )
 	{
-		putValue( DataConstants.FIELD_STATUS, new DataTypeStatus( inStatus ) );
+		putValue( DataConstants.FIELD_STATUS, inStatus );
 		status = inStatus;
 	}
 	
@@ -237,7 +235,7 @@ public abstract class STMTransaction
 		return status;
 	}
 	
-	public DataType<?> get( String inFieldKey )
+	public Object get( String inFieldKey )
 	{
 		return m_stateInstruction.valAt( inFieldKey );
 	}

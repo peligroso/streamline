@@ -1,7 +1,6 @@
 package org.juxtapose.streamline.util.data;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 
 public class DataTypeBigDecimal extends DataType<BigDecimal>{

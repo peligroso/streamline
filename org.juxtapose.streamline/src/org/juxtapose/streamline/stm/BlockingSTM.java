@@ -1,6 +1,5 @@
 package org.juxtapose.streamline.stm;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,13 +8,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import org.juxtapose.streamline.producer.ISTMEntryProducerService;
-import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
-import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -115,7 +109,7 @@ public class BlockingSTM extends STM
 			{
 				return;
 			}
-			IPersistentMap<String, DataType<?>> inst = inTransaction.getStateInstruction();
+			IPersistentMap<String, Object> inst = inTransaction.getStateInstruction();
 			Set<String> delta = inTransaction.getDeltaState();
 			if( !existingData.isCompleteVersion() )
 			{

@@ -2,6 +2,8 @@ package org.juxtapose.streamline.stm;
 
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_QUERY_KEY;
 import static org.juxtapose.streamline.tools.STMAssertionUtil.PRODUCER_SERVICES;
+import static org.juxtapose.streamline.tools.STMMessageConstants.PRODUCER_NOT_EXISTS;
+import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_NOT_SUPPORTED;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,14 +24,11 @@ import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeString;
 import org.juxtapose.streamline.util.net.ClientConnector;
 import org.juxtapose.streamline.util.net.ServerConnector;
 import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 import com.trifork.clj_ds.IPersistentMap;
-import static org.juxtapose.streamline.tools.STMMessageConstants.*;
 
 /**
  * @author Pontus Jörgne
@@ -96,7 +95,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			@Override
 			public void execute()
 			{
-				putValue( inProducerService.getServiceId(), new DataTypeString( initState.toString() ) );
+				putValue( inProducerService.getServiceId(), initState.toString() );
 				logInfo( "Producer "+inProducerService.getServiceId()+" registered" );
 			}
 		});
@@ -113,7 +112,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			@Override
 			public void execute()
 			{
-				putValue( inProducerService.getServiceId(), new DataTypeString( newStatus.toString() ) );
+				putValue( inProducerService.getServiceId(), newStatus.toString() );
 			}
 		});
 	}
@@ -519,7 +518,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.ISTM#publish(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.producer.ISTMEntryProducer, org.juxtapose.streamline.util.Status, com.trifork.clj_ds.IPersistentMap, java.util.HashSet)
 	 */
-	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, DataType<?>> inData, HashSet<String> inDeltaSet )
+	public void publish( ISTMEntryKey inDataKey, ISTMEntryProducer inProducer, Status inStatus, IPersistentMap<String, Object> inData, HashSet<String> inDeltaSet )
 	{
 		lock( inDataKey.getKey() );
 		try
@@ -555,7 +554,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		}
 	}
 	
-	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData )
+	public void request( String inService, int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData )
 	{
 		ISTMEntryProducerService producerService = idToProducerService.get( inService );
 		if( producerService == null )
@@ -567,7 +566,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		producerService.request( inTag, inType, inRequestor, inVariable, inData );
 	}
 	
-	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData  )
 	{
 		inRequestor.reply( inTag, DataConstants.RESPONSE_TYPE_ERROR,  REQUEST_NOT_SUPPORTED, null );
 	}

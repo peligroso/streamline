@@ -1,26 +1,29 @@
 package org.juxtapose.fxtradingsystem.config;
 
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_QUERY_KEY;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_STATUS;
+import static org.juxtapose.streamline.tools.DataConstants.REQUEST_TYPE_CREATE;
+import static org.juxtapose.streamline.tools.DataConstants.REQUEST_TYPE_UPDATE;
+import static org.juxtapose.streamline.tools.DataConstants.RESPONSE_TYPE_ERROR;
+import static org.juxtapose.streamline.tools.DataConstants.STATE_TYPE_CONTAINER;
+import static org.juxtapose.streamline.tools.DataConstants.STATE_TYPE_META;
+import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_MISSING_FIELDS;
+import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
+
 import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
-import org.juxtapose.fxtradingsystem.priceengine.PriceEngineKeyConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-
-import static org.juxtapose.streamline.tools.STMMessageConstants.*;
-import static org.juxtapose.streamline.tools.STMUtil.*;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import static org.juxtapose.streamline.tools.DataConstants.*;
-import org.juxtapose.streamline.tools.STMEntryKey;
 import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeStatus;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 import org.juxtapose.streamline.util.producerservices.DataRefContainerProducer;
 
@@ -98,19 +101,19 @@ public class ConfigService extends DataProducerService implements IConfigService
 		
 	}
 	
-	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, DataType<?>> inData  )
+	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData  )
 	{
 		if( "CCY".equals( inVariable ) && inType == REQUEST_TYPE_CREATE )
 		{
-			String iso = (String)inData.valAt( "ISO" ).get();
-			String name = (String)inData.valAt( "NAME" ).get();
-			String conv = (String)inData.valAt( "DC" ).get();
+			String iso = (String)inData.valAt( "ISO" );
+			String name = (String)inData.valAt( "NAME" );
+			String conv = (String)inData.valAt( "DC" );
 			
 			ISTMEntryKey key = STMUtil.createEntryKey( getServiceId(), "CCY", iso );
 			
 			/**check for errors**/
 			
-			IPersistentMap<String, DataType<?>> newData = inData.assoc( FIELD_STATUS, new DataTypeStatus( Status.OK ) );
+			IPersistentMap<String, Object> newData = inData.assoc( FIELD_STATUS, Status.OK );
 			
 			ccyContainer.addEntry( key, newData );
 		}
@@ -123,7 +126,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 			
 			try
 			{
-				IPersistentMap<String, DataType<?>> data = inData.without( FIELD_KEYS );
+				IPersistentMap<String, Object> data = inData.without( FIELD_KEYS );
 				ccyContainer.updateEntry( ref.get(), data );
 			}
 			catch( Exception e )
@@ -133,8 +136,8 @@ public class ConfigService extends DataProducerService implements IConfigService
 		}
 		if( "PRC".equals( inVariable ) && inType == REQUEST_TYPE_CREATE )
 		{
-			String ccy1 = (String)inData.valAt( FXDataConstants.FIELD_CCY1 ).get();
-			String ccy2 = (String)inData.valAt( FXDataConstants.FIELD_CCY2 ).get();
+			String ccy1 = (String)inData.valAt( FXDataConstants.FIELD_CCY1 );
+			String ccy2 = (String)inData.valAt( FXDataConstants.FIELD_CCY2 );
 			
 			ISTMEntryKey key = STMUtil.createEntryKey( getServiceId(), "PRC", 
 						new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2},
@@ -142,7 +145,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 			
 			/**check for errors**/
 			
-			IPersistentMap<String, DataType<?>> newData = inData.assoc( FIELD_STATUS, new DataTypeStatus( Status.OK ) );
+			IPersistentMap<String, Object> newData = inData.assoc( FIELD_STATUS, Status.OK );
 			
 			prcContainer.addEntry( key, newData );
 		}
@@ -155,7 +158,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 			
 			try
 			{
-				IPersistentMap<String, DataType<?>> data = inData.without( FIELD_KEYS );
+				IPersistentMap<String, Object> data = inData.without( FIELD_KEYS );
 				prcContainer.updateEntry( ref.get(), data );
 			}
 			catch( Exception e )

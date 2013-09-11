@@ -1,18 +1,16 @@
 package org.juxtapose.fxtradingsystem.priceengine;
 
+import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
+
 import java.util.Map;
 
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
-import static org.juxtapose.streamline.tools.STMUtil.*;
-import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
-import org.juxtapose.streamline.tools.STMUtil;
-import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.data.DataType;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 
 /**
@@ -104,7 +102,7 @@ public class PriceEngine extends DataProducerService implements IPriceEngine
 	@Override
 	public void updateData( ISTMEntryKey iKey, ISTMEntry inData, boolean inFullUpdate)
 	{
-		DataType<?> dataValue = inData.getValue( FXProducerServiceConstants.ORDER_MANAGER );
+		Object dataValue = inData.getValue( FXProducerServiceConstants.ORDER_MANAGER );
 		if( dataValue != null )
 		{
 			stm.logInfo( "OrderService is registered with status: "+dataValue);

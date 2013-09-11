@@ -32,7 +32,7 @@ public abstract class DataType<T> {
 	{
 		if( inObject instanceof DataType<?> )
 		{
-			return get().equals( ((DataType<?>)inObject).get() );
+			return get().equals( ((DataType<T>)inObject).get() );
 		}
 		return false;
 	}

@@ -5,8 +5,6 @@ import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -36,26 +34,26 @@ public class DataEditingSupport extends EditingSupport
 	@Override
 	protected Object getValue(Object element) 
 	{
-		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
-		DataType<?> val = map.valAt( key );
+		IPersistentMap<String, Object> map = ((ViewDataObject)element).getData();
+		Object val = map.valAt( key );
 		if( val == null )
 			return "";
 		
-		return val.get().toString();
+		return val.toString();
 	}
 
 	@Override
 	protected void setValue(Object element, Object value) 
 	{
-		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
+		IPersistentMap<String, Object> map = ((ViewDataObject)element).getData();
 		map = map.assoc( key, getDataType( value ) );
 		((ViewDataObject)element).updateData(map, key);
 		getViewer().update( element, null );
 	}
 	
-	protected DataType<?> getDataType( Object inValue )
+	protected Object getDataType( Object inValue )
 	{
-		return new DataTypeString( inValue.toString() );
+		return inValue.toString();
 	}
 
 }

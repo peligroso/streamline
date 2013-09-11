@@ -6,8 +6,6 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Display;
 import org.juxtapose.streamline.util.IInputListener;
-import org.juxtapose.streamline.util.ISTMContainerListener;
-import org.juxtapose.streamline.util.data.DataType;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -66,13 +64,13 @@ public class DataEditingSupportEnum extends DataEditingSupport
 	@Override
 	protected Object getValue(Object element) 
 	{
-		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
-		DataType<?> dVal = map.valAt( key );
+		IPersistentMap<String, Object> map = ((ViewDataObject)element).getData();
+		Object dVal = map.valAt( key );
 		
 		if( dVal == null )
 			return -1;
 		
-		String val = dVal.get().toString();
+		String val = dVal.toString();
 		
 		for( int i = 0; i < items.length; i++ )
 		{
@@ -91,7 +89,7 @@ public class DataEditingSupportEnum extends DataEditingSupport
 		
 		String val = items[index];
 		
-		IPersistentMap<String, DataType<?>> map = ((ViewDataObject)element).getData();
+		IPersistentMap<String, Object> map = ((ViewDataObject)element).getData();
 		map = map.assoc( key, getDataType( val ) );
 		((ViewDataObject)element).updateData(map, key);
 		getViewer().update( element, null );

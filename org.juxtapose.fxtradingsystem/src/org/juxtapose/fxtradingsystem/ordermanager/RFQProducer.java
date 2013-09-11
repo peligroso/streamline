@@ -6,17 +6,15 @@ import java.util.HashMap;
 import org.juxtapose.fxtradingsystem.constants.FXDataConstants;
 import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.fxtradingsystem.priceengine.PriceEngineUtil;
-import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.ReferenceLink;
 import org.juxtapose.streamline.stm.STMTransaction;
-import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeString;
 
 public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSubscriber
 {
@@ -45,13 +43,13 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 			@Override
 			public void execute()
 			{
-				putValue( FXDataConstants.FIELD_CCY1, new DataTypeString( ccy1 ) );
-				putValue( FXDataConstants.FIELD_CCY2, new DataTypeString( ccy2 ) );
+				putValue( FXDataConstants.FIELD_CCY1, ccy1 );
+				putValue( FXDataConstants.FIELD_CCY2, ccy2 );
 				
 				if( nearPeriod != null )
-					putValue( FXDataConstants.FIELD_NEAR_SWAP, new DataTypeString( nearPeriod ));
+					putValue( FXDataConstants.FIELD_NEAR_SWAP, nearPeriod);
 				if( farPeriod != null )
-					putValue( FXDataConstants.FIELD_FAR_SWAP, new DataTypeString( farPeriod ));
+					putValue( FXDataConstants.FIELD_FAR_SWAP, farPeriod);
 			}
 		});
 		
@@ -95,15 +93,15 @@ public class RFQProducer extends STMEntryProducer implements ISTMEntryRequestSub
 	{
 		if( inFieldKey == FXDataConstants.FIELD_PRICE )
 		{
-			DataTypeBoolean priced = (DataTypeBoolean)inTransaction.get( FXDataConstants.FIELD_FIRST_UPDATE );
+			Boolean priced = (Boolean)inTransaction.get( FXDataConstants.FIELD_FIRST_UPDATE );
 			
 			if( priced == null )
 			{
-				inTransaction.putValue( FXDataConstants.FIELD_FIRST_UPDATE, new DataTypeBoolean(true) );
+				inTransaction.putValue( FXDataConstants.FIELD_FIRST_UPDATE, true );
 			}
-			else if( priced.get() )
+			else if( priced )
 			{
-				inTransaction.putValue( FXDataConstants.FIELD_FIRST_UPDATE, new DataTypeBoolean(false) );
+				inTransaction.putValue( FXDataConstants.FIELD_FIRST_UPDATE, false );
 			}
 		}
 		

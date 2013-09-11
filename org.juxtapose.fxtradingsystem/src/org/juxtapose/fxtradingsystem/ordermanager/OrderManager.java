@@ -1,5 +1,7 @@
 package org.juxtapose.fxtradingsystem.ordermanager;
 
+import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
+
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,17 +17,10 @@ import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.osgi.DataProducerService;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
-
-import static org.juxtapose.streamline.tools.STMUtil.*;
-import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
+import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeBoolean;
 import org.juxtapose.streamline.util.data.DataTypeRef;
-import org.juxtapose.streamline.util.data.DataTypeString;
-import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 import org.juxtapose.streamline.util.subscriber.DataSequencer;
 import org.juxtapose.streamline.util.subscriber.ISequencedDataSubscriber;
 
@@ -75,12 +70,12 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
 		{
-			DataType<?> dataValue = inData.getValue( FXProducerServiceConstants.PRICE_ENGINE );
+			Object dataValue = inData.getValue( FXProducerServiceConstants.PRICE_ENGINE );
 			if( dataValue != null )
 			{
 				System.out.println( "Price engine is registered with status: "+dataValue);
 				
-				if( dataValue.get() == Status.OK.toString() )
+				if( dataValue.equals( Status.OK.toString() ) )
 				{
 					connector = new ClientConnector( this );
 				}
@@ -116,27 +111,27 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 			
 			final Long id = Long.parseLong( idStr );
 			DataTypeRef priceRef = (DataTypeRef)inData.getValue( FXDataConstants.FIELD_PRICE );
-			final DataTypeBigDecimal bid = (DataTypeBigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_BID );
-			final DataTypeBigDecimal ask = (DataTypeBigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_ASK );
-			final DataTypeBigDecimal spread = (DataTypeBigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_SPREAD );
+			final BigDecimal bid = (BigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_BID );
+			final BigDecimal ask = (BigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_ASK );
+			final BigDecimal spread = (BigDecimal)priceRef.getReferenceData().getValue( FXDataConstants.FIELD_SPREAD );
 			
-			final DataTypeString ccy1 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY1 );
-			final DataTypeString ccy2 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY2 );
+			final String ccy1 = (String)inData.getValue( FXDataConstants.FIELD_CCY1 );
+			final String ccy2 = (String)inData.getValue( FXDataConstants.FIELD_CCY2 );
 			
-			Long tou = (Long)priceRef.getReferenceData().getValue( DataConstants.FIELD_TIMESTAMP ).get();
+			Long tou = (Long)priceRef.getReferenceData().getValue( DataConstants.FIELD_TIMESTAMP );
 			
 			final long sequence = inData.getSequenceID();
 
-			BigDecimal validateSpread = ask.get().subtract( bid.get() );
-			boolean valid = validateSpread.equals( spread.get() );
+			BigDecimal validateSpread = ask.subtract( bid );
+			boolean valid = validateSpread.equals( spread );
 			
 			long now = System.nanoTime();
 			
 			final long updateProcessingTime = now-tou;
 			
 			final Long firstTakeTime;
-			DataTypeBoolean firstTake = (DataTypeBoolean)inData.getValue( FXDataConstants.FIELD_FIRST_UPDATE );
-			if( firstTake != null && firstTake.get() )
+			Boolean firstTake = (Boolean)inData.getValue( FXDataConstants.FIELD_FIRST_UPDATE );
+			if( firstTake != null && firstTake )
 			{
 				RFQContext context = idToRFQProducer.get( id );
 
@@ -152,7 +147,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 			
 			if( ! valid )
 			{
-				System.err.println( "Price is not valid : "+validateSpread+" != "+spread.get() );
+				System.err.println( "Price is not valid : "+validateSpread+" != "+spread );
 			}
 			else
 			{
@@ -195,13 +190,13 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 			String idStr = inKey.getValue( FXDataConstants.FIELD_ID );
 			
 			final Long id = Long.parseLong( idStr );
-			final DataTypeBigDecimal bid = (DataTypeBigDecimal)inData.getValue( FXDataConstants.FIELD_BID );
-			final DataTypeBigDecimal ask = (DataTypeBigDecimal)inData.getValue( FXDataConstants.FIELD_ASK );
+			final BigDecimal bid = (BigDecimal)inData.getValue( FXDataConstants.FIELD_BID );
+			final BigDecimal ask = (BigDecimal)inData.getValue( FXDataConstants.FIELD_ASK );
 			
-			final DataTypeString ccy1 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY1 );
-			final DataTypeString ccy2 = (DataTypeString)inData.getValue( FXDataConstants.FIELD_CCY2 );
+			final String ccy1 = (String)inData.getValue( FXDataConstants.FIELD_CCY1 );
+			final String ccy2 = (String)inData.getValue( FXDataConstants.FIELD_CCY2 );
 			
-			Long tou = (Long)inData.getValue( DataConstants.FIELD_TIMESTAMP ).get();
+			Long tou = (Long)inData.getValue( DataConstants.FIELD_TIMESTAMP );
 			
 			final long sequence = inData.getSequenceID();
 
@@ -210,8 +205,8 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 			final long updateProcessingTime = now-tou;
 			
 			final Long firstTakeTime;
-			DataTypeBoolean firstTake = (DataTypeBoolean)inData.getValue( FXDataConstants.FIELD_FIRST_UPDATE );
-			if( firstTake != null && firstTake.get() )
+			Boolean firstTake = (Boolean)inData.getValue( FXDataConstants.FIELD_FIRST_UPDATE );
+			if( firstTake != null && firstTake )
 			{
 				RFQContext context = idToRFQProducer.get( id );
 
@@ -226,7 +221,7 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 				firstTakeTime = null;
 			
 			
-			RFQMessage message = new RFQMessage( RFQMessage.TYPE_PRICING, ccy1.get(), ccy2.get(), id,  bid.get().doubleValue(), ask.get().doubleValue(), firstTakeTime, updateProcessingTime, sequence, BigDecimal.ONE );
+			RFQMessage message = new RFQMessage( RFQMessage.TYPE_PRICING, ccy1, ccy2, id,  bid.doubleValue(), ask.doubleValue(), firstTakeTime, updateProcessingTime, sequence, BigDecimal.ONE );
 			
 			
 			connector.updateRFQ( message );

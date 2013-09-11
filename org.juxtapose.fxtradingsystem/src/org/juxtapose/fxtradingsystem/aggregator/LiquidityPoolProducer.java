@@ -26,9 +26,6 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeArrayList;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 
 public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDataSubscriber, ISTMEntryRequestSubscriber{
 
@@ -127,7 +124,7 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 				
 				Long timeStamp = System.nanoTime();
 				
-				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( timeStamp ));
+				putValue( MarketDataConstants.FIELD_TIMESTAMP, timeStamp );
 				
 				if( getStatus() != Status.OK )
 					setStatus( Status.OK );
@@ -137,30 +134,30 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	
 	private final void createMessageFromQuote( final QPMessage inMessage, DataTransaction inTransaction )
 	{
-		PersistentArrayList<DataTypeArrayList> bidSide = createSide( inMessage.bid, true );	
-		PersistentArrayList<DataTypeArrayList> askSide = createSide( inMessage.ask, false );
+		PersistentArrayList<PersistentArrayList<Object>> bidSide = createSide( inMessage.bid, true );	
+		PersistentArrayList<PersistentArrayList<Object>> askSide = createSide( inMessage.ask, false );
 		
-		inTransaction.putValue( MarketDataConstants.FIELD_BID, new DataTypeArrayList(bidSide) );
-		inTransaction.putValue( MarketDataConstants.FIELD_ASK, new DataTypeArrayList(askSide) );
+		inTransaction.putValue( MarketDataConstants.FIELD_BID, bidSide );
+		inTransaction.putValue( MarketDataConstants.FIELD_ASK, askSide );
 		
 	}
 	
-	private final PersistentArrayList<DataTypeArrayList> createSide( Double inQuote, boolean inBid )
+	private final PersistentArrayList<PersistentArrayList<Object>> createSide( Double inQuote, boolean inBid )
 	{
-		PersistentArrayList<DataTypeArrayList> side = new PersistentArrayList<DataTypeArrayList>(); 
+		PersistentArrayList<PersistentArrayList<Object>> side = new PersistentArrayList<PersistentArrayList<Object>>(); 
 		
-		BigDecimal pips = BigDecimals.getInt( 10000 ).get();
+		BigDecimal pips = BigDecimals.getInt( 10000 );
 		
 		for( int i = 1; i < 5; i++ )
 		{
-			PersistentArrayList<DataTypeBigDecimal> entry = new PersistentArrayList<DataTypeBigDecimal>();
+			PersistentArrayList<Object> entry = new PersistentArrayList<Object>();
 			
 			BigDecimal bid = new BigDecimal( inQuote ).setScale( 4, RoundingMode.HALF_UP );
 			
-			BigDecimal adjust = BigDecimals.getInt( i ).get().divide( pips );
+			BigDecimal adjust = BigDecimals.getInt( i ).divide( pips );
 			
 			if( !inBid )
-				adjust = adjust.multiply(BigDecimals.MINUS_ONE.get());
+				adjust = adjust.multiply(BigDecimals.MINUS_ONE);
 			
 			adjust = adjust.setScale( 4, RoundingMode.HALF_UP );
 			bid = bid.add( adjust );
@@ -168,13 +165,11 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 			BigDecimal amt = new BigDecimal(1000000).multiply( new BigDecimal(i) );
 			amt = amt.setScale( 1, RoundingMode.HALF_UP );
 			
-			entry = entry.add( new DataTypeBigDecimal( bid ) );
-			entry = entry.add( new DataTypeBigDecimal( amt ) );
+			entry = entry.add( bid );
+			entry = entry.add( amt );
 			entry = entry.add( FXDataConstants.getSourceCode( source ) );
 			
-			DataTypeArrayList sideData = new DataTypeArrayList(entry);
-			
-			side = side.add( sideData );
+			side = side.add( entry );
 		}
 		
 		return side;
@@ -205,16 +200,16 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 			public void execute()
 			{
 				putValue( DataConstants.FIELD_TIMESTAMP, inData.getValue( DataConstants.FIELD_TIMESTAMP ) );
-				PersistentArrayList<DataTypeArrayList> bidSide = recalculateLiquiditySide( true );
-				PersistentArrayList<DataTypeArrayList> askSide = recalculateLiquiditySide( false );
+				PersistentArrayList<PersistentArrayList<Object>> bidSide = recalculateLiquiditySide( true );
+				PersistentArrayList<PersistentArrayList<Object>> askSide = recalculateLiquiditySide( false );
 				
 				if( bidSide == null || askSide == null )
 				{
 					dispose();
 					return;
 				}
-				putValue( FXDataConstants.FIELD_BID, new DataTypeArrayList( bidSide ) );
-				putValue( FXDataConstants.FIELD_ASK, new DataTypeArrayList( askSide ) );
+				putValue( FXDataConstants.FIELD_BID, bidSide );
+				putValue( FXDataConstants.FIELD_ASK, askSide );
 				
 				setStatus( Status.OK );
 			}
@@ -226,29 +221,29 @@ public class LiquidityPoolProducer extends STMEntryProducer implements IMarketDa
 	 * @param inBid
 	 * @return
 	 */
-	private final PersistentArrayList<DataTypeArrayList> recalculateLiquiditySide( boolean inBid )
+	private final PersistentArrayList<PersistentArrayList<Object>> recalculateLiquiditySide( boolean inBid )
 	{
-		Set<DataTypeArrayList> entries = new TreeSet<DataTypeArrayList>( inBid ? priceEntryComparatorBid : priceEntryComparatorAsk ); 
+		Set<PersistentArrayList<Object>> entries = new TreeSet<PersistentArrayList<Object>>( inBid ? priceEntryComparatorBid : priceEntryComparatorAsk ); 
 		
 		String field = inBid ? FXDataConstants.FIELD_BID : FXDataConstants.FIELD_ASK;
 		
 		for( ISTMEntryKey key : keys )
 		{
 			ISTMEntry liquidity = stm.getData( key.getKey() );
-			DataTypeArrayList list = (DataTypeArrayList)liquidity.getValue( field );
+			PersistentArrayList<Object> list = (PersistentArrayList<Object>)liquidity.getValue( field );
 			
 			if( list == null )
 				continue;
 			
-			for( int i =  0; i < list.get().size(); i++ )
+			for( int i =  0; i < list.size(); i++ )
 			{
-				DataTypeArrayList entry = (DataTypeArrayList)list.get().get( i );
+				PersistentArrayList<Object> entry = (PersistentArrayList<Object>)list.get( i );
 				entries.add( entry );
 			}
 		}
 		
-		PersistentArrayList<DataTypeArrayList> side = new PersistentArrayList<DataTypeArrayList>();
-		for( DataTypeArrayList entry : entries )
+		PersistentArrayList<PersistentArrayList<Object>> side = new PersistentArrayList<PersistentArrayList<Object>>();
+		for( PersistentArrayList<Object> entry : entries )
 		{
 			side = side.add( entry );
 		}

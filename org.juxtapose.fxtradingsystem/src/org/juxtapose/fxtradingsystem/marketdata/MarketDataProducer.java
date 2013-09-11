@@ -1,16 +1,11 @@
 package org.juxtapose.fxtradingsystem.marketdata;
 
-import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.producer.STMEntryProducer;
 import org.juxtapose.streamline.producer.executor.Executable;
-import org.juxtapose.streamline.producer.executor.IExecutor;
-import org.juxtapose.streamline.producer.executor.StickyRunnable;
 import org.juxtapose.streamline.stm.DataTransaction;
 import org.juxtapose.streamline.stm.ISTM;
-import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataTypeBigDecimal;
-import org.juxtapose.streamline.util.data.DataTypeLong;
 
 /**
  * @author Pontus Jörgne
@@ -75,12 +70,12 @@ public class MarketDataProducer extends STMEntryProducer implements IMarketDataS
 			@Override
 			public void execute()
 			{
-				putValue( MarketDataConstants.FIELD_BID, new DataTypeBigDecimal( inQuote.bid ));
-				putValue( MarketDataConstants.FIELD_ASK, new DataTypeBigDecimal( inQuote.ask ));
+				putValue( MarketDataConstants.FIELD_BID, inQuote.bid );
+				putValue( MarketDataConstants.FIELD_ASK, inQuote.ask );
 				
 				Long timeStamp = inQuote.timestamp;
 				
-				putValue( MarketDataConstants.FIELD_TIMESTAMP, new DataTypeLong( timeStamp ));
+				putValue( MarketDataConstants.FIELD_TIMESTAMP, timeStamp);
 				
 				if( getStatus() != Status.OK )
 					setStatus( Status.OK );

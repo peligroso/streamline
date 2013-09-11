@@ -9,8 +9,6 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.data.DataType;
-import org.juxtapose.streamline.util.data.DataTypeStatus;
 
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
@@ -29,7 +27,7 @@ public class STMEntryFactory implements ISTMEntryFactory
 	 */
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer )
 	{
-		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create();
+		IPersistentMap<String, Object> dataMap = PersistentHashMap.create();
 		PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
 		PersistentArrayList<ISTMEntrySubscriber> highPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
 		
@@ -41,8 +39,8 @@ public class STMEntryFactory implements ISTMEntryFactory
 	 */
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber )
 	{
-		IPersistentMap<String, DataType<?>> dataMap = PersistentHashMap.create( );
-		dataMap = dataMap.assoc( DataConstants.FIELD_STATUS, new DataTypeStatus( inStatus ) );
+		IPersistentMap<String, Object> dataMap = PersistentHashMap.create( );
+		dataMap = dataMap.assoc( DataConstants.FIELD_STATUS, inStatus );
 		
 		PersistentArrayList<ISTMEntrySubscriber> emptySubscribers = new PersistentArrayList<ISTMEntrySubscriber>();
 		
