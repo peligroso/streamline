@@ -2,17 +2,11 @@ package org.juxtapose.streamline.util.data;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 
-public class DataTypeLazyRef
+public class DataTypeLazyRef extends DataType<ISTMEntryKey>
 {
-	final ISTMEntryKey key;
-	
 	public DataTypeLazyRef(ISTMEntryKey inValue)
 	{
-		key = inValue;
+		super( inValue );
 	}
 	
-	public ISTMEntryKey get()
-	{
-		return key;
-	}
 }

@@ -1,5 +1,6 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -45,6 +46,12 @@ public class DataEditingSupport extends EditingSupport
 	@Override
 	protected void setValue(Object element, Object value) 
 	{
+		if( keyField && (value == null || "".equals( value.toString() ) ) )
+		{
+			MessageDialog.openError( getViewer().getControl().getShell(), "Key field error", "Key field must contain a value" );
+			return;
+		}	
+		
 		IPersistentMap<String, Object> map = ((ViewDataObject)element).getData();
 		map = map.assoc( key, getDataType( value ) );
 		((ViewDataObject)element).updateData(map, key);

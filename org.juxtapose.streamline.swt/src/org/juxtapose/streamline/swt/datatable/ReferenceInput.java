@@ -1,9 +1,11 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import org.juxtapose.streamline.util.IInputListener;
+import org.juxtapose.streamline.util.ContainerSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryListener;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
@@ -12,7 +14,7 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 {
 	ContainerSubscriber subscriber;
 	
-	ArrayList<String> values = new ArrayList<String>();
+	ArrayList<Map.Entry<String, DataTypeLazyRef>> values = new ArrayList<Map.Entry<String, DataTypeLazyRef>>();
 	
 	ArrayList<IInputListener> inputListeners = new ArrayList<IInputListener>(); 
 	
@@ -26,7 +28,13 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 	@Override
 	public String[] getInputObjects()
 	{
-		return values.toArray( new String[]{} );
+		String[] strings = new String[values.size()];
+		
+		for( int i = 0; i < strings.length; i++ )
+		{
+			strings[i] = values.get( i ).getKey().toString();
+		}
+		return strings;
 	}
 
 
@@ -38,13 +46,14 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 			Object value = inEntry.getValue( updatedValue );
 			if( value instanceof DataTypeLazyRef )
 			{
-				ISTMEntryKey key = ((DataTypeLazyRef)value).get();
-				String keyVal = key.getSingleValue();
+				DataTypeLazyRef ref = (DataTypeLazyRef)value;
+				String keyString = ref.get().getSymbolicName();
 				
-				if( !values.contains( keyVal ) )
+				Map.Entry<String, DataTypeLazyRef> entry = new AbstractMap.SimpleEntry<String, DataTypeLazyRef>(keyString, ref);
+				
+				if( !values.contains( entry ) )
 				{
-					values.add( keyVal );
-					System.out.println("Got me a reference value "+keyVal );
+					values.add( entry );
 					updateListeners();
 				}
 			}
@@ -71,5 +80,16 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 		{
 			listener.inputChanged();
 		}
+	}
+	
+	public DataTypeLazyRef getReference( String inKey )
+	{
+		for( Map.Entry<String, DataTypeLazyRef> entry : values.toArray( new Map.Entry[]{} ) )
+		{
+			if( entry.getKey().equals( inKey ) )
+				return entry.getValue();
+		}
+		
+		return null;
 	}
 }

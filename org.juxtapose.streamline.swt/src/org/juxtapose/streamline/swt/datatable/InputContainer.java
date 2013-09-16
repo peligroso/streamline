@@ -1,6 +1,5 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
-import org.juxtapose.streamline.util.IInputListener;
 
 public interface InputContainer
 {

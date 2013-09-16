@@ -58,6 +58,9 @@ public class STMEntryKey implements ISTMEntryKey
 		return key.toString();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getKey()
+	 */
 	public String getKey()
 	{
 		return key;
@@ -68,11 +71,17 @@ public class STMEntryKey implements ISTMEntryKey
 	 * @param inKey
 	 * @return
 	 */
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getValue(java.lang.String)
+	 */
 	public String getValue( String inKey )
 	{
 		return keyMap.get( inKey );
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getKeys()
+	 */
 	public Set<String> getKeys()
 	{
 		return keyMap.keySet();
@@ -101,19 +110,45 @@ public class STMEntryKey implements ISTMEntryKey
 		return key.hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getService()
+	 */
 	@Override
 	public String getService()
 	{
 		return producerServiceKey;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getType()
+	 */
 	public String getType()
 	{
 		return type;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.producer.ISTMEntryKey#getSingleValue()
+	 */
 	public String getSingleValue()
 	{
 		return singleValue;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getSymbolicName()
+	{
+		if( singleValue != null )
+			return singleValue;
+		
+		StringBuilder sb = new StringBuilder();
+		for( String val : keyMap.values() )
+		{
+			sb.append( val );
+		}
+		
+		return sb.toString();
 	}
 }

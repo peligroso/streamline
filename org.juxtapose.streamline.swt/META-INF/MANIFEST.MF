@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Swt
+Bundle-SymbolicName: org.juxtapose.streamline.swt
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.juxtapose.streamline.swt.dataeditor,
+ org.juxtapose.streamline.swt.datatable,
+ org.juxtapose.streamline.swt.spl
+Require-Bundle: org.eclipse.ui;bundle-version="3.7.0",
+ org.juxtapose.streamline;bundle-version="1.0.0"

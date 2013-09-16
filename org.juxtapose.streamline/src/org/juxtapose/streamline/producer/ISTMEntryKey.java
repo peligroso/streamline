@@ -11,4 +11,5 @@ public interface ISTMEntryKey
 	public String getSingleValue();
 	public Set<String> getKeys();
 	public String toString();
+	public String getSymbolicName();
 }

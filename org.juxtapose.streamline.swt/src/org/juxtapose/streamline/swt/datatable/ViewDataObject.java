@@ -1,16 +1,16 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
-import static org.juxtapose.fxtradingclient.ViewDataObjectState.CREATED;
-import static org.juxtapose.fxtradingclient.ViewDataObjectState.MIRROR;
-import static org.juxtapose.fxtradingclient.ViewDataObjectState.UPDATED;
-import static org.juxtapose.fxtradingclient.tools.ClientViewMethods.createEntryKey;
+import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.CREATED;
+import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.MIRROR;
+import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.UPDATED;
+import static org.juxtapose.streamline.swt.spl.ClientViewMethods.createEntryKey;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.PersistentArrayList;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -45,7 +45,7 @@ public class ViewDataObject
 		service = inService;
 		type = inType;
 		
-		PersistentArrayList<Object> listType = (PersistentArrayList<Object>)inMetaData.valAt( DataConstants.FIELD_KEYS );
+		PersistentArrayList<Object> listType = (PersistentArrayList<Object>)inMetaData.valAt( FIELD_KEYS );
 		if( listType != null )
 			keyList = (PersistentArrayList<Object>) listType;
 		
@@ -63,7 +63,7 @@ public class ViewDataObject
 		service = inService;
 		type = inType;
 		
-		PersistentArrayList<Object> listType = (PersistentArrayList<Object>)inMetaData.valAt( DataConstants.FIELD_KEYS );
+		PersistentArrayList<Object> listType = (PersistentArrayList<Object>)inMetaData.valAt( FIELD_KEYS );
 		if( listType != null )
 			keyList = (PersistentArrayList<Object>) listType;
 		
@@ -76,7 +76,7 @@ public class ViewDataObject
 	public void updateData( IPersistentMap<String, Object> inData, String inKey )
 	{
 		data = inData;
-		entryKey = createEntryKey( service, type, keyList, inData );
+		entryKey = createEntryKey( service, type, keyList, data );
 		
 		state = state == MIRROR ? UPDATED : state;
 		updatedKeys.add( inKey );
@@ -94,7 +94,7 @@ public class ViewDataObject
 		{
 			Entry<String, Object> entry = iter.next();
 			
-			if( !DataConstants.FIELD_KEYS.equals( entry.getKey() ))
+			if( !FIELD_KEYS.equals( entry.getKey() ))
 			{
 				if( data.valAt( entry.getKey() ) == null )
 				{

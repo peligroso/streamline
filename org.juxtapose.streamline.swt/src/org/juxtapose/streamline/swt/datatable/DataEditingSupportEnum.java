@@ -1,11 +1,10 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Display;
-import org.juxtapose.streamline.util.IInputListener;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -16,17 +15,20 @@ import com.trifork.clj_ds.IPersistentMap;
  */
 public class DataEditingSupportEnum extends DataEditingSupport
 {
-	String[] items;
+	protected String[] items;
 	
-	ComboBoxCellEditor cellEditor;
+	private ComboBoxCellEditor cellEditor;
 	
-	Display display;
+	private Display display;
+	
+	protected InputContainer inputContainer;
 	
 	public DataEditingSupportEnum( ColumnViewer viewer, String inKey, final InputContainer inInputContainer, Display inDisplay, boolean inKeyField ) 
 	{
 		super( viewer, inKey, inKeyField );
 		items = inInputContainer.getInputObjects();
 		display = inDisplay;
+		inputContainer = inInputContainer;
 		
 		inInputContainer.addInputListener( new IInputListener()
 		{

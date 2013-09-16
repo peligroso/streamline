@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +8,6 @@ import java.util.Set;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.tools.STMUtil;
-import org.juxtapose.streamline.util.ISTMContainerListener;
-import org.juxtapose.streamline.util.ISTMEntry;
-import org.juxtapose.streamline.util.ISTMEntryListener;
-import org.juxtapose.streamline.util.STMEntrySubscriber;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeNull;
 
@@ -34,7 +30,7 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 	{
 		if( inValue instanceof DataTypeNull )
 		{
-			System.out.println("Should delete data ");
+			
 		}
 		else if( inValue instanceof DataTypeLazyRef )
 		{
@@ -140,7 +136,6 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 	 */
 	private void updateListeners( ISTMEntryKey inKey, ISTMEntry inEntry )
 	{
-		System.out.println("updatign reference listenrs");
 		for( ISTMContainerListener listener : containerListeners )
 		{
 			listener.onContainerRefAdded( inKey, inEntry );

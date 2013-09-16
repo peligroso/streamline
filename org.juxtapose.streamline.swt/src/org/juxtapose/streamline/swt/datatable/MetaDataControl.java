@@ -1,14 +1,15 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import org.juxtapose.fxtradingsystem.constants.FXProducerServiceConstants;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.swt.dataeditor.GenericEditor;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.STMUtil;
+import org.juxtapose.streamline.util.ContainerSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.STMEntrySubscriber;
@@ -24,18 +25,22 @@ public class MetaDataControl extends STMEntrySubscriber
 {
 	boolean metaDataInitiated = false;
 	
-	final EditView editView;
+	final GenericEditor editor;
 	
 	HashMap<String, ContainerSubscriber> typeToContainer = new HashMap<String, ContainerSubscriber>();
 	HashMap<String, InputContainer> typeToInput = new HashMap<String, InputContainer>();
 	
+	String serviceKey;
+	
 	/**
 	 * @param inView
 	 */
-	public MetaDataControl( EditView inView )
+	public MetaDataControl( GenericEditor inView, String inServiceKey )
 	{
-		editView = inView;
+		editor = inView;
+		serviceKey = inServiceKey;
 	}
+	
 	
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.util.STMEntrySubscriber#updateData(org.juxtapose.streamline.producer.ISTMEntryKey, org.juxtapose.streamline.util.ISTMEntry, boolean)
@@ -77,14 +82,14 @@ public class MetaDataControl extends STMEntrySubscriber
 			{
 				//Container value
 				final String fieldKey = entry.getKey();
-				ISTMEntryKey containerEntryKey = STMUtil.createEntryKey( FXProducerServiceConstants.CONFIG, DataConstants.STATE_TYPE_CONTAINER, fieldKey );
+				ISTMEntryKey containerEntryKey = STMUtil.createEntryKey( serviceKey, DataConstants.STATE_TYPE_CONTAINER, fieldKey );
 				ContainerSubscriber containerSub = new ContainerSubscriber();
 				
 				ReferenceInput refInput = new ReferenceInput( containerSub );
 				containerSub.initialize( stm, containerEntryKey );
 				
 				typeToContainer.put( fieldKey, containerSub );
-				
+		
 				typeToInput.put( entry.getKey(), refInput );
 				
 				viewsToBeCreated.put( entry.getKey(), ((IPersistentMap<String, Object>)value) );
@@ -107,30 +112,8 @@ public class MetaDataControl extends STMEntrySubscriber
 		{
 			String fieldKey = viewInstruction.getKey();
 			IPersistentMap<String, Object> value = viewInstruction.getValue();
-			editView.addViewer( fieldKey, value, this );
+			editor.addViewer( fieldKey, value, this );
 		}
-//		
-//				viewer = new DataViewer( parent, SWT.NONE, inData.getDataMap(), "CCY" );
-//				parent.layout();
-//				parent.update();
-//			
-//	}	
-//				
-////				IPersistentMap<String, Object> testPrice = PersistentHashMap.EMPTY;
-////				testPrice = testPrice.assoc( FXDataConstants.FIELD_DECIMALS, new DataTypeLong(4l) );
-////				testPrice = testPrice.assoc( FXDataConstants.FIELD_PIP, new DataTypeLong(10000l) );
-////				testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY1, new DataTypeString("EUR") );
-////				testPrice = testPrice.assoc( FXDataConstants.FIELD_CCY2, new DataTypeString("SEK") );
-////				viewer.setInput( new ViewDataObject[]{ new ViewDataObject(testPrice) } );
-//				
-//				IPersistentMap<String, Object> testCcy = PersistentHashMap.EMPTY;
-//				testCcy = testCcy.assoc( "NAME", new DataTypeString("European currency") );
-//				testCcy = testCcy.assoc( "DC", new DataTypeString("30_360_Accual") );
-//				testCcy = testCcy.assoc( "ISO", new DataTypeString("EUR") );
-//				viewer.setInput( new ViewDataObject[]{ new ViewDataObject(testCcy) } );
-//			}
-//		});
-		
 	}
 	
 	public InputContainer getInputContainer( String inType )

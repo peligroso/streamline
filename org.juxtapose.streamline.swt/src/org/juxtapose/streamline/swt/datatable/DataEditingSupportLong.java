@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
 import org.eclipse.jface.viewers.ColumnViewer;
 

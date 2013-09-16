@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingclient;
+package org.juxtapose.streamline.swt.datatable;
 
 public enum ViewDataObjectState
 {

@@ -1,4 +1,4 @@
-package org.juxtapose.streamline.util;
+package org.juxtapose.streamline.swt.datatable;
 
 public interface IInputListener
 {

@@ -7,6 +7,7 @@ Bundle-Activator: org.juxtapose.fxtradingclient.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.juxtapose.streamline;bundle-version="1.0.0",
- org.juxtapose.fxtradingsystem.common;bundle-version="1.0.0"
+ org.juxtapose.fxtradingsystem.common;bundle-version="1.0.0",
+ org.juxtapose.streamline.swt;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

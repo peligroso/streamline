@@ -23,6 +23,7 @@ import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 import org.juxtapose.streamline.util.producerservices.DataRefContainerProducer;
@@ -136,12 +137,12 @@ public class ConfigService extends DataProducerService implements IConfigService
 		}
 		if( "PRC".equals( inVariable ) && inType == REQUEST_TYPE_CREATE )
 		{
-			String ccy1 = (String)inData.valAt( FXDataConstants.FIELD_CCY1 );
-			String ccy2 = (String)inData.valAt( FXDataConstants.FIELD_CCY2 );
+			DataTypeLazyRef ccy1 = (DataTypeLazyRef)inData.valAt( FXDataConstants.FIELD_CCY1 );
+			DataTypeLazyRef ccy2 = (DataTypeLazyRef)inData.valAt( FXDataConstants.FIELD_CCY2 );
 			
 			ISTMEntryKey key = STMUtil.createEntryKey( getServiceId(), "PRC", 
 						new String[]{FXDataConstants.FIELD_CCY1, FXDataConstants.FIELD_CCY2},
-						new String[]{ccy1, ccy2});
+						new String[]{ccy1.get().getSymbolicName(), ccy2.get().getSymbolicName()});
 			
 			/**check for errors**/
 			

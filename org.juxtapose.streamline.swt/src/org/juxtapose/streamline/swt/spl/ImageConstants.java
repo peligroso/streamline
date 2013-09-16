@@ -1,4 +1,4 @@
-package org.juxtapose.fxtradingclient.tools;
+package org.juxtapose.streamline.swt.spl;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;

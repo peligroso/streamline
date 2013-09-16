@@ -9,21 +9,19 @@ import org.juxtapose.streamline.util.ISTMEntry;
 // * Dec 30, 2011
 // * Copyright (c) Pontus Jörgne. All rights reserved
 // */
-public class DataTypeRef
+public class DataTypeRef extends DataType<ISTMEntryKey>
 {
-	final ISTMEntryKey key;
-
 	final ISTMEntry referenceData;
 	
 	public DataTypeRef(ISTMEntryKey inValue)
 	{
-		key = inValue;
+		super( inValue );
 		referenceData = null;
 	}
 	
 	public DataTypeRef(ISTMEntryKey inValue, ISTMEntry inData )
 	{
-		key = inValue;
+		super( inValue );
 		referenceData = inData;
 	}
 	
@@ -32,8 +30,4 @@ public class DataTypeRef
 		return referenceData;
 	}
 	
-	public ISTMEntryKey get()
-	{
-		return key;
-	}
 }
