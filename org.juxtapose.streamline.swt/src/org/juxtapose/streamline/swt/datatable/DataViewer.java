@@ -157,14 +157,29 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			i++;
 		}
 
-		TableViewerColumn col = createTableViewerColumn("", 100, i);
+		TableViewerColumn col = createTableViewerColumn("", 250, i);
 
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage( Object inElement )
 			{
-				Image im = ImageConstants.getImage( ImageConstants.TEST );
-				return im;
+				if( inElement instanceof ViewDataObject )
+				{
+					ViewDataObject obj = (ViewDataObject)inElement;
+					String validate = obj.validate();
+					if( validate != null && !("".equals(validate)) )
+						return ImageConstants.getImage( ImageConstants.WARNING );
+					else
+					{
+						ViewDataObjectState state = obj.getState();
+						switch( state )
+						{
+						case MIRROR : return ImageConstants.getImage( ImageConstants.OK );
+						default : return ImageConstants.getImage( ImageConstants.EDITED );
+						}
+					}
+				}
+				return null;
 			}
 
 			public String getText( Object inElement )
@@ -180,6 +195,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			}
 		});
 	}
+	
 
 	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) 
 	{
