@@ -1,5 +1,10 @@
 package org.juxtapose.streamline.swt.datatable;
 
+import static org.juxtapose.streamline.swt.spl.ClientViewMethods.getDataLabel;
+import static org.juxtapose.streamline.swt.spl.ClientViewMethods.getEditingSupport;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
+import static org.juxtapose.streamline.tools.DataConstants.FIELD_STATUS;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,10 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
-import static org.juxtapose.streamline.swt.spl.ClientViewMethods.*;
 import org.juxtapose.streamline.swt.spl.ImageConstants;
-import org.juxtapose.streamline.tools.CollectionMethods;
-import static org.juxtapose.streamline.tools.DataConstants.*;
 import org.juxtapose.streamline.util.ContainerSubscriber;
 import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
@@ -45,12 +47,12 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	IPersistentMap<String, Object> metaData;
 
 	Set<ViewDataObject> viewObjects = new HashSet<ViewDataObject>();
-
+	
 
 	public DataViewer( String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
 	{
 		super( parent, style );
-
+		
 		typeKey = inTypeKey;
 		serviceKey = inServiceKey;
 
@@ -100,7 +102,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 	public void addEntry()
 	{
-		ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, PersistentHashMap.EMPTY, metaData );
+		ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, PersistentHashMap.EMPTY, metaData, this );
 		viewer.add( viewObject );
 
 		viewObjects.add( viewObject );
@@ -111,135 +113,151 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	 * @param viewer
 	 * @param inData
 	 */
-	 private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, Object> inData) 
-	 {
-		 PersistentArrayList<Object> keyList = (PersistentArrayList<Object>)inData.valAt( FIELD_KEYS );
+	private void createColumns(final Composite parent, final TableViewer viewer, IPersistentMap<String, Object> inData) 
+	{
+		PersistentArrayList<Object> keyList = (PersistentArrayList<Object>)inData.valAt( FIELD_KEYS );
 
-		 Iterator<Map.Entry<String, Object>> iter = inData.iterator();
+		Iterator<Map.Entry<String, Object>> iter = inData.iterator();
 
-		 int i = 0;
+		int i = 0;
 
-		 while( iter.hasNext() )
-		 {
-			 Map.Entry<String, Object> entry = iter.next();
+		while( iter.hasNext() )
+		{
+			Map.Entry<String, Object> entry = iter.next();
 
-			 final String key = entry.getKey();
+			final String key = entry.getKey();
 
-			 if( !FIELD_STATUS.equals(key) && !FIELD_KEYS.equals(key) )
-			 {
-				 Object val = entry.getValue();
-				 TableViewerColumn col = createTableViewerColumn(key, 100, i);
+			if( !FIELD_STATUS.equals(key) && !FIELD_KEYS.equals(key) )
+			{
+				Object val = entry.getValue();
+				TableViewerColumn col = createTableViewerColumn(key, 100, i);
 
-				 col.setLabelProvider(new ColumnLabelProvider() 
-				 {
-					 @Override
-					 public String getText(Object element) 
-					 {
-						 ViewDataObject viewObj = (ViewDataObject)element;
-						 IPersistentMap<String, Object> map = viewObj.getData();
-						 Object data = map.valAt( key );
+				col.setLabelProvider(new ColumnLabelProvider() 
+				{
+					@Override
+					public String getText(Object element) 
+					{
+						ViewDataObject viewObj = (ViewDataObject)element;
+						IPersistentMap<String, Object> map = viewObj.getData();
+						Object data = map.valAt( key );
 
-						 if( data == null )
-							 return "";
-						 
-						 return getDataLabel( data );
-					 }
-				 });
+						if( data == null )
+							return "";
 
-				 InputContainer input = metaDataControl.getInputContainer( val.toString() );
-				 EditingSupport editSupport = getEditingSupport( val, input, keyList, key, parent.getDisplay(), viewer );
-				 
-				 if( editSupport != null )
-					 col.setEditingSupport( editSupport );
-			 }
-			 i++;
-		 }
+						return getDataLabel( data );
+					}
+				});
 
-		 TableViewerColumn col = createTableViewerColumn("", 100, i);
+				InputContainer input = metaDataControl.getInputContainer( val.toString() );
+				EditingSupport editSupport = getEditingSupport( val, input, keyList, key, parent.getDisplay(), viewer );
 
-		 col.setLabelProvider(new ColumnLabelProvider() {
-			 @Override
-			 public Image getImage( Object inElement )
-			 {
-				 Image im = ImageConstants.getImage( ImageConstants.TEST );
-				 return im;
-			 }
+				if( editSupport != null )
+					col.setEditingSupport( editSupport );
+			}
+			i++;
+		}
 
-			 public String getText( Object inElement )
-			 {
-				 if( inElement instanceof ViewDataObject )
-				 {
-					 ViewDataObject obj = (ViewDataObject)inElement;
-					 String validate = obj.validate();
-					 if( validate != null )
-						 return validate;
-				 }
-				 return "";
-			 }
-		 });
-	 }
+		TableViewerColumn col = createTableViewerColumn("", 100, i);
 
-	 private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) 
-	 {
-		 final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-		 final TableColumn column = viewerColumn.getColumn();
-		 column.setText(title);
-		 column.setWidth(bound);
-		 column.setResizable(true);
-		 column.setMoveable(true);
-		 return viewerColumn;
-	 }
+		col.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public Image getImage( Object inElement )
+			{
+				Image im = ImageConstants.getImage( ImageConstants.TEST );
+				return im;
+			}
 
+			public String getText( Object inElement )
+			{
+				if( inElement instanceof ViewDataObject )
+				{
+					ViewDataObject obj = (ViewDataObject)inElement;
+					String validate = obj.validate();
+					if( validate != null )
+						return validate;
+				}
+				return "";
+			}
+		});
+	}
 
-
-	 @Override
-	 public void onContainerRefAdded( final ISTMEntryKey inKey, final ISTMEntry inEntry )
-	 {
-		 getDisplay().asyncExec( new Runnable(){
-
-			 @Override
-			 public void run()
-			 {
-				 ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, inEntry.getDataMap(), metaData, inKey );
-
-				 for( ViewDataObject existingObject : viewObjects )
-				 {
-					 if( existingObject.getKey() != null && inKey.equals( existingObject.getKey() ) )
-					 {
-						 existingObject.setData( inEntry.getDataMap() );
-						 viewer.update( existingObject, new String[]{"NAME"} );
-						 return;
-					 }
-				 }
-				 viewer.add( viewObject );
-				 viewObjects.add( viewObject );
-			 }
-
-		 });
-
-	 }
-
-
-	 public String getType()
-	 {
-		 return typeKey;
-	 }
-
-	 @Override
-	 public void onContainerRefUpdated( ISTMEntryKey inKey, ISTMEntry inEntry )
-	 {
-		 // TODO Auto-generated method stub
-
-	 }
+	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) 
+	{
+		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		final TableColumn column = viewerColumn.getColumn();
+		column.setText(title);
+		column.setWidth(bound);
+		column.setResizable(true);
+		column.setMoveable(true);
+		return viewerColumn;
+	}
 
 
 
-	 @Override
-	 public void onContainerRefRemoved( ISTMEntryKey inKey, ISTMEntry inEntry )
-	 {
-		 // TODO Auto-generated method stub
+	@Override
+	public void onContainerRefAdded( final ISTMEntryKey inKey, final ISTMEntry inEntry )
+	{
+		getDisplay().asyncExec( new Runnable(){
 
-	 }
+			@Override
+			public void run()
+			{
+				ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, inEntry.getDataMap(), metaData, inKey, DataViewer.this );
+
+				for( ViewDataObject existingObject : viewObjects )
+				{
+					if( existingObject.getKey() != null && inKey.equals( existingObject.getKey() ) )
+					{
+						existingObject.setData( inEntry.getDataMap() );
+						viewer.update( existingObject, new String[]{"NAME"} );
+						return;
+					}
+				}
+				viewer.add( viewObject );
+				viewObjects.add( viewObject );
+			}
+
+		});
+
+	}
+
+
+	public String getType()
+	{
+		return typeKey;
+	}
+
+	/**
+	 * @param inKey
+	 * @return
+	 */
+	protected boolean validateKey( ISTMEntryKey inKey )
+	{
+		for( ViewDataObject viewObj : viewObjects )
+		{
+			if( viewObj.getKey() != null && viewObj.getKey().equals( inKey ))
+				return false;	
+		}
+
+		return true;
+	}	
+
+
+	@Override
+	public void onContainerRefUpdated( ISTMEntryKey inKey, ISTMEntry inEntry )
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+
+
+	@Override
+	public void onContainerRefRemoved( ISTMEntryKey inKey, ISTMEntry inEntry )
+	{
+		// TODO Auto-generated method stub
+
+	}
 
 
 

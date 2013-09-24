@@ -10,7 +10,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.swt.dataeditor.GenericEditor;
 import org.juxtapose.streamline.util.PersistentArrayList;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -23,21 +25,23 @@ import com.trifork.clj_ds.PersistentHashMap;
  */
 public class ViewDataObject 
 {
-	ViewDataObjectState state;
+	private ViewDataObjectState state;
 	
-	IPersistentMap<String, Object> metaData;
-	IPersistentMap<String, Object> data;
+	private final IPersistentMap<String, Object> metaData;
+	private IPersistentMap<String, Object> data;
 	
-	String service;
-	String type;
+	private final String service;
+	private final String type;
 	
-	PersistentArrayList<Object> keyList;
+	private PersistentArrayList<Object> keyList;
 	
-	ISTMEntryKey entryKey;
+	private ISTMEntryKey entryKey;
 	
-	HashSet<String> updatedKeys = new HashSet<String>();
+	private HashSet<String> updatedKeys = new HashSet<String>();
 	
-	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData )
+	private final DataViewer parent;
+	
+	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, DataViewer inParent )
 	{
 		data = inData;
 		metaData = inMetaData;
@@ -53,9 +57,11 @@ public class ViewDataObject
 		
 		state = CREATED;
 		updatedKeys.clear();
+		
+		parent = inParent;
 	}
 	
-	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, ISTMEntryKey inEntryKey )
+	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, ISTMEntryKey inEntryKey, DataViewer inParent )
 	{
 		data = inData;
 		metaData = inMetaData;
@@ -71,12 +77,27 @@ public class ViewDataObject
 		
 		state = MIRROR;
 		updatedKeys.clear();
+		
+		parent = inParent;
 	}
 	
 	public void updateData( IPersistentMap<String, Object> inData, String inKey )
 	{
+		if( entryKey == null )
+		{
+			ISTMEntryKey newKey = createEntryKey( service, type, keyList, inData );
+			if( newKey != null )
+			{
+				if( !parent.validateKey( newKey ) )
+				{
+					MessageDialog.openError( parent.getShell(), "Illegal key", "En entry with this key alrweady exists" );
+					return;
+				}
+			}
+			entryKey = newKey;
+		}
+		
 		data = inData;
-		entryKey = createEntryKey( service, type, keyList, data );
 		
 		state = state == MIRROR ? UPDATED : state;
 		updatedKeys.add( inKey );

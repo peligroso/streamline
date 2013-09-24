@@ -43,7 +43,14 @@ public class ClientViewMethods
 				return null;
 			
 			fields[i] = field;
-			vals[i] = val.toString();
+			if( val instanceof DataTypeLazyRef )
+			{
+				vals[i] = ((DataTypeLazyRef)val).get().getSymbolicName();
+			}
+			else
+			{
+				vals[i] = val.toString();
+			}
 		}
 		
 		if( vals.length == 1 )
