@@ -17,6 +17,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataKey;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.DataMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.HashMapEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.LongEntry;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.NullEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.ReferenceEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringEntry;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
@@ -25,6 +26,7 @@ import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.util.PersistentArrayList;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
+import org.juxtapose.streamline.util.data.DataTypeNull;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.google.protobuf.ByteString;
@@ -212,6 +214,17 @@ public class PostMarshaller
 				ISTMEntryKey entryKey = parseKey( key );
 				
 				inParseObject.update( field, lazy ? new DataTypeLazyRef( entryKey ) : new DataTypeRef( entryKey ) );
+			}
+		}
+		
+		List<NullEntry> nullEntries = inDataMap.getNullEntriesList();
+		
+		if( nullEntries != null && !nullEntries.isEmpty() )
+		{
+			for( NullEntry nullEntry : nullEntries )
+			{
+				String field = nullEntry.getField();
+				inParseObject.update( field, new DataTypeNull() );
 			}
 		}
 	}

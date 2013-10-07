@@ -1,13 +1,6 @@
 package org.juxtapose.fxtradingsystem.config;
 
-import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
-import static org.juxtapose.streamline.tools.DataConstants.FIELD_QUERY_KEY;
-import static org.juxtapose.streamline.tools.DataConstants.FIELD_STATUS;
-import static org.juxtapose.streamline.tools.DataConstants.REQUEST_TYPE_CREATE;
-import static org.juxtapose.streamline.tools.DataConstants.REQUEST_TYPE_UPDATE;
-import static org.juxtapose.streamline.tools.DataConstants.RESPONSE_TYPE_ERROR;
-import static org.juxtapose.streamline.tools.DataConstants.STATE_TYPE_CONTAINER;
-import static org.juxtapose.streamline.tools.DataConstants.STATE_TYPE_META;
+import static org.juxtapose.streamline.tools.DataConstants.*;
 import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_MISSING_FIELDS;
 import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
 
@@ -129,6 +122,22 @@ public class ConfigService extends DataProducerService implements IConfigService
 			{
 				IPersistentMap<String, Object> data = inData.without( FIELD_KEYS );
 				ccyContainer.updateEntry( ref.get(), data );
+			}
+			catch( Exception e )
+			{
+				stm.logError( e.getMessage(), e );
+			}
+		}
+		else if( "CCY".equals( inVariable ) && inType == REQUEST_TYPE_DELETE )
+		{
+			DataTypeRef ref = (DataTypeRef)inData.valAt( FIELD_KEYS );
+			
+			if( ref == null )
+				inRequestor.reply( inTag, RESPONSE_TYPE_ERROR, REQUEST_MISSING_FIELDS, null );
+			
+			try
+			{
+				ccyContainer.removeEntry( ref.get() );
 			}
 			catch( Exception e )
 			{

@@ -39,6 +39,7 @@ import com.trifork.clj_ds.IPersistentMap;
 public class GenericEditor extends Composite implements ISTMEntryRequestSubscriber, ISTMRequestor
 {
 	public static String SYNCH = "Synch";
+	public static String DELETE = "Delete";
 	
 	private HashMap<String, DataViewer> typeToViewer = new HashMap<String, DataViewer>();
 	private Composite parent;
@@ -149,6 +150,23 @@ public class GenericEditor extends Composite implements ISTMEntryRequestSubscrib
 		});
 		
 		newButt.setText( "New Entry" );
+		
+		Button delButt = new Button(parent, SWT.PUSH);
+		delButt.addSelectionListener( new SelectionAdapter(){
+			public void widgetSelected( SelectionEvent sev )
+			{
+				TabItem[] items = tabFolder.getSelection();
+				
+				if( items != null && items.length != 0 )
+				{
+					DataViewer viewer = (DataViewer)items[0].getControl();
+					viewer.deleteEntry();
+				}
+//				
+			}
+		});
+		
+		delButt.setText( "Delete Entry" );
 	}
 	
 	private void uploadRecord()
@@ -178,6 +196,12 @@ public class GenericEditor extends Composite implements ISTMEntryRequestSubscrib
 				IPersistentMap<String, Object> data = obj.getUpdateData();
 				data = data.assoc( DataConstants.FIELD_KEYS, new DataTypeRef( obj.getKey() ) );
 				stm.request( serviceKey, 1, DataConstants.REQUEST_TYPE_UPDATE, this, viewer.getType(), data );
+			}
+			else if( obj.getState() == ViewDataObjectState.DELETED )
+			{
+				IPersistentMap<String, Object> data = obj.getUpdateData();
+				data = data.assoc( DataConstants.FIELD_KEYS, new DataTypeRef( obj.getKey() ) );
+				stm.request( serviceKey, 1, DataConstants.REQUEST_TYPE_DELETE, this, viewer.getType(), data );
 			}
 		}
 	}

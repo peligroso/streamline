@@ -11,6 +11,7 @@ public class ImageConstants
 	public static final String WARNING = "warning";
 	public static final String OK = "accept";
 	public static final String EDITED = "livejournal";
+	public static final String DELETE = "delete";
 	
 	private static ImageRegistry imageRegistry = new ImageRegistry();
 	
@@ -24,6 +25,9 @@ public class ImageConstants
 		
 		ImageDescriptor id3 = ImageDescriptor.createFromFile(ImageConstants.class, ICON_PATH + EDITED+".png");
 		imageRegistry.put(EDITED, id3);
+		
+		ImageDescriptor id4 = ImageDescriptor.createFromFile(ImageConstants.class, ICON_PATH + DELETE+".png");
+		imageRegistry.put(DELETE, id4);
 	}
 	
 	public static Image getImage( String inKey )

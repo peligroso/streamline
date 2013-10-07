@@ -44,7 +44,8 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 				{
 					Map.Entry<String, Object> entry = iterator.next();
 
-					if( entry instanceof DataTypeNull )
+					Object data = entry.getValue();
+					if( data instanceof DataTypeNull )
 					{
 						try
 						{
@@ -55,17 +56,13 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 							stm.logError( e.getMessage(), e );
 						}
 					}
+					else if( data instanceof DataTypeRef )
+					{
+						addReference( entry.getKey(), (DataTypeRef)data );
+					}
 					else
 					{
-						Object data = entry.getValue();
-						if( data instanceof DataTypeRef )
-						{
-							addReference( entry.getKey(), (DataTypeRef)data );
-						}
-						else
-						{
-							putValue( entry.getKey(), data );
-						}
+						putValue( entry.getKey(), data );
 					}
 				}
 			}

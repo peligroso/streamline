@@ -13,6 +13,8 @@ import java.util.Set;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -38,6 +40,8 @@ import com.trifork.clj_ds.PersistentHashMap;
  */
 public class DataViewer extends Composite implements ISTMContainerListener
 {
+	public static String STATUS_FIELD_NAME = "";
+	
 	String typeKey;
 	String serviceKey;
 
@@ -107,6 +111,22 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 		viewObjects.add( viewObject );
 	}
+	
+	public void deleteEntry()
+	{
+		ISelection sel = viewer.getSelection();
+		if( sel != null && !sel.isEmpty() )
+		{
+			Iterator iter = ((IStructuredSelection)sel).iterator();
+			
+			while( iter.hasNext() )
+			{
+				ViewDataObject obj = (ViewDataObject)iter.next();
+				obj.setDeleted();
+				viewer.update( obj, new String[]{STATUS_FIELD_NAME} );
+			}
+		}
+	}
 
 	/**
 	 * @param parent
@@ -175,6 +195,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 						switch( state )
 						{
 						case MIRROR : return ImageConstants.getImage( ImageConstants.OK );
+						case DELETED : return ImageConstants.getImage( ImageConstants.DELETE );
 						default : return ImageConstants.getImage( ImageConstants.EDITED );
 						}
 					}
@@ -225,7 +246,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 					if( existingObject.getKey() != null && inKey.equals( existingObject.getKey() ) )
 					{
 						existingObject.setData( inEntry.getDataMap() );
-						viewer.update( existingObject, new String[]{"NAME"} );
+						viewer.update( existingObject, new String[]{STATUS_FIELD_NAME} );
 						return;
 					}
 				}

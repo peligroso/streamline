@@ -13,6 +13,7 @@ import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.Preconditions;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -169,6 +170,11 @@ public abstract class STMTransaction
 		
 		
 		if( removedData instanceof DataTypeRef )
+		{
+			removedDataReferences.add( inKey );
+			containesReferenceInstructions = true;
+		}
+		if( removedData instanceof DataTypeLazyRef )
 		{
 			removedDataReferences.add( inKey );
 			containesReferenceInstructions = true;

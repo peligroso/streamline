@@ -10,6 +10,7 @@ import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.stm.STMTransaction;
 import org.juxtapose.streamline.util.Status;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
+import org.juxtapose.streamline.util.data.DataTypeNull;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -62,12 +63,20 @@ public class DataRefContainerProducer extends STMEntryProducer
 		});
 	}
 	
+	/**
+	 * @param inKey
+	 * @param inData
+	 */
 	public void addEntry( final ISTMEntryKey inKey, final IPersistentMap<String, Object> inData )
 	{
 		stm.publish( inKey, this, Status.OK, inData, new HashSet<String>() );
 		addReference( inKey );
 	}
 	
+	/**
+	 * @param inKey
+	 * @param inData
+	 */
 	public void updateEntry( final ISTMEntryKey inKey, final IPersistentMap<String, Object> inData )
 	{
 		stm.commit( new STMTransaction( inKey, this, 0, 0, true )
@@ -84,6 +93,30 @@ public class DataRefContainerProducer extends STMEntryProducer
 				}
 			}
 		});
+	}
+	
+	/**
+	 * @param inKey
+	 */
+	protected void removeReference( final ISTMEntryKey... inKey )
+	{
+		stm.commit( new STMTransaction( entryKey, this, 0, 0, false )
+		{
+			@Override
+			public void execute()
+			{
+				for( ISTMEntryKey key : inKey )
+				{
+					putValue( key.toString(), new DataTypeNull() );
+				}
+			}
+		});
+	}
+	
+	public void removeEntry( final ISTMEntryKey inKey )
+	{
+		removeReference( inKey );
+		stm.unsubscribeToData( inKey, this );
 	}
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.producer.STMEntryProducer#stop()

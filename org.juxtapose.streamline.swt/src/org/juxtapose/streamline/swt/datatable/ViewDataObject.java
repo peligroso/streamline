@@ -1,8 +1,6 @@
 package org.juxtapose.streamline.swt.datatable;
 
-import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.CREATED;
-import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.MIRROR;
-import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.UPDATED;
+import static org.juxtapose.streamline.swt.datatable.ViewDataObjectState.*;
 import static org.juxtapose.streamline.swt.spl.ClientViewMethods.createEntryKey;
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
 
@@ -146,6 +144,11 @@ public class ViewDataObject
 	public ViewDataObjectState getState()
 	{
 		return state;
+	}
+	
+	public void setDeleted()
+	{
+		state = DELETED;
 	}
 	
 	public IPersistentMap<String, Object> getUpdateData()
