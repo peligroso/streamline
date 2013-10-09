@@ -144,7 +144,7 @@ public class ConfigService extends DataProducerService implements IConfigService
 				stm.logError( e.getMessage(), e );
 			}
 		}
-		if( "PRC".equals( inVariable ) && inType == REQUEST_TYPE_CREATE )
+		else if( "PRC".equals( inVariable ) && inType == REQUEST_TYPE_CREATE )
 		{
 			DataTypeLazyRef ccy1 = (DataTypeLazyRef)inData.valAt( FXDataConstants.FIELD_CCY1 );
 			DataTypeLazyRef ccy2 = (DataTypeLazyRef)inData.valAt( FXDataConstants.FIELD_CCY2 );
@@ -170,6 +170,22 @@ public class ConfigService extends DataProducerService implements IConfigService
 			{
 				IPersistentMap<String, Object> data = inData.without( FIELD_KEYS );
 				prcContainer.updateEntry( ref.get(), data );
+			}
+			catch( Exception e )
+			{
+				stm.logError( e.getMessage(), e );
+			}
+		}
+		else if( "PRC".equals( inVariable ) && inType == REQUEST_TYPE_DELETE )
+		{
+			DataTypeRef ref = (DataTypeRef)inData.valAt( FIELD_KEYS );
+			
+			if( ref == null )
+				inRequestor.reply( inTag, RESPONSE_TYPE_ERROR, REQUEST_MISSING_FIELDS, null );
+			
+			try
+			{
+				prcContainer.removeEntry( ref.get() );
 			}
 			catch( Exception e )
 			{
