@@ -107,7 +107,14 @@ public class DataRefContainerProducer extends STMEntryProducer
 			{
 				for( ISTMEntryKey key : inKey )
 				{
-					putValue( key.toString(), new DataTypeNull() );
+					try
+					{
+						removeValue( key.toString() );
+					}
+					catch( Exception e)
+					{
+						stm.logError( e.getMessage(), e );
+					}
 				}
 			}
 		});

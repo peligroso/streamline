@@ -28,11 +28,7 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 	
 	private void fieldUpdated( Object inValue )
 	{
-		if( inValue instanceof DataTypeNull )
-		{
-			
-		}
-		else if( inValue instanceof DataTypeLazyRef )
+		if( inValue instanceof DataTypeLazyRef )
 		{
 			DataTypeLazyRef lRef = (DataTypeLazyRef)inValue;
 			if( entryToSubscribers.get( lRef.get().toString() ) != null )
@@ -80,7 +76,20 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 		for( String s : deltaSet )
 		{
 			Object value = data.valAt( s );
-			fieldUpdated( value );
+			if( value == null )
+			{
+				STMEntrySubscriber subscriber = entryToSubscribers.remove( s );
+				if( subscriber != null )
+					subscriber.dispose();
+				
+				ISTMEntryKey entryKey = subscriber.getEntryKey();
+				
+				entryRemoved( entryKey );
+			}
+			else
+			{
+				fieldUpdated( value );
+			}
 		}
 	}
 
@@ -139,6 +148,14 @@ public class ContainerSubscriber extends STMEntrySubscriber implements ISTMEntry
 		for( ISTMContainerListener listener : containerListeners )
 		{
 			listener.onContainerRefAdded( inKey, inEntry );
+		}
+	}
+	
+	private void entryRemoved( ISTMEntryKey inKey )
+	{
+		for( ISTMContainerListener listener : containerListeners )
+		{
+			listener.onContainerRefRemoved( inKey );
 		}
 	}
 	

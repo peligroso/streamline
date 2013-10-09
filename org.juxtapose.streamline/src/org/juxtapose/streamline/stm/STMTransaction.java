@@ -174,11 +174,6 @@ public abstract class STMTransaction
 			removedDataReferences.add( inKey );
 			containesReferenceInstructions = true;
 		}
-		if( removedData instanceof DataTypeLazyRef )
-		{
-			removedDataReferences.add( inKey );
-			containesReferenceInstructions = true;
-		}
 		
 	}
 	

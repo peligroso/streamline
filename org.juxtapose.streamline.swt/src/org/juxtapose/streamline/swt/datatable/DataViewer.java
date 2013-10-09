@@ -5,11 +5,13 @@ import static org.juxtapose.streamline.swt.spl.ClientViewMethods.getEditingSuppo
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_STATUS;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -24,11 +26,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+import org.juxtapose.streamline.swt.dataeditor.GenericEditor;
 import org.juxtapose.streamline.swt.spl.ImageConstants;
 import org.juxtapose.streamline.util.ContainerSubscriber;
 import org.juxtapose.streamline.util.ISTMContainerListener;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
+import org.juxtapose.streamline.util.BucketMap;
 
 import com.trifork.clj_ds.IPersistentMap;
 import com.trifork.clj_ds.PersistentHashMap;
@@ -52,11 +56,23 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 	Set<ViewDataObject> viewObjects = new HashSet<ViewDataObject>();
 	
-
-	public DataViewer( String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
+	BucketMap<String, String> referenceDependencies = new BucketMap<String, String>();
+	
+	GenericEditor editor;
+	
+	/**
+	 * @param inServiceKey
+	 * @param parent
+	 * @param style
+	 * @param inData
+	 * @param inTypeKey
+	 * @param inMetaDataControl
+	 */
+	public DataViewer( GenericEditor inGenEd, String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
 	{
 		super( parent, style );
 		
+		editor = inGenEd;
 		typeKey = inTypeKey;
 		serviceKey = inServiceKey;
 
@@ -72,8 +88,23 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 	}
 
+	/**
+	 * @return
+	 */
+	public ISTMEntryKey getContainerKey()
+	{
+		ContainerSubscriber containerSub = metaDataControl.getContainerSubscriber( typeKey );
+		if( containerSub != null )
+			return containerSub.getEntryKey();
+		
+		return null;
+	}
 
 
+	/**
+	 * @param parent
+	 * @param inData
+	 */
 	private void createViewer(Composite parent, IPersistentMap<String, Object> inData ) 
 	{
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -85,15 +116,24 @@ public class DataViewer extends Composite implements ISTMContainerListener
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 	}
 
+	/**
+	 * @return
+	 */
 	public TableViewer getViewer() {
 		return viewer;
 	}
 
+	/**
+	 * @param inData
+	 */
 	public void setInput( ViewDataObject[] inData )
 	{
 		viewer.setInput( inData );
 	}
 
+	/**
+	 * @return
+	 */
 	public ViewDataObject[] getObjects()
 	{
 		ViewDataObject[] objects = new ViewDataObject[viewer.getTable().getItemCount()];
@@ -104,6 +144,9 @@ public class DataViewer extends Composite implements ISTMContainerListener
 		return objects;  
 	}
 
+	/**
+	 * 
+	 */
 	public void addEntry()
 	{
 		ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, PersistentHashMap.EMPTY, metaData, this );
@@ -122,6 +165,13 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			while( iter.hasNext() )
 			{
 				ViewDataObject obj = (ViewDataObject)iter.next();
+				
+				if( ! editor.qualifyForDelete( obj.getKey() ))
+				{
+					MessageDialog.openWarning( getShell(), "Warning", "This object cannot be deleted since other objects is dependent ion it" );
+					return;
+				}
+				
 				obj.setDeleted();
 				viewer.update( obj, new String[]{STATUS_FIELD_NAME} );
 			}
@@ -169,6 +219,10 @@ public class DataViewer extends Composite implements ISTMContainerListener
 				});
 
 				InputContainer input = metaDataControl.getInputContainer( val.toString() );
+				if( input instanceof ReferenceInput )
+				{
+					referenceDependencies.put( val.toString(), key );
+				}
 				EditingSupport editSupport = getEditingSupport( val, input, keyList, key, parent.getDisplay(), viewer );
 
 				if( editSupport != null )
@@ -290,13 +344,34 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 
 	@Override
-	public void onContainerRefRemoved( ISTMEntryKey inKey, ISTMEntry inEntry )
+	public void onContainerRefRemoved( final ISTMEntryKey inKey )
 	{
-		// TODO Auto-generated method stub
+		getDisplay().asyncExec( new Runnable(){
 
+			@Override
+			public void run()
+			{
+				Iterator<ViewDataObject> iter = viewObjects.iterator();
+				while( iter.hasNext() )
+				{
+					ViewDataObject existingObject = iter.next();
+					
+					if( existingObject.getKey() != null && inKey.equals( existingObject.getKey() ) )
+					{
+						iter.remove();
+						viewer.remove( existingObject );
+						return;
+					}
+				}
+			}
+
+		});
 	}
 
-
+	public Set<String> getTypeDependentFields( String inType )
+	{
+		return referenceDependencies.get( inType );
+	}
 
 
 }

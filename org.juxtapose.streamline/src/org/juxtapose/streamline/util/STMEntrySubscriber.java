@@ -42,7 +42,11 @@ public abstract class STMEntrySubscriber implements ISTMEntryRequestSubscriber
 		stm.subscribeToData( key, this );
 	}
 	
-
+	public void dispose()
+	{
+		if( key != null )
+			stm.unsubscribeToData( key, this );
+	}
 	@Override
 	public int getPriority()
 	{

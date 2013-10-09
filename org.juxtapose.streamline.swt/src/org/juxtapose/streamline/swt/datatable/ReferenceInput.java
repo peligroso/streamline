@@ -2,6 +2,7 @@ package org.juxtapose.streamline.swt.datatable;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -9,6 +10,7 @@ import org.juxtapose.streamline.util.ContainerSubscriber;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryListener;
 import org.juxtapose.streamline.util.data.DataTypeLazyRef;
+import org.juxtapose.streamline.util.data.DataTypeNull;
 
 public class ReferenceInput implements InputContainer, ISTMEntryListener
 {
@@ -55,6 +57,21 @@ public class ReferenceInput implements InputContainer, ISTMEntryListener
 				{
 					values.add( entry );
 					updateListeners();
+				}
+			}
+			if( value == null || value instanceof DataTypeNull )
+			{
+				Iterator<Map.Entry<String, DataTypeLazyRef>> iter = values.iterator();
+				
+				while( iter.hasNext() )
+				{
+					Map.Entry<String, DataTypeLazyRef> val = iter.next();
+					if( val.getValue().get().getKey().equals( updatedValue ) )
+					{
+						iter.remove();
+						updateListeners();
+						break;
+					}
 				}
 			}
 		}

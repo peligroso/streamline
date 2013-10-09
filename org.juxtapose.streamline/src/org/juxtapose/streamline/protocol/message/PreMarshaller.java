@@ -21,6 +21,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.StringMap;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryResponseMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UnsubscribeMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UpdateMessage;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.PersistentArrayList;
@@ -81,6 +82,19 @@ public class PreMarshaller
 		messB.setType( Message.Type.SubscribeMessage );
 		
 		return messB.build();
+	}
+	
+	public static Message createUnSubscribeMessage( int inReference )
+	{
+		UnsubscribeMessage.Builder unSubMessB = UnsubscribeMessage.newBuilder();
+		unSubMessB.setReference( inReference );
+		
+		Message.Builder messB = Message.newBuilder();
+		messB.setUnsubscribeMessage( unSubMessB );
+		messB.setType( Message.Type.UnSubscribeMessage );
+		
+		return messB.build();
+		
 	}
 	
 	public static Message createSubscriptionMessage( int inReference, ISTMEntryKey inKey )
@@ -270,7 +284,13 @@ public class PreMarshaller
 	 */
 	public static void parseValueToMap( String inKey, Object inData, DataMap.Builder inBuilder )
 	{
-		if( inData instanceof String )
+		if( inData == null )
+		{
+			NullEntry.Builder nullBuilder = NullEntry.newBuilder();
+			nullBuilder.setField( inKey );
+			inBuilder.addNullEntries( nullBuilder.build() );
+		}
+		else if( inData instanceof String )
 		{
 			StringEntry.Builder strBuilder = StringEntry.newBuilder();
 			strBuilder.setField( inKey );
@@ -286,27 +306,27 @@ public class PreMarshaller
 			bdBuilder.setIntBytes( ByteString.copyFrom( bd.unscaledValue().toByteArray() ));
 			inBuilder.addBDEntries( bdBuilder.build() );
 		}
-		if( inData instanceof Long )
+		else if( inData instanceof Long )
 		{
 			LongEntry.Builder longBuilder = LongEntry.newBuilder();
 			longBuilder.setField( inKey );
 			longBuilder.setData( ((Long)inData) );
 			inBuilder.addLongEntries( longBuilder.build() );
 		}
-		if( inData instanceof Boolean)
+		else if( inData instanceof Boolean)
 		{
 			BooleanEntry.Builder booleanBuilder = BooleanEntry.newBuilder();
 			booleanBuilder.setField( inKey );
 			booleanBuilder.setData( ((Boolean)inData) );
 			inBuilder.addBoolEntries( booleanBuilder.build() );
 		}
-		if( inData instanceof DataTypeNull )
+		else if( inData instanceof DataTypeNull )
 		{
 			NullEntry.Builder nullBuilder = NullEntry.newBuilder();
 			nullBuilder.setField( inKey );
 			inBuilder.addNullEntries( nullBuilder.build() );
 		}
-		if( inData instanceof IPersistentMap<?, ?> )
+		else if( inData instanceof IPersistentMap<?, ?> )
 		{
 			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
 			dataMapBuilder.setField( inKey );
@@ -320,7 +340,7 @@ public class PreMarshaller
 			
 			inBuilder.addHashMapEntries( dataMapBuilder.build() );
 		}
-		if( inData instanceof PersistentArrayList<?> )
+		else if( inData instanceof PersistentArrayList<?> )
 		{
 			HashMapEntry.Builder dataMapBuilder = HashMapEntry.newBuilder();
 			dataMapBuilder.setField( inKey );

@@ -92,7 +92,7 @@ public class RemoteProxyEntryProducer extends STMEntryProducer
 	
 	protected void stop()
 	{
-//		clientConnector.unSubscribe( this, dataKey );
+		clientConnector.unSubscribe( this, entryKey );
 	}
 
 }

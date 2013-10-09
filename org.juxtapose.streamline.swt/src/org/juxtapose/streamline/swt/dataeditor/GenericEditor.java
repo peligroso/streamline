@@ -3,6 +3,8 @@ package org.juxtapose.streamline.swt.dataeditor;
 import static org.juxtapose.streamline.tools.STMUtil.isServiceStatusUpdatedToOk;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -29,6 +31,7 @@ import org.juxtapose.streamline.swt.datatable.ViewDataObject;
 import org.juxtapose.streamline.swt.datatable.ViewDataObjectState;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
+import org.juxtapose.streamline.tools.STMQueryMethods;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMRequestor;
@@ -254,7 +257,7 @@ public class GenericEditor extends Composite implements ISTMEntryRequestSubscrib
 			{
 				TabItem viewTabItem = new TabItem(tabFolder, SWT.NONE);
 				
-				final DataViewer viewer = new DataViewer( serviceKey, tabFolder, SWT.NONE, inData, inFieldKey, inMetaDataControl );
+				final DataViewer viewer = new DataViewer( GenericEditor.this, serviceKey, tabFolder, SWT.NONE, inData, inFieldKey, inMetaDataControl );
 				typeToViewer.put( inFieldKey, viewer );
 				
 				viewTabItem.setControl(viewer);
@@ -277,6 +280,24 @@ public class GenericEditor extends Composite implements ISTMEntryRequestSubscrib
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public boolean qualifyForDelete( ISTMEntryKey inKey )
+	{
+		String type = inKey.getType();
+		
+		for( DataViewer viewer : typeToViewer.values() )
+		{
+			Set<String> fields = viewer.getTypeDependentFields( type );
+			
+			if( fields != null )
+			{
+				ISTMEntryKey containerKey = viewer.getContainerKey();
+				if( STMQueryMethods.containsReferences( stm, containerKey, inKey.getKey(), fields.toArray( new String[]{} ) ) )
+					return false;
+			}
+		}
+		return true;
 	}
 
 }

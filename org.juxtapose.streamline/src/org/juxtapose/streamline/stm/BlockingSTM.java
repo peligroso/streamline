@@ -126,7 +126,7 @@ public class BlockingSTM extends STM
 				Map< String, DataTypeRef > dataReferences = inTransaction.getAddedReferences();
 				addedLinks = dataReferences == null ? null : new ReferenceLink[ dataReferences.size() ];
 
-				if( dataReferences == null || !dataReferences.isEmpty() )
+				if( dataReferences != null )
 				{
 					ISTMEntryProducer producer = newData.getProducer();
 					if( producer == null )
@@ -150,7 +150,7 @@ public class BlockingSTM extends STM
 				List< String > removedReferences = inTransaction.getRemovedReferences();
 				removedLinks = removedReferences == null ? null : new ReferenceLink[ removedReferences.size() ];
 
-				if( removedReferences != null && !removedReferences.isEmpty() )
+				if( removedReferences != null )
 				{
 					ISTMEntryProducer producer = newData.getProducer();
 					if( producer == null )
@@ -158,7 +158,7 @@ public class BlockingSTM extends STM
 					else
 					{
 						int i = 0;
-						for( String fieldKey : dataReferences.keySet() )
+						for( String fieldKey : removedReferences )
 						{
 							ReferenceLink refLink = producer.removeReferenceLink( fieldKey );
 							if( refLink == null )

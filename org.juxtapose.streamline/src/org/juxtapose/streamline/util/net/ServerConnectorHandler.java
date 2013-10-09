@@ -23,6 +23,7 @@ import org.juxtapose.streamline.protocol.message.StreamDataProtocol.Message;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.RequestMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubQueryMessage;
 import org.juxtapose.streamline.protocol.message.StreamDataProtocol.SubscribeMessage;
+import org.juxtapose.streamline.protocol.message.StreamDataProtocol.UnsubscribeMessage;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
@@ -116,6 +117,22 @@ public final class ServerConnectorHandler extends SimpleChannelUpstreamHandler i
     		}
     		
     		stm.request( service, tag, type, this, variable, data );
+    	}
+    	else if( message.getType() == Message.Type.UnSubscribeMessage )
+    	{
+    		UnsubscribeMessage unSubMess = message.getUnsubscribeMessage();
+    		
+    		Integer ref = unSubMess.getReference();
+    		
+    		ISTMEntryKey key = refStore.getKeyFromRef( ref );
+    		
+    		if( key == null )
+    		{
+    			stm.logError( "Unknown message recieved: "+e.getMessage().getClass() );
+    			return;
+    		}
+    		
+    		stm.unsubscribeToData( key, this );
     	}
     	else
     	{

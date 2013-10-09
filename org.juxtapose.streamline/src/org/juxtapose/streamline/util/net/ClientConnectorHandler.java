@@ -220,6 +220,19 @@ public class ClientConnectorHandler extends SimpleChannelUpstreamHandler
 		channel.write( subMessage );
 	}
 	
+	public void unSubscribe( RemoteProxyEntryProducer inProducer, ISTMEntryKey inKey )
+	{
+		Integer ref = refStore.getRefFromKey( inKey );
+		if( ref == null )
+		{
+			stm.logError( "No reference found for key "+inKey );
+			return;
+		}
+		
+		Message unSubMessage = PreMarshaller.createUnSubscribeMessage( ref );
+		channel.write( unSubMessage );
+	}
+	
 	/**
 	 * @param inTag
 	 * @param inRequestor
