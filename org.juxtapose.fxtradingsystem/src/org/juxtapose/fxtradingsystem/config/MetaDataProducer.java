@@ -46,6 +46,15 @@ public class MetaDataProducer extends STMEntryProducer
 				PersistentArrayList<String> keyList = new PersistentArrayList<String>( keys );
 				ccyMap = ccyMap.assoc( DataConstants.FIELD_KEYS, keyList );
 				
+				IPersistentMap<String, Object> holidayMap = PersistentHashMap.emptyMap();
+				holidayMap = holidayMap.assoc( "NAME", "" );
+				holidayMap = holidayMap.assoc( "DATE", "DC" );
+				keys = new String[]{ "NAME" };
+				PersistentArrayList<String> holidayKeyList = new PersistentArrayList<String>( keys );
+				holidayMap = holidayMap.assoc( DataConstants.FIELD_KEYS, holidayKeyList );
+				
+				ccyMap = ccyMap.assoc( "HOLIDAY", holidayMap );
+
 				putValue( "CCY", ccyMap );
 				
 				//PRICE

@@ -20,9 +20,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
@@ -80,7 +86,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 		metaData = inData;
 
-		setLayout( new FillLayout() );
+		setLayout( new GridLayout(1, false) );
 		createViewer( this, inData );
 
 		ContainerSubscriber containerSub = metaDataControl.getContainerSubscriber( typeKey );
@@ -114,6 +120,9 @@ public class DataViewer extends Composite implements ISTMContainerListener
 		table.setLinesVisible(true);
 
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
+		
+		table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
+
 	}
 
 	/**
@@ -177,6 +186,24 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			}
 		}
 	}
+	
+	private ViewDataObject getSelectedObject()
+	{
+		ISelection sel = viewer.getSelection();
+		if( sel != null && !sel.isEmpty() )
+		{
+			Iterator iter = ((IStructuredSelection)sel).iterator();
+			
+			while( iter.hasNext() )
+			{
+				ViewDataObject obj = (ViewDataObject)iter.next();
+				
+				return obj;
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * @param parent
@@ -197,10 +224,48 @@ public class DataViewer extends Composite implements ISTMContainerListener
 
 			final String key = entry.getKey();
 
-			if( !FIELD_STATUS.equals(key) && !FIELD_KEYS.equals(key) )
+			if( entry.getValue() instanceof PersistentHashMap< ?, ? >)
+			{
+				final IPersistentMap< String, Object > subMap = (IPersistentMap< String, Object >)entry.getValue();
+				Label tableName = new Label( parent, SWT.NONE );
+				tableName.setText( key );
+				
+				Button newEntryButt = new Button(parent, SWT.PUSH);
+				newEntryButt.setText( "New Entry" );
+				
+				final TableViewer subView = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+				createColumns( parent, subView, subMap );
+				final Table table = subView.getTable();
+				table.setHeaderVisible(true);
+				table.setLinesVisible(true);
+
+				subView.setContentProvider(ArrayContentProvider.getInstance());
+				
+				table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
+				
+				newEntryButt.addSelectionListener( new SelectionAdapter(){
+					/* (non-Javadoc)
+					 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+					 */
+					public void widgetSelected( SelectionEvent sev )
+					{
+						ViewDataObject obj = getSelectedObject();
+						if( obj == null )
+						{
+							MessageDialog.openWarning( getShell(), "Warning", "No root object is selected" );
+							return;
+						}
+						
+						ViewDataObject viewObject = new ViewDataObject( null, null, PersistentHashMap.EMPTY, subMap, DataViewer.this );
+						subView.add( viewObject );
+
+					}
+				});
+			}
+			else if( !FIELD_STATUS.equals(key) && !FIELD_KEYS.equals(key) )
 			{
 				Object val = entry.getValue();
-				TableViewerColumn col = createTableViewerColumn(key, 100, i);
+				TableViewerColumn col = createTableViewerColumn(viewer, key, 100, i);
 
 				col.setLabelProvider(new ColumnLabelProvider() 
 				{
@@ -231,7 +296,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			i++;
 		}
 
-		TableViewerColumn col = createTableViewerColumn("", 250, i);
+		TableViewerColumn col = createTableViewerColumn(viewer, "", 250, i);
 
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -269,12 +334,13 @@ public class DataViewer extends Composite implements ISTMContainerListener
 				return "";
 			}
 		});
+		
 	}
 	
 
-	private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) 
+	private TableViewerColumn createTableViewerColumn(TableViewer inViewer, String title, int bound, final int colNumber) 
 	{
-		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
+		final TableViewerColumn viewerColumn = new TableViewerColumn(inViewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
 		column.setText(title);
 		column.setWidth(bound);
