@@ -34,6 +34,8 @@ public class ClientConnector
 	
 	int avgPriceUpdates = 20;
 	
+	volatile boolean stop = false;
+	
 //	String[][] instruments = new String[][]{{"EUR", "SEK"}, {"EUR", "NOK"}, {"EUR", "USD"}, {"EUR", "DKK"}, {"EUR", "GBP"}, {"EUR", "TRY"}, {"EUR", "RUB"}, {"EUR", "AUD"}, {"EUR", "CHF"},{"EUR", "NZD"}, {"EUR", "CAD"}, {"EUR", "SGD"}, {"EUR", "JPY"}};
 	
 	String[][] instruments = new String[][]{{"SEK", "NOK"}};
@@ -139,6 +141,7 @@ public class ClientConnector
 						if( inCommingMess.tag == maxRFQs -1 )
 						{
 							printStats();
+							stop = true;
 						}
 					}
 				}
@@ -202,6 +205,9 @@ public class ClientConnector
 						}
 						
 						i++;
+						
+						if( stop )
+							break;
 					}
 				} catch ( Throwable t )
 				{
