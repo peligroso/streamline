@@ -48,7 +48,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 1 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class DataViewer extends Composite implements ISTMContainerListener
+public class DataViewer extends Composite implements ISTMContainerListener, IViewDataObjectContainer
 {
 	public static String STATUS_FIELD_NAME = "";
 	
@@ -156,12 +156,29 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	/**
 	 * 
 	 */
-	public void addEntry()
+	public ViewDataObject addEntry( String inKey )
 	{
-		ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, PersistentHashMap.EMPTY, metaData, this );
+		ViewDataObject viewObject = new ViewDataObject( serviceKey, typeKey, getEmptyMap(), metaData, this );
 		viewer.add( viewObject );
 
 		viewObjects.add( viewObject );
+		
+		return viewObject;
+	}
+	
+	public IPersistentMap<String, Object> getEmptyMap()
+	{
+		IPersistentMap<String, Object> data = PersistentHashMap.EMPTY;
+		
+		for( Map.Entry<String,Object> entry : metaData )
+		{
+			if( entry.getValue() instanceof IPersistentMap )
+			{
+				data = data.assoc( entry.getKey(), PersistentHashMap.EMPTY );
+			}
+		}
+		
+		return data;
 	}
 	
 	public void deleteEntry()
@@ -174,6 +191,13 @@ public class DataViewer extends Composite implements ISTMContainerListener
 			while( iter.hasNext() )
 			{
 				ViewDataObject obj = (ViewDataObject)iter.next();
+				
+				if( obj.getState() == ViewDataObjectState.CREATED )
+				{
+					viewObjects.remove( obj );
+					viewer.remove( obj );
+					return;
+				}
 				
 				if( ! editor.qualifyForDelete( obj.getKey() ))
 				{
@@ -256,7 +280,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 							return;
 						}
 						
-						ViewDataObject viewObject = new ViewDataObject( null, null, PersistentHashMap.EMPTY, subMap, DataViewer.this );
+						ViewDataObject viewObject = obj.addEntry( key );
 						subView.add( viewObject );
 
 					}
@@ -388,7 +412,7 @@ public class DataViewer extends Composite implements ISTMContainerListener
 	 * @param inKey
 	 * @return
 	 */
-	protected boolean validateKey( ISTMEntryKey inKey )
+	public boolean validateKey( String inKey, ISTMEntryKey inEntryKey )
 	{
 		for( ViewDataObject viewObj : viewObjects )
 		{

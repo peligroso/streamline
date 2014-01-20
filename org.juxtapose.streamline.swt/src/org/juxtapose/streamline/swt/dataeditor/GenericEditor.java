@@ -146,7 +146,7 @@ public class GenericEditor extends Composite implements ISTMEntryRequestSubscrib
 				if( items != null && items.length != 0 )
 				{
 					DataViewer viewer = (DataViewer)items[0].getControl();
-					viewer.addEntry();
+					viewer.addEntry( viewer.getType() );
 				}
 //				
 			}

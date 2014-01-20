@@ -6,11 +6,14 @@ import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.swt.dataeditor.GenericEditor;
+import org.juxtapose.streamline.util.BucketMap;
 import org.juxtapose.streamline.util.PersistentArrayList;
 
 import com.trifork.clj_ds.IPersistentMap;
@@ -21,7 +24,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 3 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class ViewDataObject 
+public class ViewDataObject implements IViewDataObjectContainer
 {
 	private ViewDataObjectState state;
 	
@@ -37,9 +40,18 @@ public class ViewDataObject
 	
 	private HashSet<String> updatedKeys = new HashSet<String>();
 	
-	private final DataViewer parent;
+	private final IViewDataObjectContainer parent;
 	
-	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, DataViewer inParent )
+	BucketMap< String, ViewDataObject> viewObjects = new BucketMap< String, ViewDataObject>();
+	
+	/**
+	 * @param inService
+	 * @param inType
+	 * @param inData
+	 * @param inMetaData
+	 * @param inParent
+	 */
+	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, IViewDataObjectContainer inParent )
 	{
 		data = inData;
 		metaData = inMetaData;
@@ -59,7 +71,15 @@ public class ViewDataObject
 		parent = inParent;
 	}
 	
-	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, ISTMEntryKey inEntryKey, DataViewer inParent )
+	/**
+	 * @param inService
+	 * @param inType
+	 * @param inData
+	 * @param inMetaData
+	 * @param inEntryKey
+	 * @param inParent
+	 */
+	public ViewDataObject( String inService, String inType, IPersistentMap<String, Object> inData, IPersistentMap<String, Object> inMetaData, ISTMEntryKey inEntryKey, IViewDataObjectContainer inParent )
 	{
 		data = inData;
 		metaData = inMetaData;
@@ -79,6 +99,10 @@ public class ViewDataObject
 		parent = inParent;
 	}
 	
+	/**
+	 * @param inData
+	 * @param inKey
+	 */
 	public void updateData( IPersistentMap<String, Object> inData, String inKey )
 	{
 		if( entryKey == null )
@@ -86,7 +110,7 @@ public class ViewDataObject
 			ISTMEntryKey newKey = createEntryKey( service, type, keyList, inData );
 			if( newKey != null )
 			{
-				if( !parent.validateKey( newKey ) )
+				if( !parent.validateKey( type, newKey ) )
 				{
 					MessageDialog.openError( parent.getShell(), "Illegal key", "En entry with this key alrweady exists" );
 					return;
@@ -99,13 +123,20 @@ public class ViewDataObject
 		
 		state = state == MIRROR ? UPDATED : state;
 		updatedKeys.add( inKey );
+		
 	}
 	
+	/**
+	 * @return
+	 */
 	public IPersistentMap<String, Object> getData()
 	{
 		return data;
 	}
 	
+	/**
+	 * @return
+	 */
 	public String validate()
 	{
 		Iterator<Entry<String, Object>> iter = metaData.iterator();
@@ -127,6 +158,9 @@ public class ViewDataObject
 		return null;
 	}
 	
+	/**
+	 * @param inData
+	 */
 	public void setData( IPersistentMap<String, Object> inData )
 	{
 		data = inData;
@@ -163,6 +197,39 @@ public class ViewDataObject
 		}
 		
 		return updateData;
+	}
+
+	@Override
+	public ViewDataObject addEntry( String inKey)
+	{
+		Object obj = metaData.valAt( inKey );
+		
+		if( obj instanceof IPersistentMap )
+		{
+			ViewDataObject viewObject = new ViewDataObject( null, inKey, PersistentHashMap.EMPTY, (IPersistentMap<String, Object>)obj, this );
+			viewObjects.put( inKey, viewObject );
+			return viewObject;
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Shell getShell()
+	{
+		return parent.getShell();
+	}
+
+	@Override
+	public boolean validateKey( String inKey, ISTMEntryKey inEntryKey )
+	{
+		for( ViewDataObject viewObj : viewObjects.get( inKey ) )
+		{
+			if( viewObj.getKey() != null && viewObj.getKey().equals( inEntryKey ))
+				return false;	
+		}
+
+		return true;
 	}
 	
 }
