@@ -3,10 +3,16 @@ package org.juxtapose.streamline.tools;
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_SINGLE_VALUE_DATA_KEY;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.management.AttributeNotFoundException;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.Status;
+import org.juxtapose.streamline.util.data.DataTypeLazyRef;
+
+import com.trifork.clj_ds.IPersistentMap;
 
 public class STMUtil
 {
@@ -94,6 +100,49 @@ public class STMUtil
 			return false;
 		
 		return dataValue.equals( Status.OK );
+	}
+	
+	/**
+	 * @param inServiceID
+	 * @param inType
+	 * @param inData
+	 * @param inMap
+	 * @return
+	 * @throws AttributeNotFoundException
+	 */
+	public static ISTMEntryKey createEntryKey( String inServiceID, String inType, IPersistentMap<String, Object> inData, Map<String, Object> inMap )throws AttributeNotFoundException
+	{
+		int i = 0;
+		
+		String[] attr = new String[ inMap.size() ];
+		String[] val = new String[ inMap.size() ];
+		
+		for( String key : inMap.keySet() )
+		{
+			Object oo = inMap.get( key );
+			Object dataOb = inData.valAt( key );
+			
+			if( dataOb == null )
+				throw new AttributeNotFoundException( );
+			
+			attr[i] = key;
+			
+			if( oo instanceof String && ((String)oo).isEmpty() )
+			{
+				val[i] = dataOb.toString();
+			}
+			else if( oo instanceof String )
+			{
+				val[i] = ((DataTypeLazyRef)dataOb).get().getSymbolicName();
+			}
+			
+			i++;
+		}
+		
+		if( val.length == 1 )
+			return STMUtil.createEntryKey( inServiceID, inType, val[0] );
+		else
+			return STMUtil.createEntryKey( inServiceID, inType, attr, val);
 	}
 	
 }

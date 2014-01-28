@@ -9,6 +9,9 @@ Export-Package: com.lmax.disruptor,
  com.lmax.disruptor.dsl,
  com.lmax.disruptor.util,
  com.trifork.clj_ds,
+ org.json.simple,
+ org.json.simple.parser,
+ org.juxtapose.streamline.declarativeservice,
  org.juxtapose.streamline.producer,
  org.juxtapose.streamline.producer.executor,
  org.juxtapose.streamline.protocol.message,
@@ -20,8 +23,11 @@ Export-Package: com.lmax.disruptor,
  org.juxtapose.streamline.util.net,
  org.juxtapose.streamline.util.producerservices,
  org.juxtapose.streamline.util.subscriber
-Import-Package: org.osgi.framework;version="1.5.0",
+Import-Package: org.eclipse.core.runtime;version="3.4.0",
+ org.osgi.framework;version="1.5.0",
  org.osgi.service.component;version="1.1.0"
 Require-Bundle: org.juxtapose.apache.commons;bundle-version="1.0.0",
  org.juxtapose.netty;bundle-version="1.0.0",
  org.juxtapose.protobuf;bundle-version="1.0.0"
+Bundle-ClassPath: lib/json-simple-1.1.1.jar,
+ .

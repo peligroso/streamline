@@ -1,6 +1,6 @@
 package org.juxtapose.fxtradingsystem.constants;
 
-import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
+import org.juxtapose.streamline.tools.ProducerServiceConstants;
 
 public class FXProducerServiceConstants extends ProducerServiceConstants
 {

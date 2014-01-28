@@ -290,7 +290,12 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 			{
 				Object val = entry.getValue();
 				TableViewerColumn col = createTableViewerColumn(viewer, key, 100, i);
-
+				
+				if( val instanceof PersistentHashMap<?, ?> )
+				{
+					continue;
+				}
+				
 				col.setLabelProvider(new ColumnLabelProvider() 
 				{
 					@Override

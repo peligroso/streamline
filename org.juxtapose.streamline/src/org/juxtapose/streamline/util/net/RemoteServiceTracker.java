@@ -7,11 +7,11 @@ import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.tools.DataConstants;
+import org.juxtapose.streamline.tools.ProducerServiceConstants;
 import org.juxtapose.streamline.tools.STMAssertionUtil;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.Status;
-import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 /**
  * @author Pontus Jörgne
@@ -47,7 +47,7 @@ public class RemoteServiceTracker extends RemoteServiceProxy implements ISTMEntr
 	 */
 	public void statusUpdated( String inService, Status inStatus )
 	{
-		if( ProducerServiceConstants.STM_SERVICE_KEY.equals( inService ) || ProducerServiceConstants.DE_SERVICE_KEY.equals( inService ))
+		if( ProducerServiceConstants.STM_SERVICE_KEY.equals( inService ) )
 			return;
 		
 		RemoteServiceProxy serviceProxy = serviceProxies.get( inService );

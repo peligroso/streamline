@@ -21,6 +21,7 @@ import org.juxtapose.streamline.producer.executor.IExecutable;
 import org.juxtapose.streamline.producer.executor.IExecutor;
 import org.juxtapose.streamline.tools.DataConstants;
 import org.juxtapose.streamline.tools.KeyConstants;
+import org.juxtapose.streamline.tools.ProducerServiceConstants;
 import org.juxtapose.streamline.util.ISTMEntry;
 import org.juxtapose.streamline.util.ISTMEntryRequestSubscriber;
 import org.juxtapose.streamline.util.ISTMEntrySubscriber;
@@ -30,7 +31,6 @@ import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.net.ClientConnector;
 import org.juxtapose.streamline.util.net.ServerConnector;
-import org.juxtapose.streamline.util.producerservices.ProducerServiceConstants;
 
 import com.trifork.clj_ds.IPersistentMap;
 

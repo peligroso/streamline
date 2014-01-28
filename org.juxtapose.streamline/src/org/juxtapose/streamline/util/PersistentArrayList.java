@@ -157,5 +157,14 @@ public class PersistentArrayList<T>
 		
 		return sb.toString();
 	}
+	
+	public T[] toArray()
+	{
+		T[] newData = (T[]) new Object[size];
+		
+		System.arraycopy(arr, 0, newData, 0, size);
+		
+		return newData;
+	}
 
 }

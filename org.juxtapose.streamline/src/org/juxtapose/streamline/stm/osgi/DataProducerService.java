@@ -30,7 +30,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 	
 	public void activate( ComponentContext inContext )
 	{
-		init();
+		init( inContext );
 	}
 	
 	public void bindSTM( ISTM inSTM )
@@ -54,7 +54,7 @@ public abstract class DataProducerService implements ISTMEntryProducerService, I
 		}
 	}
 	
-	protected void init()
+	protected void init( ComponentContext inContext )
 	{
 		stm.execute( new Executable(){
 

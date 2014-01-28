@@ -1,0 +1,44 @@
+{
+	"DC":[
+	"30_360",
+	"30_Accual",
+	"Acctual_Acctual"]
+	
+	"CCY":
+	{
+	"@ISO": "",
+	"DC": "DC",
+	"NAME": ""
+	"HOLIDAY":{
+			"NAME":"",
+			"DATE":""
+		}
+	}
+	
+	"PRC":
+	{
+	"@C1": "CCY",
+	"@C2": "CCY",
+	"DEC": 0,
+	"PIP": 0
+	}
+	
+	"Location":[
+	"Frankfurt",
+	"London",
+	"Dubai", 
+	"Stockholm"]
+	
+	"User":
+	{
+	"@NAME": "",
+	"Number": 0,
+	"Account": "",
+	"Passwd": "",
+	"Location": "Location"
+	}
+	
+}
+
+		
+		

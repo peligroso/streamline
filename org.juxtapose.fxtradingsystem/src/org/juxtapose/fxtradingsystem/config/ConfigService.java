@@ -20,6 +20,7 @@ import org.juxtapose.streamline.util.data.DataTypeLazyRef;
 import org.juxtapose.streamline.util.data.DataTypeRef;
 import org.juxtapose.streamline.util.producerservices.DataInitializer;
 import org.juxtapose.streamline.util.producerservices.DataRefContainerProducer;
+import org.osgi.service.component.ComponentContext;
 
 import com.trifork.clj_ds.IPersistentMap;
 
@@ -36,11 +37,11 @@ public class ConfigService extends DataProducerService implements IConfigService
 	/* (non-Javadoc)
 	 * @see org.juxtapose.streamline.stm.osgi.DataProducerService#init()
 	 */
-	public void init( )
+	public void init( ComponentContext inContext )
 	{
 		ccyContainer = new DataRefContainerProducer( CCY_CONTAINER_KEY, stm );
 		prcContainer = new DataRefContainerProducer( PRC_CONTAINER_KEY, stm );
-		super.init();
+		super.init( inContext );
 	}
 	
 	public DataInitializer createDataInitializer( )

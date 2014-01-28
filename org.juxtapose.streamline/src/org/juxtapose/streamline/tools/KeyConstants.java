@@ -1,8 +1,9 @@
 package org.juxtapose.streamline.tools;
 
-import static org.juxtapose.streamline.util.producerservices.ProducerServiceConstants.*;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
+
+import static org.juxtapose.streamline.tools.ProducerServiceConstants.*;
 import static org.juxtapose.streamline.tools.STMUtil.*;
 
 public class KeyConstants
