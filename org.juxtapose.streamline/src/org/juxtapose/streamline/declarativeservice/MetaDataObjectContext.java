@@ -83,11 +83,19 @@ public class MetaDataObjectContext
 	{
 		IPersistentMap<String, Object> map = PersistentHashMap.emptyMap();
 		
+		PersistentArrayList<String> keyList = new PersistentArrayList<String>( );
+		
 		for( Object objKey : inJsonObj.keySet() )
 		{
 			Object object = inJsonObj.get( objKey );
 			
 			String keyStr = (String)objKey;
+			
+			if( ((String)objKey).startsWith( "@" ) )
+			{
+				keyStr = keyStr.substring( 1 );
+				keyList = keyList.add( keyStr );
+			}
 			
 			if( object instanceof JSONObject )
 			{
@@ -99,6 +107,8 @@ public class MetaDataObjectContext
 				map = map.assoc( keyStr, object );
 			}
 		}
+		
+		map = map.assoc( DataConstants.FIELD_KEYS, keyList );
 		
 		return map;
 	}

@@ -11,7 +11,7 @@ Service-Component: OSGI-INF/priceengine.xml, OSGI-INF/stm.xml, OSGI-INF/orderman
 Require-Bundle: org.juxtapose.streamline;bundle-version="1.0.0",
  org.eclipse.osgi.services;bundle-version="3.2.100",
  org.juxtapose.fxtradingsystem.common;bundle-version="1.0.0",
- org.eclipse.core.runtime;bundle-version="3.8.0"
+ org.eclipse.core.runtime;bundle-version="3.7.0"
 Export-Package: org.juxtapose.fxtradingsystem,
  org.juxtapose.fxtradingsystem.marketdata,
  org.juxtapose.fxtradingsystem.ordermanager,

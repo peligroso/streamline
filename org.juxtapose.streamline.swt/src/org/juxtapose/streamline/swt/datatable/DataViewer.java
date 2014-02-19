@@ -90,7 +90,8 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 		createViewer( this, inData );
 
 		ContainerSubscriber containerSub = metaDataControl.getContainerSubscriber( typeKey );
-		containerSub.addContainerListener( this );
+		if( containerSub != null )
+			containerSub.addContainerListener( this );
 
 	}
 
@@ -257,15 +258,19 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 				Button newEntryButt = new Button(parent, SWT.PUSH);
 				newEntryButt.setText( "New Entry" );
 				
-				final TableViewer subView = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-				createColumns( parent, subView, subMap );
-				final Table table = subView.getTable();
-				table.setHeaderVisible(true);
-				table.setLinesVisible(true);
-
-				subView.setContentProvider(ArrayContentProvider.getInstance());
+				/**New**/
+				final DataViewer subView = new DataViewer( editor, serviceKey, parent, SWT.NONE, subMap, key, metaDataControl );
+				/**End**/
 				
-				table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
+//				final TableViewer subView = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+//				createColumns( parent, subView, subMap );
+//				final Table table = subView.getTable();
+//				table.setHeaderVisible(true);
+//				table.setLinesVisible(true);
+
+//				subView.setContentProvider(ArrayContentProvider.getInstance());
+				
+//				table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
 				
 				newEntryButt.addSelectionListener( new SelectionAdapter(){
 					/* (non-Javadoc)
@@ -280,9 +285,11 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 							return;
 						}
 						
-						ViewDataObject viewObject = obj.addEntry( key );
-						subView.add( viewObject );
+						subView.addEntry( key );
+//						ViewDataObject viewObject = obj.addEntry( key );
+//						subView.add( viewObject );
 
+						getViewer().update( obj, null );
 					}
 				});
 			}
@@ -466,6 +473,12 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 	public Set<String> getTypeDependentFields( String inType )
 	{
 		return referenceDependencies.get( inType );
+	}
+
+	@Override
+	public void updateChild( IPersistentMap<String, Object> inData, String inKey )
+	{
+		// Not used
 	}
 
 

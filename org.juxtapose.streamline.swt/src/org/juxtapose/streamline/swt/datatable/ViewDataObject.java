@@ -24,7 +24,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 3 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class ViewDataObject implements IViewDataObjectContainer
+public class ViewDataObject implements IDataViewerParent
 {
 	private ViewDataObjectState state;
 	
@@ -124,6 +124,15 @@ public class ViewDataObject implements IViewDataObjectContainer
 		state = state == MIRROR ? UPDATED : state;
 		updatedKeys.add( inKey );
 		
+		if( parent != null )
+			parent.updateChild( inData, type );
+	}
+	
+	public void updateChild( IPersistentMap<String, Object> inData, String inKey )
+	{
+		data.valAt( inKey );
+		data = data.assoc( inKey, inData );
+		updateData( data, inKey );
 	}
 	
 	/**
@@ -208,6 +217,7 @@ public class ViewDataObject implements IViewDataObjectContainer
 		{
 			ViewDataObject viewObject = new ViewDataObject( null, inKey, PersistentHashMap.EMPTY, (IPersistentMap<String, Object>)obj, this );
 			viewObjects.put( inKey, viewObject );
+			state = UPDATED;
 			return viewObject;
 		}
 		
@@ -230,6 +240,13 @@ public class ViewDataObject implements IViewDataObjectContainer
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean qualifyForDelete( ISTMEntryKey inKey )
+	{
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

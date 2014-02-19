@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.stm.ISTM;
 import org.juxtapose.streamline.swt.datatable.DataViewer;
+import org.juxtapose.streamline.swt.datatable.IDataViewerParent;
 import org.juxtapose.streamline.swt.datatable.MetaDataControl;
 import org.juxtapose.streamline.swt.datatable.ViewDataObject;
 import org.juxtapose.streamline.swt.datatable.ViewDataObjectState;
@@ -39,7 +40,7 @@ import org.juxtapose.streamline.util.data.DataTypeRef;
 
 import com.trifork.clj_ds.IPersistentMap;
 
-public class GenericEditor extends Composite implements ISTMEntryRequestSubscriber, ISTMRequestor
+public class GenericEditor extends Composite implements ISTMEntryRequestSubscriber, ISTMRequestor, IDataViewerParent
 {
 	public static String SYNCH = "Synch";
 	public static String DELETE = "Delete";
