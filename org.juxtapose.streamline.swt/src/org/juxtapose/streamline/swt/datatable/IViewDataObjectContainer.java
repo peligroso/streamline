@@ -10,5 +10,6 @@ public interface IViewDataObjectContainer
 	public ViewDataObject addEntry( String inKey );
 	public Shell getShell();
 	public boolean validateKey( String inKey, ISTMEntryKey inEntryKey );
-	public void updateChild( IPersistentMap<String, Object> inData, String inKey );
+	public void updateChild( IPersistentMap<String, Object> inData, String inType, String inKeyVal );
+	public void updateViewObject( ViewDataObject inObject );
 }

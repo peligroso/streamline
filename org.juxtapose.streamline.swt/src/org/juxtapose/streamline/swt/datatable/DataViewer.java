@@ -5,20 +5,27 @@ import static org.juxtapose.streamline.swt.spl.ClientViewMethods.getEditingSuppo
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_KEYS;
 import static org.juxtapose.streamline.tools.DataConstants.FIELD_STATUS;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,7 +55,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 1 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class DataViewer extends Composite implements ISTMContainerListener, IViewDataObjectContainer
+public class DataViewer extends Composite implements ISTMContainerListener, IViewDataObjectContainer, IDataViewerParent
 {
 	public static String STATUS_FIELD_NAME = "";
 	
@@ -60,11 +67,14 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 
 	IPersistentMap<String, Object> metaData;
 
-	Set<ViewDataObject> viewObjects = new HashSet<ViewDataObject>();
+	//Do we really need this map? We have all the objects in the 
+	List<ViewDataObject> viewObjects = new Vector<ViewDataObject>();
 	
 	BucketMap<String, String> referenceDependencies = new BucketMap<String, String>();
 	
-	GenericEditor editor;
+	IDataViewerParent viewParent;
+	
+	ArrayList<DataViewer> subViewers = new ArrayList<DataViewer>();
 	
 	/**
 	 * @param inServiceKey
@@ -74,11 +84,11 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 	 * @param inTypeKey
 	 * @param inMetaDataControl
 	 */
-	public DataViewer( GenericEditor inGenEd, String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
+	public DataViewer( IDataViewerParent inViewParent, String inServiceKey, Composite parent, int style, IPersistentMap<String, Object> inData, String inTypeKey, MetaDataControl inMetaDataControl ) 
 	{
 		super( parent, style );
 		
-		editor = inGenEd;
+		viewParent = inViewParent;
 		typeKey = inTypeKey;
 		serviceKey = inServiceKey;
 
@@ -123,6 +133,27 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		
 		table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
+		
+		viewer.addSelectionChangedListener( new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged( SelectionChangedEvent event ) 
+			{
+				ISelection sel = event.getSelection();
+				if( sel instanceof StructuredSelection )
+				{
+					Object o = ((StructuredSelection)sel).getFirstElement();
+					
+					if( o != null && o instanceof ViewDataObject )
+					{
+						for( DataViewer subView : subViewers )
+						{
+							subView.setViewDataObjects( ((ViewDataObject )o).getViewDataObjects() );
+						}
+					}
+				}
+			}
+		});
 
 	}
 
@@ -200,7 +231,7 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 					return;
 				}
 				
-				if( ! editor.qualifyForDelete( obj.getKey() ))
+				if( ! viewParent.qualifyForDelete( obj.getKey() ))
 				{
 					MessageDialog.openWarning( getShell(), "Warning", "This object cannot be deleted since other objects is dependent ion it" );
 					return;
@@ -259,7 +290,13 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 				newEntryButt.setText( "New Entry" );
 				
 				/**New**/
-				final DataViewer subView = new DataViewer( editor, serviceKey, parent, SWT.NONE, subMap, key, metaDataControl );
+				final DataViewer subView = new DataViewer( this, serviceKey, parent, SWT.NONE, subMap, key, metaDataControl );
+				subViewers.add( subView );
+				
+				GridData gd = new GridData();
+				gd.heightHint = 100;
+				subView.setLayoutData( gd );
+				
 				/**End**/
 				
 //				final TableViewer subView = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -267,7 +304,7 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 //				final Table table = subView.getTable();
 //				table.setHeaderVisible(true);
 //				table.setLinesVisible(true);
-
+//
 //				subView.setContentProvider(ArrayContentProvider.getInstance());
 				
 //				table.setLayoutData( new GridData( GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL ) );
@@ -285,11 +322,8 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 							return;
 						}
 						
-						subView.addEntry( key );
-//						ViewDataObject viewObject = obj.addEntry( key );
-//						subView.add( viewObject );
-
-						getViewer().update( obj, null );
+						ViewDataObject viewObject = obj.addEntry( key );
+						subView.getViewer().add( viewObject );
 					}
 				});
 			}
@@ -403,6 +437,7 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 					{
 						existingObject.setData( inEntry.getDataMap() );
 						viewer.update( existingObject, new String[]{STATUS_FIELD_NAME} );
+						viewer.getTable().setSelection( 0 );
 						return;
 					}
 				}
@@ -476,9 +511,27 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 	}
 
 	@Override
-	public void updateChild( IPersistentMap<String, Object> inData, String inKey )
+	public void updateChild( IPersistentMap<String, Object> inData, String inType, String inKey )
 	{
 		// Not used
+	}
+
+	@Override
+	public boolean qualifyForDelete( ISTMEntryKey inKey ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	public void setViewDataObjects( List<ViewDataObject> inViewObjects )
+	{
+		viewer.setInput( null );
+		viewObjects = inViewObjects;
+		viewer.add( viewObjects.toArray( ) );
+	}
+	
+	public void updateViewObject( ViewDataObject inObject )
+	{
+		getViewer().update( inObject, null );
 	}
 
 

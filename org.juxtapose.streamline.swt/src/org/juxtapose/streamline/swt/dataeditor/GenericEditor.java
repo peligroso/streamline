@@ -42,20 +42,20 @@ import com.trifork.clj_ds.IPersistentMap;
 
 public class GenericEditor extends Composite implements ISTMEntryRequestSubscriber, ISTMRequestor, IDataViewerParent
 {
-	public static String SYNCH = "Synch";
-	public static String DELETE = "Delete";
+	public static final String SYNCH = "Synch";
+	public static final String DELETE = "Delete";
 	
-	private HashMap<String, DataViewer> typeToViewer = new HashMap<String, DataViewer>();
-	private Composite parent;
+	private final HashMap<String, DataViewer> typeToViewer = new HashMap<String, DataViewer>();
+	private final Composite parent;
 
-	ISTM stm;
+	private final ISTM stm;
+	
+	private final TabFolder tabFolder;
+	
+	private final String serviceKey;
 	
 	private ISTMEntryKey configMetaKey; 
 	boolean subscribedMetaData = false;
-	
-	TabFolder tabFolder;
-	
-	String serviceKey;
 	
 	public GenericEditor( Composite parent, int style, ISTM inSTM, String inServiceKey )
 	{

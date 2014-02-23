@@ -8,11 +8,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.swt.dataeditor.GenericEditor;
+import org.juxtapose.streamline.tools.STMUtil;
 import org.juxtapose.streamline.util.BucketMap;
 import org.juxtapose.streamline.util.PersistentArrayList;
 
@@ -24,7 +26,7 @@ import com.trifork.clj_ds.PersistentHashMap;
  * 3 jun 2013
  * Copyright (c) Pontus Jörgne. All rights reserved
  */
-public class ViewDataObject implements IDataViewerParent
+public class ViewDataObject implements IViewDataObjectContainer
 {
 	private ViewDataObjectState state;
 	
@@ -125,14 +127,33 @@ public class ViewDataObject implements IDataViewerParent
 		updatedKeys.add( inKey );
 		
 		if( parent != null )
-			parent.updateChild( inData, type );
+		{
+			if( entryKey != null )
+			{
+				String keyVal = entryKey.getSymbolicName();
+				parent.updateChild( inData, type, keyVal);
+			}
+		}
 	}
 	
-	public void updateChild( IPersistentMap<String, Object> inData, String inKey )
+	/* (non-Javadoc)
+	 * @see org.juxtapose.streamline.swt.datatable.IViewDataObjectContainer#updateChild(com.trifork.clj_ds.IPersistentMap, java.lang.String)
+	 */
+	public void updateChild( IPersistentMap<String, Object> inData, String inType, String inKey )
 	{
-		data.valAt( inKey );
-		data = data.assoc( inKey, inData );
-		updateData( data, inKey );
+		Object val = data.valAt( inType );
+		
+		IPersistentMap<String, Object> submap = (PersistentHashMap<String, Object>)val;
+		
+		if( val == null )
+			submap = PersistentHashMap.EMPTY;
+		
+		submap = submap.assoc( inKey, inData );
+		data = data.assoc( inType, submap );
+		
+		updateData( data, inType );
+		
+		parent.updateViewObject( this );
 	}
 	
 	/**
@@ -177,6 +198,31 @@ public class ViewDataObject implements IDataViewerParent
 		
 		updatedKeys.clear();
 		state = MIRROR;
+		
+		for( String key : viewObjects.keySet() )
+		{
+			Object subObj = inData.valAt( key );
+			
+			if( subObj instanceof IPersistentMap )
+			{
+				viewObjects.clear();
+				
+				IPersistentMap<String, Object> subMap = (IPersistentMap)subObj;
+				
+				Iterator<Entry<String, Object>> iter = subMap.iterator();
+				
+				while( iter.hasNext() )
+				{
+					Entry<String, Object> entry = iter.next();
+					ISTMEntryKey entryKey = STMUtil.createEntryKey( service, key, entry.getKey() );
+					
+					ViewDataObject subObject = new ViewDataObject( service, key, (IPersistentMap<String, Object>)entry.getValue(), (IPersistentMap<String, Object>)metaData.valAt( key ), entryKey, this );
+					viewObjects.put( key, subObject );
+				}
+			}
+		}
+			
+		
 	}
 	
 	public ISTMEntryKey getKey()
@@ -241,12 +287,15 @@ public class ViewDataObject implements IDataViewerParent
 
 		return true;
 	}
+	
+	public Vector<ViewDataObject> getViewDataObjects()
+	{
+		return viewObjects.values();
+	}
 
 	@Override
-	public boolean qualifyForDelete( ISTMEntryKey inKey )
+	public void updateViewObject( ViewDataObject inObject ) 
 	{
-		// TODO Auto-generated method stub
-		return false;
+		
 	}
-	
 }
