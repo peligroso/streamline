@@ -146,15 +146,19 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 					
 					if( o != null && o instanceof ViewDataObject )
 					{
-						for( DataViewer subView : subViewers )
-						{
-							subView.setViewDataObjects( ((ViewDataObject )o).getViewDataObjects() );
-						}
+						updateSubViewers( (ViewDataObject )o );
 					}
 				}
 			}
 		});
-
+	}
+	
+	private void updateSubViewers( ViewDataObject inViewDataObject )
+	{
+		for( DataViewer subView : subViewers )
+		{
+			subView.setViewDataObjects( inViewDataObject.getViewDataObjects() );
+		}
 	}
 
 	/**
@@ -438,6 +442,7 @@ public class DataViewer extends Composite implements ISTMContainerListener, IVie
 						existingObject.setData( inEntry.getDataMap() );
 						viewer.update( existingObject, new String[]{STATUS_FIELD_NAME} );
 						viewer.getTable().setSelection( 0 );
+						updateSubViewers( existingObject );
 						return;
 					}
 				}

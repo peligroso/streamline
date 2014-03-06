@@ -263,7 +263,7 @@ public class ViewDataObject implements IViewDataObjectContainer
 		{
 			ViewDataObject viewObject = new ViewDataObject( null, inKey, PersistentHashMap.EMPTY, (IPersistentMap<String, Object>)obj, this );
 			viewObjects.put( inKey, viewObject );
-			state = UPDATED;
+			state = state == MIRROR ? UPDATED : state;
 			return viewObject;
 		}
 		
