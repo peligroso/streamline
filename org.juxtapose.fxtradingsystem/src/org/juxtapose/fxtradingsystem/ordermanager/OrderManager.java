@@ -70,19 +70,22 @@ public class OrderManager extends DataProducerService implements IOrderManager, 
 	{
 		if( inKey.equals( KeyConstants.PRODUCER_SERVICE_KEY ))
 		{
-			Object dataValue = inData.getValue( FXProducerServiceConstants.PRICE_ENGINE );
-			if( dataValue != null )
+			if( inData.isDeltaValue( FXProducerServiceConstants.PRICE_ENGINE ) )
 			{
-				System.out.println( "Price engine is registered with status: "+dataValue);
-				
-				if( dataValue.equals( Status.OK.toString() ) )
+				Object dataValue = inData.getValue( FXProducerServiceConstants.PRICE_ENGINE );
+				if( dataValue != null )
 				{
-					connector = new ClientConnector( this );
+					System.out.println( "Price engine is registered with status: "+dataValue);
+
+					if( dataValue.equals( Status.OK.toString() ) )
+					{
+						connector = new ClientConnector( this );
+					}
 				}
-			}
-			else
-			{
-				System.out.println( "Price engine is not registered");
+				else
+				{
+					System.out.println( "Price engine is not registered");
+				}
 			}
 		}
 	}
