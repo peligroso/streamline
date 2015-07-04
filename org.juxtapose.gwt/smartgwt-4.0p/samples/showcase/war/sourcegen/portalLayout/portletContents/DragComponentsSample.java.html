@@ -1,0 +1,173 @@
+<html>
+<head>
+<link rel='stylesheet' href='../../../js/sh/SyntaxHighlighter.css' type='text/css' />
+<script src='../../../js/sh/shCore.js'></script>
+<script src='../../../js/sh/shBrushJava.js'></script>
+<style>
+* {
+font-family:Courier New,monospace;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.dp-highlighter {
+  white-space: nowrap;
+  overflow: visible;
+  width: 600px;
+  font-size: 11px;
+  font-family:Courier New,monospace;
+}
+</style>
+</head>
+<body>
+<textarea name='code' class='java:nogutter' rows='15' cols='120'>
+/*
+ * Smart GWT (GWT for SmartClient)
+ * Copyright 2008 and beyond, Isomorphic Software, Inc.
+ *
+ * Smart GWT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3
+ * as published by the Free Software Foundation.  Smart GWT is also
+ * available under typical commercial license terms - see
+ * http://smartclient.com/license
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.DragAppearance;
+import com.smartgwt.client.types.DragDataAction;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.AnimationCallback;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.ImgProperties;
+import com.smartgwt.client.widgets.events.DropEvent;
+import com.smartgwt.client.widgets.events.DropHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.LayoutSpacer;
+import com.smartgwt.client.widgets.layout.PortalLayout;
+import com.smartgwt.client.widgets.layout.Portlet;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.layout.VStack;
+import com.smartgwt.sample.showcase.client.data.PartData;
+
+import com.google.gwt.core.client.EntryPoint;
+
+public class DragComponentsSample implements EntryPoint {
+
+    @Override
+    protected boolean isTopIntro() {
+        return true;
+    }
+
+    public void onModuleLoad() {
+        PartsListGrid myList = new PartsListGrid();
+        myList.setCanDragRecordsOut(true);
+        myList.setCanReorderRecords(true);
+        myList.setDragDataAction(DragDataAction.COPY);
+        myList.setData(PartData.getRecords());
+        myList.setHeight(150);
+		
+        PortalLayout portalLayout = new PortalLayout() {
+            public Canvas getDropPortlet(Canvas dragTarget, Integer colNum, Integer rowNum, Integer dropPosition) {
+                // You can use getDropPortlet to customize what happens when a component is dropped
+                if (dragTarget instanceof PartsListGrid) {
+                    Portlet portlet = new Portlet();
+                    portlet.setTitle("Dragged Records");
+                    PartsListGrid partListGrid = new PartsListGrid();
+                    partListGrid.setData(((PartsListGrid)dragTarget).getDragData());
+                    portlet.addItem(partListGrid);
+                    return portlet;
+                } else {
+                    // By default, the whole component is wrapped in a Portlet
+                    return super.getDropPortlet(dragTarget, colNum, rowNum, dropPosition);
+                }
+            }
+        };
+        portalLayout.setHeight100();
+
+        VStack vStack = new VStack();
+        vStack.setMembersMargin(10);
+        vStack.setLayoutMargin(10);
+        vStack.setShowEdges(true);
+        DragPiece dragPieceBlue = new DragPiece();
+        dragPieceBlue.setSrc("pawn_blue.png");
+        DragPiece dragPieceGreen = new DragPiece();
+        dragPieceGreen.setSrc("pawn_green.png");
+        DragPiece dragPieceYellow = new DragPiece();
+        dragPieceYellow.setSrc("pawn_yellow.png");
+        vStack.addMembers(dragPieceBlue, dragPieceGreen, dragPieceYellow);
+		
+        VLayout vLayout = new VLayout();
+        vLayout.setWidth(200);
+        vLayout.setHeight100();
+        vLayout.setMembersMargin(20);
+        vLayout.setMembers(myList, vStack);
+		
+        HLayout hLayout = new HLayout();
+        hLayout.setWidth100();
+        hLayout.setHeight100();
+        hLayout.setMargin(20);
+        hLayout.setMembers(portalLayout, vLayout);
+		
+        hLayout.draw();
+    }
+
+    class DragPiece extends Img {
+        public DragPiece() {
+            setWidth(48);
+            setHeight(48);
+            setPadding(12);
+            setLayoutAlign(Alignment.CENTER);
+            setCanDragReposition(true);
+            setCanDrop(true);
+            setDragAppearance(DragAppearance.TARGET);
+            setAppImgDir("pieces/48/");
+        }
+    }
+	
+    class PartsListGrid extends ListGrid {
+        public PartsListGrid() {
+            setCellHeight(24);
+            setImageSize(16);
+            setShowEdges(true);
+            setBorder("0px");
+            setBodyStyleName("normal");
+            setAlternateRecordStyles(true);
+            setShowHeader(false);
+            setLeaveScrollbarGap(false);
+			
+            ImgProperties imgProperties = new ImgProperties();
+            imgProperties.setSrc("pieces/24/cubes_all.png");
+            imgProperties.setWidth(24);
+            imgProperties.setHeight(24);
+			
+            setTrackerImage(imgProperties);
+			
+            ListGridField partSrcField = new ListGridField("partSrc");
+            partSrcField.setType(ListGridFieldType.IMAGE);
+            partSrcField.setWidth(24);
+            partSrcField.setImgDir("pieces/16/");
+            ListGridField partNameField = new ListGridField("partName");
+            ListGridField partNumField = new ListGridField("partNum");
+            partNumField.setWidth(20);
+			
+            setFields(partSrcField, partNameField, partNumField);
+        }
+    }
+
+}
+</textarea>
+<script class='javascript'>
+dp.SyntaxHighlighter.HighlightAll("code");
+</script>
+</body>
+</html>

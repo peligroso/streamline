@@ -1,0 +1,212 @@
+<html>
+<head>
+<link rel='stylesheet' href='../../../js/sh/SyntaxHighlighter.css' type='text/css' />
+<script src='../../../js/sh/shCore.js'></script>
+<script src='../../../js/sh/shBrushJava.js'></script>
+<style>
+* {
+font-family:Courier New,monospace;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.dp-highlighter {
+  white-space: nowrap;
+  overflow: visible;
+  width: 600px;
+  font-size: 11px;
+  font-family:Courier New,monospace;
+}
+</style>
+</head>
+<body>
+<textarea name='code' class='java:nogutter' rows='15' cols='120'>
+/*
+ * Smart GWT (GWT for SmartClient)
+ * Copyright 2008 and beyond, Isomorphic Software, Inc.
+ *
+ * Smart GWT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3
+ * as published by the Free Software Foundation.  Smart GWT is also
+ * available under typical commercial license terms - see
+ * http://smartclient.com/license
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
+
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import com.google.gwt.core.client.EntryPoint;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.data.RecordList;
+import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.TextImportSettings;
+import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.Visibility;
+import com.smartgwt.client.types.EscapingMode;
+import com.smartgwt.client.types.LayoutPolicy;
+import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.widgets.Button;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Dialog;
+import com.smartgwt.client.widgets.IButton;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
+import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.CellSelection;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.ButtonItem;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import com.smartgwt.client.widgets.form.fields.StaticTextItem;
+
+import com.google.gwt.core.client.EntryPoint;
+
+public class GridToGridSample implements EntryPoint {
+
+    private GridClipboard board;
+
+    public class GridCanvas extends VLayout {
+
+        final private int GRID_N_ROWS = 10;
+        
+        final private String[] GRID_FIELD_NAMES = { "A", "B", "C", "D", "E", "F", "G" };
+
+        private ListGrid grid;
+
+        public class CopyButton extends IButton implements ClickHandler {
+
+            public CopyButton(String title) {
+                super(title);
+                this.addClickHandler(this);
+            }        
+            public void onClick(ClickEvent event) {
+                board.data = grid.getSelectedCellData();
+            }
+        }
+
+        public class PasteButton extends IButton implements ClickHandler {
+
+            public PasteButton(String title) {
+                super(title);
+                this.addClickHandler(this);
+            }        
+            public void onClick(ClickEvent event) {
+                grid.applyCellData(board.data);
+            }
+        }
+
+        public void installInitialValues(Record[] records) {
+            Map<String, String> map;
+            map = new HashMap();
+            map.put(GRID_FIELD_NAMES[1], "text1");
+            map.put(GRID_FIELD_NAMES[4], "text2");
+            records[2] = new Record(map);
+
+            map = new HashMap();
+            map.put(GRID_FIELD_NAMES[2], "text3");
+            records[4] = new Record(map);
+            
+            map = new HashMap();
+            map.put(GRID_FIELD_NAMES[6], "text4");
+            records[7] = new Record(map);
+
+            map = new HashMap();
+            map.put(GRID_FIELD_NAMES[0], "text5");
+            map.put(GRID_FIELD_NAMES[5], "text6");
+            records[5] = new Record(map);
+        }
+
+        public void addListGrid(int index) {
+            List<ListGridField> fields = new ArrayList<ListGridField>();
+
+            for(int i = 0; i < GRID_FIELD_NAMES.length; i++ ) {
+                fields.add(new ListGridField(GRID_FIELD_NAMES[i]));
+            }
+
+            ListGrid grid = new ListGrid();
+            grid.setHeight(250);
+            grid.setCanEdit(true);
+            grid.setCanDragSelect(true);
+            grid.setCanSelectCells(true);
+            grid.setLeaveScrollbarGap(false);
+
+            grid.setFields(fields.toArray(new ListGridField[0]));
+
+            Record[] records = new Record[GRID_N_ROWS];
+            for (int i = 0; i < GRID_N_ROWS; i++) {
+                records[i] = new Record();
+            }
+            if (0 == index) {
+                installInitialValues(records);
+            }
+            grid.setData(records);
+
+            this.addMember(grid);
+            this.grid = grid;
+        }
+
+        public void addButtons(int index) {
+
+            final Alignment[] MEMBER_ALIGNMENT = { Alignment.LEFT, 
+                                                   Alignment.CENTER, 
+                                                   Alignment.RIGHT };
+
+            HLayout layout = new HLayout();
+            CopyButton copy = new CopyButton("Copy");
+            PasteButton paste = new PasteButton("Paste");
+            
+            layout.addMember(copy);
+            layout.addMember(paste);
+            layout.setAlign(MEMBER_ALIGNMENT[index]);
+            layout.setHeight(25);
+            this.addMember(layout);
+        }
+
+        public GridCanvas(int index) {
+            super(10);
+            this.addListGrid(index);
+            this.addButtons(index);
+        }
+    }
+
+    public class GridClipboard extends TabSet {
+        RecordList data;
+    };
+
+    public void onModuleLoad() {
+        this.board = new GridClipboard();
+
+        for (int i = 0; i < 3; i++ ) {
+            Tab myTab = new Tab("Sheet " + (i + 1));
+            GridCanvas canvas = new GridCanvas(i);
+            canvas.setOverflow(Overflow.VISIBLE);
+            myTab.setPane(canvas);
+            board.addTab(myTab);
+        }
+        this.board.setHeight(325);
+        board.draw();
+    }
+
+};
+
+</textarea>
+<script class='javascript'>
+dp.SyntaxHighlighter.HighlightAll("code");
+</script>
+</body>
+</html>

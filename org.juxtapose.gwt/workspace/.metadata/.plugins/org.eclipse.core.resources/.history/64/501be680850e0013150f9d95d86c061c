@@ -1,0 +1,7 @@
+package com.test.smartgui.client.client;
+
+import com.smartgwt.client.widgets.layout.HLayout;
+
+public class ApplicationMenu extends HLayout {
+
+}

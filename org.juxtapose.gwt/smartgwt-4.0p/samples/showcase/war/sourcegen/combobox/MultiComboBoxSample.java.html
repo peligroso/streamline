@@ -1,0 +1,113 @@
+<html>
+<head>
+<link rel='stylesheet' href='../../js/sh/SyntaxHighlighter.css' type='text/css' />
+<script src='../../js/sh/shCore.js'></script>
+<script src='../../js/sh/shBrushJava.js'></script>
+<style>
+* {
+font-family:Courier New,monospace;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.dp-highlighter {
+  white-space: nowrap;
+  overflow: visible;
+  width: 600px;
+  font-size: 11px;
+  font-family:Courier New,monospace;
+}
+</style>
+</head>
+<body>
+<textarea name='code' class='java:nogutter' rows='15' cols='120'>
+/*
+ * Smart GWT (GWT for SmartClient)
+ * Copyright 2008 and beyond, Isomorphic Software, Inc.
+ *
+ * Smart GWT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3
+ * as published by the Free Software Foundation.  Smart GWT is also
+ * available under typical commercial license terms - see
+ * http://smartclient.com/license
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.smartgwt.client.types.MultiComboBoxLayoutStyle;
+import com.smartgwt.client.types.TitleOrientation;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.MultiComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.SpacerItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.sample.showcase.client.data.ItemSupplyXmlDS;
+
+import com.google.gwt.core.client.EntryPoint;
+
+public class MultiComboBoxSample implements EntryPoint {
+
+    private static final Map<String, MultiComboBoxLayoutStyle> layoutStyles;
+    static {
+        final MultiComboBoxLayoutStyle[] values = MultiComboBoxLayoutStyle.values();
+        layoutStyles = new HashMap<String, MultiComboBoxLayoutStyle>(values.length);
+
+        for (MultiComboBoxLayoutStyle value : values) {
+            layoutStyles.put(value.getValue(), value);
+        }
+    }
+
+    public void onModuleLoad() {
+
+        final MultiComboBoxLayoutStyle initialLayoutStyle = MultiComboBoxLayoutStyle.VERTICAL;
+
+        final DynamicForm form = new DynamicForm();
+        form.setMargin(10);
+        form.setNumCols(2);
+        form.setColWidths(500, 120);
+        form.setCellPadding(15);
+        form.setTitleOrientation(TitleOrientation.TOP);
+
+        final MultiComboBoxItem supplies = new MultiComboBoxItem("supplies", "Items");
+        supplies.setOptionDataSource(ItemSupplyXmlDS.getInstance());
+        supplies.setDisplayField("itemName");
+        supplies.setValueField("itemID");
+        supplies.setAutoFetchData(true);
+        supplies.setLayoutStyle(initialLayoutStyle);
+
+        final SpacerItem spacer1 = new SpacerItem(), spacer2 = new SpacerItem();
+
+        final SelectItem layoutStyleSelector = new SelectItem();
+        layoutStyleSelector.setTitle("Change layout style");
+        layoutStyleSelector.setDefaultValue(initialLayoutStyle.getValue());
+        layoutStyleSelector.setValueMap(layoutStyles.keySet().toArray(new String[0]));
+        layoutStyleSelector.addChangedHandler(new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                String value = (String) event.getValue();
+                supplies.setLayoutStyle(layoutStyles.get(value));
+            }
+            
+        });
+
+        form.setFields(supplies, spacer1, spacer2, layoutStyleSelector);
+
+        form.draw();
+    }
+
+}
+</textarea>
+<script class='javascript'>
+dp.SyntaxHighlighter.HighlightAll("code");
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<html>
+<head>
+<link rel='stylesheet' href='../../../js/sh/SyntaxHighlighter.css' type='text/css' />
+<script src='../../../js/sh/shCore.js'></script>
+<script src='../../../js/sh/shBrushJava.js'></script>
+<style>
+* {
+font-family:Courier New,monospace;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.dp-highlighter {
+  white-space: nowrap;
+  overflow: visible;
+  width: 600px;
+  font-size: 11px;
+  font-family:Courier New,monospace;
+}
+</style>
+</head>
+<body>
+<textarea name='code' class='java:nogutter' rows='15' cols='120'>
+/*
+ * Smart GWT (GWT for SmartClient)
+ * Copyright 2008 and beyond, Isomorphic Software, Inc.
+ *
+ * Smart GWT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3
+ * as published by the Free Software Foundation.  Smart GWT is also
+ * available under typical commercial license terms - see
+ * http://smartclient.com/license
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
+
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.DragAppearance;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.AnimationCallback;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.Img;
+import com.smartgwt.client.widgets.ImgProperties;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.CheckboxItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.LayoutSpacer;
+import com.smartgwt.client.widgets.layout.PortalLayout;
+import com.smartgwt.client.widgets.layout.Portlet;
+import com.smartgwt.client.widgets.layout.VLayout;
+
+import com.google.gwt.core.client.EntryPoint;
+
+public class ColumnWidthSample implements EntryPoint {
+
+    @Override
+    protected boolean isTopIntro() {
+        return true;
+    }
+
+    public void onModuleLoad() {
+        final PortalLayout portalLayout = new PortalLayout();
+        portalLayout.setCanResizeColumns(true);
+		
+        Portlet portlet1 = new Portlet();
+        portlet1.setTitle("Portlet 1");
+        Portlet portlet2 = new Portlet();
+        portlet2.setTitle("Portlet 2");
+        Portlet portlet3 = new Portlet();
+        portlet3.setTitle("Portlet 3");
+        Portlet portlet4 = new Portlet();
+        portlet4.setTitle("Portlet 4");
+		
+        portalLayout.addPortlet(portlet1, 0, 0);
+        portalLayout.addPortlet(portlet2, 0, 1, 0);
+        portalLayout.addPortlet(portlet3, 0, 1, 1);
+        portalLayout.addPortlet(portlet4, 1, 0);
+	
+        DynamicForm form = new DynamicForm();
+        CheckboxItem checkbox = new CheckboxItem();
+        checkbox.setTitle("Prevent Underflow");
+        checkbox.setDefaultValue(true);
+        checkbox.addChangedHandler(new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                portalLayout.setPreventUnderflow((Boolean)event.getValue());
+            }
+        });
+        form.setFields(checkbox);
+		
+        VLayout vLayout = new VLayout();
+        vLayout.setWidth100();
+        vLayout.setHeight100();
+        vLayout.setMembersMargin(10);
+        vLayout.addMembers(form, portalLayout);
+		
+        vLayout.draw();
+    }
+
+}
+</textarea>
+<script class='javascript'>
+dp.SyntaxHighlighter.HighlightAll("code");
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<html>
+<head>
+<link rel='stylesheet' href='../../../js/sh/SyntaxHighlighter.css' type='text/css' />
+<script src='../../../js/sh/shCore.js'></script>
+<script src='../../../js/sh/shBrushJava.js'></script>
+<style>
+* {
+font-family:Courier New,monospace;
+  padding: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.dp-highlighter {
+  white-space: nowrap;
+  overflow: visible;
+  width: 600px;
+  font-size: 11px;
+  font-family:Courier New,monospace;
+}
+</style>
+</head>
+<body>
+<textarea name='code' class='java:nogutter' rows='15' cols='120'>
+/*
+ * Smart GWT (GWT for SmartClient)
+ * Copyright 2008 and beyond, Isomorphic Software, Inc.
+ *
+ * Smart GWT is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License version 3
+ * as published by the Free Software Foundation.  Smart GWT is also
+ * available under typical commercial license terms - see
+ * http://smartclient.com/license
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
+
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.GroupStartOpen;
+import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.grid.*;
+import com.smartgwt.sample.showcase.client.data.CountryXmlDS;
+
+import java.util.LinkedHashMap;
+import java.util.Date;
+
+import com.google.gwt.core.client.EntryPoint;
+
+public class GridGroupingModesSample implements EntryPoint {
+
+    public void onModuleLoad() {
+
+        CountryXmlDS countryDS = CountryXmlDS.getInstance();
+    	final ListGrid countryGrid = new ListGrid();  
+        countryGrid.setWidth(500);  
+        countryGrid.setHeight(425);  
+        countryGrid.setAlternateRecordStyles(true);
+        countryGrid.setCellHeight(22);
+        countryGrid.setDataSource(countryDS);
+        countryGrid.setGroupStartOpen(GroupStartOpen.ALL);
+        countryGrid.setGroupByField("continent");
+        countryGrid.setAutoFetchData(true);
+        
+        ListGridField countryCodeField = new ListGridField("countryCode", "Flag", 40);  
+        countryCodeField.setAlign(Alignment.CENTER);  
+        countryCodeField.setType(ListGridFieldType.IMAGE);  
+        countryCodeField.setImageURLPrefix("flags/16/");  
+        countryCodeField.setImageURLSuffix(".png");  
+  
+        ListGridField nameField = new ListGridField("countryName"); 
+        ListGridField continentField = new ListGridField("continent");
+        continentField.setDefaultGroupingMode("hemisphere");
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        map.put("continent", "Continent Name");
+        map.put("hemisphere", "Hemisphere");
+        continentField.setGroupingModes(map);
+        continentField.setGroupValueFunction(new GroupValueFunction() {
+            public Object getGroupValue(Object value, ListGridRecord record, ListGridField field, String fieldName, ListGrid grid) {
+            	String continent = (String)value; 
+            	if (field.getGroupingMode().equals("continent")) return value;
+                else {
+                    if ((continent.equals("North America")) || (continent.equals("South America"))) {
+                        return "Western Hemisphere";
+                    } else {
+                        return "Eastern Hemisphere";
+                    }
+                }
+            }
+        });
+        ListGridField independenceField = new ListGridField("independence");
+        LinkedHashMap<String, String> mapIndependence = new LinkedHashMap<String, String>();
+        mapIndependence.put("epoch", "Epoch");
+        mapIndependence.put("season", "Season");
+        final LinkedHashMap<String, String> mapSeasons = new LinkedHashMap<String, String>();
+        mapSeasons.put("0", "Winter");
+        mapSeasons.put("1", "Spring");
+        mapSeasons.put("2", "Summer");
+        mapSeasons.put("3", "Fall");
+        independenceField.setGroupingModes(mapIndependence);
+        independenceField.setDefaultGroupingMode("epoch");
+        independenceField.setGroupValueFunction(new GroupValueFunction() {
+            public Object getGroupValue(Object value, ListGridRecord record, ListGridField field, String fieldName, ListGrid grid) {
+            	Date date = (Date)value; 
+            	DateTimeFormat dateFormatYear = DateTimeFormat.getFormat("yyyy");
+            	DateTimeFormat dateFormatMonth = DateTimeFormat.getFormat("MM");
+            	DateTimeFormat dateFormatDay = DateTimeFormat.getFormat("dd");
+            	if (field.getGroupingMode().equals("season")) {
+                    if (date == null) return "Unknown";
+                    int month = Integer.parseInt(dateFormatMonth.format(date))-1;
+                    int day = Integer.parseInt(dateFormatDay.format(date));
+                    int shift = month % 3 == 2 && day >= 21 ? 1 : 0;
+                    double season = Math.floor(((month + shift) % 12)/3);
+                    return mapSeasons.get(String.valueOf(season));
+                } else {
+                    if (date == null) return "Ancient";
+                	int year = Integer.parseInt(dateFormatYear.format(date));
+                    if (year < 1910) return "Pre-Industrial";
+                    else return "Post-Industrial";
+                }
+            }
+        });
+        
+        ListGridField populationField = new ListGridField("population");  
+
+        countryGrid.setFields(nameField, continentField, independenceField, populationField, countryCodeField);
+
+        countryGrid.draw();
+    }
+
+}
+</textarea>
+<script class='javascript'>
+dp.SyntaxHighlighter.HighlightAll("code");
+</script>
+</body>
+</html>

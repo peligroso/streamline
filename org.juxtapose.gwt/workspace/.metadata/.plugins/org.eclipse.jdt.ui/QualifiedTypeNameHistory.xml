@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.google.gwt.user.client.rpc.RemoteService"/>
+<fullyQualifiedTypeName name="com.google.gwt.user.client.rpc.RemoteServiceRelativePath"/>
+<fullyQualifiedTypeName name="java.util.Random"/>
+<fullyQualifiedTypeName name="com.google.gwt.core.client.GWT"/>
+<fullyQualifiedTypeName name="com.google.gwt.user.client.rpc.AsyncCallback"/>
+<fullyQualifiedTypeName name="java.io.Serializable"/>
+<fullyQualifiedTypeName name="java.util.Iterator"/>
+<fullyQualifiedTypeName name="java.net.URL"/>
+<fullyQualifiedTypeName name="com.google.gwt.http.client.URL"/>
+<fullyQualifiedTypeName name="com.google.gwt.http.client.Request"/>
+<fullyQualifiedTypeName name="com.google.gwt.http.client.RequestCallback"/>
+<fullyQualifiedTypeName name="com.google.gwt.http.client.RequestBuilder"/>
+<fullyQualifiedTypeName name="com.google.gwt.http.client.RequestException"/>
+<fullyQualifiedTypeName name="com.google.gwt.core.client.JsonUtils"/>
+<fullyQualifiedTypeName name="com.google.gwt.core.client.JsArray"/>
+</qualifiedTypeNameHistroy>

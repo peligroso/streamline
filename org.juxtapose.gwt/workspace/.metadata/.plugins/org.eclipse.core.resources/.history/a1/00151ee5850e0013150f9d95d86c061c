@@ -1,0 +1,7 @@
+package com.test.smartgui.client.client;
+
+import com.smartgwt.client.widgets.layout.VLayout;
+
+public class MainArea extends VLayout {
+
+}

@@ -1,0 +1,5 @@
+package com.test.smartgui.client.client;
+
+public class NavigationArea {
+
+}

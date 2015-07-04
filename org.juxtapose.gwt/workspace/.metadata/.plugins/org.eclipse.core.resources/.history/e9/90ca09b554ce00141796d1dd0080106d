@@ -1,0 +1,13 @@
+package com.google.gwt.sample.stockwatcher.server;
+
+import com.google.gwt.sample.stockwatcher.client.StockPrice;
+import com.google.gwt.sample.stockwatcher.client.StockPriceService;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+public class StockPriceServiceImpl extends RemoteServiceServlet implements StockPriceService {
+
+    public StockPrice[] getPrices(String[] symbols) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+}
