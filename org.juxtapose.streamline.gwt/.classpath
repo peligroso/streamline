@@ -4,7 +4,7 @@
 	<classpathentry kind="src" output="test-classes" path="test"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/pontus/Downloads/de.csenk.gwt.jetty-7.1.6.v20100715.jar"/>
-	<classpathentry kind="lib" path="D:/GWT/de.csenk.gwt.ws_v0.0.1.67.jar"/>
+	<classpathentry kind="lib" path="/org.juxtapose.gwt/de.csenk.gwt.jetty-7.1.6.v20100715.jar"/>
+	<classpathentry kind="lib" path="/org.juxtapose.gwt/de.csenk.gwt.ws_v0.0.1.67.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

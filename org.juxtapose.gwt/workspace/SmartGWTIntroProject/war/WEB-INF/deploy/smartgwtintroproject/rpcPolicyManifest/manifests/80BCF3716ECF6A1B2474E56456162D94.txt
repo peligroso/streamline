@@ -1,0 +1,2 @@
+serviceClass: com.test.smartgui.client.client.GreetingService
+path: BD2958991B0A7C196C27D4B5CE2D3416.gwt.rpc
