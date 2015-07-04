@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.juxtapose.streamline.stm.ISTM;
+import org.juxtapose.streamline.util.net.websocket.WebSocketServerPipelineFactory;
 
 public class ServerConnector 
 {
@@ -29,5 +30,23 @@ public class ServerConnector
 
         // Bind and start to accept incoming connections.
         bootstrap.bind(new InetSocketAddress(port));
+        
+        
+        startWebsocketConnector();
+    }
+	
+	public void startWebsocketConnector() {
+        // Configure the server.
+        ServerBootstrap bootstrap = new ServerBootstrap(new NioServerSocketChannelFactory(
+                Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
+
+        // Set up the event pipeline factory.
+        bootstrap.setPipelineFactory(new WebSocketServerPipelineFactory());
+
+        // Bind and start to accept incoming connections.
+        bootstrap.bind(new InetSocketAddress(9191));
+
+        System.out.println("Web socket server started at port 9191");
+        System.out.println("ws://localhost:9191/websocket");
     }
 }

@@ -1,0 +1,2 @@
+serviceClass: org.juxtapose.streamline.gwt.client.GreetingService
+path: AE105DB212543FF325BA15294E80FDA6.gwt.rpc

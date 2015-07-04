@@ -25,7 +25,7 @@ public class STMEntryFactory implements ISTMEntryFactory
 	 * @param inProducer
 	 * @return
 	 */
-	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer )
+	public ISTMEntry createData( ISTMEntryProducer inProducer )
 	{
 		IPersistentMap<String, Object> dataMap = PersistentHashMap.create();
 		PersistentArrayList<ISTMEntrySubscriber> lowPrioSubscribers = new PersistentArrayList<ISTMEntrySubscriber>();

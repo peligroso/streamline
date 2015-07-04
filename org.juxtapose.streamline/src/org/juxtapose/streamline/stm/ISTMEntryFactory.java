@@ -12,6 +12,6 @@ import org.juxtapose.streamline.util.Status;
  */
 public interface ISTMEntryFactory
 {
-	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer );
+	public ISTMEntry createData( ISTMEntryProducer inProducer );
 	public ISTMEntry createData( Status inStatus, ISTMEntryProducer inProducer, ISTMEntrySubscriber inSubscriber );
 }

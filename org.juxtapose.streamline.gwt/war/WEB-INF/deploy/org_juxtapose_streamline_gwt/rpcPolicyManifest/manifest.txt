@@ -1,0 +1,2 @@
+# Module org_juxtapose_streamline_gwt
+# RPC service class, partial path of RPC policy file

@@ -213,14 +213,14 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	 * @param inProducer
 	 * @return
 	 */
-	protected ISTMEntry createEmptyData( Status inStatus, ISTMEntryProducer inProducer )
+	protected ISTMEntry createEmptyData( ISTMEntryProducer inProducer )
 	{
 		if( entryFactory == null )
 		{
 			logError( "Datafactory has not been initiated" );
 			System.exit(1);
 		}
-		return entryFactory.createData(inStatus, inProducer );
+		return entryFactory.createData( inProducer );
 	}
 	
 	/* (non-Javadoc)
@@ -540,7 +540,7 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 			}
 			else
 			{
-				entry = createEmptyData( inStatus, inProducer );
+				entry = createEmptyData( inProducer );
 				entry = entry.addSubscriber( inProducer );
 				
 				entry = entry.setUpdatedData( inData, new HashSet<String>(), true );
