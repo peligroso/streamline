@@ -18,8 +18,8 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
   <!-- Other module inherits                                      -->
-  <inherits name='de.csenk.gwt.ws.WebSocket'/>
   <inherits name='com.google.gwt.json.JSON'/>
+  <inherits name='de.csenk.gwt.ws.WebSocket'/>
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.juxtapose.streamline.gwt.client.Org_juxtapose_streamline_gwt'/>

@@ -11,7 +11,7 @@ public interface IJSSTMEntryProducerService {
 	
 	public String getServiceId();
 	
-	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, Object inTag, Map<String, String> inQuery );
+	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, String inTag, Map<String, String> inQuery );
 	public IJSSTMEntryProducer getDataProducer( String inDataKey );
 
 }

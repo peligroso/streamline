@@ -36,7 +36,7 @@ public class JSSTM implements IJSSTMEntryProducerService, IJSSTMEntryProducer, I
 		keyToData.put( JSSTMConstants.PRODUCER_SERVICE_KEY, emptyData);
 		registerProducer( this, JSSTMConstants.STATUS_OK );
 		
-		JSClientConnector connector = new JSClientConnector();
+		JSClientConnector connector = new JSClientConnector( this );
 		connector.connect();
 	}
 	
@@ -319,8 +319,7 @@ public class JSSTM implements IJSSTMEntryProducerService, IJSSTMEntryProducer, I
 	}
 
 	@Override
-	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, Object inTag,
-			Map<String, String> inQuery ) {
+	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, String inTag, Map<String, String> inQuery ) {
 		// TODO Auto-generated method stub
 		
 	}

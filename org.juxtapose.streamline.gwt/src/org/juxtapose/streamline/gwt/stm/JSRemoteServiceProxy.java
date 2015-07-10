@@ -14,6 +14,8 @@ public class JSRemoteServiceProxy implements IJSSTMEntryProducerService
 	
 	HashMap<String, IJSSTMEntrySubscriber> tagToSubscriber = new HashMap<String, IJSSTMEntrySubscriber>();
 	
+	Map<String, IJSSTMEntryProducer> keyToProducer = new HashMap<String, IJSSTMEntryProducer>();
+	
 	public JSRemoteServiceProxy( String inServiceID, JSSTM inSTM, String inStatus, JSClientConnector inConnector ) 
 	{
 		serviceID = inServiceID;
@@ -34,18 +36,33 @@ public class JSRemoteServiceProxy implements IJSSTMEntryProducerService
 	{
 		return serviceID;
 	}
+	
+	/**
+	 * @param inStatus
+	 */
+	public void updateStatus( String inStatus )
+	{
+		status = inStatus;
+	}
+
 
 	@Override
-	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, Object inTag,
-			Map<String, String> inQuery ) {
-		// TODO Auto-generated method stub
+	public void getDataKey( IJSSTMEntrySubscriber inSubscriber, String inTag, Map<String, String> inQuery )
+	{
+		tagToSubscriber.put( inTag, inSubscriber );
+		clientConnector.requestKey( this, serviceID, inQuery, inTag );
 		
 	}
 
 	@Override
-	public IJSSTMEntryProducer getDataProducer( String inDataKey ) {
-		// TODO Auto-generated method stub
-		return null;
+	public IJSSTMEntryProducer getDataProducer( String inDataKey )
+	{
+		IJSSTMEntryProducer producer = keyToProducer.get( inDataKey );
+		
+		if( producer == null )		{
+//			producer = new RemoteProxyEntryProducer( stm, inDataKey, clientConnector );
+		}
+		return producer;
 	}
 
 }

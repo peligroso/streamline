@@ -1,461 +1,271 @@
-function org_juxtapose_streamline_gwt(){
-  var $wnd_0 = window;
-  var $doc_0 = document;
-  sendStats('bootstrap', 'begin');
-  function isHostedMode(){
-    var query = $wnd_0.location.search;
-    return query.indexOf('gwt.codesvr.org_juxtapose_streamline_gwt=') != -1 || query.indexOf('gwt.codesvr=') != -1;
+/*
+ * Copyright 2014 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+/**
+ * This startup script is used when we run superdevmode from an app server.
+ *
+ * The main goal is to avoid installing bookmarklets for host:port/module
+ * to load and recompile the application.
+ */
+(function($wnd, $doc){
+  // Don't support browsers without session storage: IE6/7
+  var badBrowser = 'Unable to load Super Dev Mode of "org_juxtapose_streamline_gwt" because\n';
+  if (!('sessionStorage' in $wnd)) {
+    $wnd.alert(badBrowser +  'this browser does not support "sessionStorage".');
+    return;
   }
 
-  function sendStats(evtGroupString, typeString){
-    if ($wnd_0.__gwtStatsEvent) {
-      $wnd_0.__gwtStatsEvent({moduleName:'org_juxtapose_streamline_gwt', sessionId:$wnd_0.__gwtStatsSessionId, subSystem:'startup', evtGroup:evtGroupString, millis:(new Date).getTime(), type:typeString});
+  //We don't import properties.js so we have to update active modules here
+  $wnd.__gwt_activeModules = $wnd.__gwt_activeModules || {};
+  $wnd.__gwt_activeModules['org_juxtapose_streamline_gwt'] = {
+    'moduleName' : 'org_juxtapose_streamline_gwt',
+    'bindings' : function() {
+      return {};
+    }
+  };
+
+  // Reuse compute script base
+  /*
+ * Copyright 2012 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+/**
+ * A simplified version of computeScriptBase.js that's used only when running
+ * in Super Dev Mode. (We don't want the default version because it allows the
+ * web page to override it using a meta tag.)
+ *
+ * Prerequisite: we assume that the first script tag using a URL ending with
+ * "/org_juxtapose_streamline_gwt.nocache.js" is the one that loaded us. Normally this happens
+ * because DevModeRedirectHook.js loaded this nocache.js script by prepending a
+ * script tag with an absolute URL to head. (However, it's also okay for an html
+ * file included in the GWT compiler's output to load the nocache.js file using
+ * a relative URL.)
+ */
+function computeScriptBase() {
+  // TODO(skybrian) This approach won't work for workers.
+
+  $wnd.__gwt_activeModules['org_juxtapose_streamline_gwt'].superdevmode = true;
+
+  var expectedSuffix = '/org_juxtapose_streamline_gwt.nocache.js';
+
+  var scriptTags = $doc.getElementsByTagName('script');
+  for (var i = 0;; i++) {
+    var tag = scriptTags[i];
+    if (!tag) {
+      break;
+    }
+    var candidate = tag.src;
+    var lastMatch = candidate.lastIndexOf(expectedSuffix);
+    if (lastMatch == candidate.length - expectedSuffix.length) {
+      // Assumes that either the URL is absolute, or it's relative
+      // and the html file is hosted by this code server.
+      return candidate.substring(0, lastMatch + 1);
     }
   }
 
-  org_juxtapose_streamline_gwt.__sendStats = sendStats;
-  org_juxtapose_streamline_gwt.__moduleName = 'org_juxtapose_streamline_gwt';
-  org_juxtapose_streamline_gwt.__errFn = null;
-  org_juxtapose_streamline_gwt.__moduleBase = 'DUMMY';
-  org_juxtapose_streamline_gwt.__softPermutationId = 0;
-  org_juxtapose_streamline_gwt.__computePropValue = null;
-  org_juxtapose_streamline_gwt.__getPropMap = null;
-  org_juxtapose_streamline_gwt.__gwtInstallCode = function(){
-  }
-  ;
-  org_juxtapose_streamline_gwt.__gwtStartLoadingFragment = function(){
-    return null;
-  }
-  ;
-  var __gwt_isKnownPropertyValue = function(){
-    return false;
-  }
-  ;
-  var __gwt_getMetaProperty = function(){
-    return null;
-  }
-  ;
-  __propertyErrorFunction = null;
-  var activeModules = $wnd_0.__gwt_activeModules = $wnd_0.__gwt_activeModules || {};
-  activeModules['org_juxtapose_streamline_gwt'] = {moduleName:'org_juxtapose_streamline_gwt'};
-  var frameDoc;
-  function getInstallLocationDoc(){
-    setupInstallLocation();
-    return frameDoc;
+  $wnd.alert('Unable to load Super Dev Mode version of ' + org_juxtapose_streamline_gwt + ".");
+}
+;
+
+  // document.head does not exist in IE8
+  var $head = $doc.head || $doc.getElementsByTagName('head')[0];
+
+  // Quick way to compute the user.agent, it works almost the same than
+  // UserAgentPropertyGenerator, but we cannot reuse it without depending
+  // on gwt-user.jar.
+  // This reduces compilation time since we only compile for one ua.
+  var ua = $wnd.navigator.userAgent.toLowerCase();
+  var docMode = $doc.documentMode || 0;
+  ua = /webkit/.test(ua)? 'safari' : /gecko/.test(ua) || docMode > 10 ? 'gecko1_8' :
+       /msie/.test(ua) && docMode > 7 ? 'ie' + docMode : '';
+  if (!ua && docMode) {
+    $wnd.alert(badBrowser +  'your browser is running "Compatibility View" for IE' + docMode + '.');
+    return;
   }
 
-  function getInstallLocation(){
-    setupInstallLocation();
-    return frameDoc.getElementsByTagName('body')[0];
+  // We use a different key for each module so that we can turn on dev mode
+  // independently for each.
+  var devModeHookKey = '__gwtDevModeHook:org_juxtapose_streamline_gwt';
+  var devModeSessionKey = '__gwtDevModeSession:org_juxtapose_streamline_gwt';
+
+  // Compute some codeserver urls so as the user does not need bookmarklets
+  var hostName = $wnd.location.hostname;
+  var serverUrl = 'http://' + hostName + ':9876';
+  var nocacheUrl = serverUrl + '/org_juxtapose_streamline_gwt/org_juxtapose_streamline_gwt.nocache.js';
+
+  // Save supder-devmode url in session
+  $wnd.sessionStorage[devModeHookKey] = nocacheUrl;
+  // Save user.agent in session
+  $wnd.sessionStorage[devModeSessionKey] = 'user.agent=' + ua + '&';
+
+  // Set bookmarklet params in window
+  $wnd.__gwt_bookmarklet_params = {'server_url': serverUrl};
+  // Save the original module base. (Returned by GWT.getModuleBaseURL.)
+  $wnd[devModeHookKey + ':moduleBase'] = computeScriptBase();
+
+  // Needed in the real nocache.js logic
+  $wnd.__gwt_activeModules['org_juxtapose_streamline_gwt'].canRedirect = true;
+  $wnd.__gwt_activeModules['org_juxtapose_streamline_gwt'].superdevmode = true;
+
+  // Insert the superdevmode nocache script in the first position of the head
+  var devModeScript = $doc.createElement('script');
+  devModeScript.src = nocacheUrl;
+
+  // Show a div in a corner for adding buttons to recompile the app.
+  // We reuse the same div in all modules of this page for stacking buttons
+  // and to make it available in jsni.
+  // The user can remove this: .gwt-DevModeRefresh {display:none}
+  $wnd.__gwt_compileElem = $wnd.__gwt_compileElem || $doc.createElement('div');
+  $wnd.__gwt_compileElem.className = 'gwt-DevModeRefresh';
+
+  // Create the compile button for this module
+  var compileButton = $doc.createElement('div');
+  $wnd.__gwt_compileElem.appendChild(compileButton);
+  // Number of modules present in the window
+  var moduleIdx = $wnd.__gwt_compileElem.childNodes.length;
+  // Each button has a class with its index number
+  var buttonClassName = 'gwt-DevModeCompile gwt-DevModeModule-' + moduleIdx;
+  compileButton.className = buttonClassName;
+  // The status message container
+  compileButton.innerHTML = '<div></div>';
+  // User knows who module to compile, hovering the button
+  compileButton.title = 'Compile module:\norg_juxtapose_streamline_gwt';
+
+  // Use CSS so the app could change button style
+  var compileStyle = $doc.createElement('style');
+  compileStyle.language = 'text/css';
+  $head.appendChild(compileStyle);
+  var css =
+    ".gwt-DevModeRefresh{" +
+      "position:fixed;" +
+      "right:3px;" +
+      "bottom:3px;" +
+      "font-family:arial;" +
+      "font-size:1.8em;" +
+      "cursor:pointer;" +
+      "color:#B62323;" +
+      "text-shadow:grey 1px 1px 3px;" +
+      "z-index:2147483646;" +
+      "white-space:nowrap;" +
+    "}" +
+    ".gwt-DevModeCompile{" +
+      "position:relative;" +
+      "float:left;" +
+      "width:1em;" +
+    "}" +
+    ".gwt-DevModeCompile div{" +
+      "position:absolute;" +
+      "right:1em;" +
+      "bottom:-3px;" +
+      "font-size:0.3em;" +
+      "opacity:1;" +
+      "direction:rtl;" +
+    "}" +
+    ".gwt-DevModeCompile:before{" +
+      "content:'\u21bb';" +
+    "}" +
+    ".gwt-DevModeCompiling:before{" +
+      // IE8 fails when setting content here
+      "opacity:0.1;" +
+    "}" +
+    ".gwt-DevModeCompile div:before{" +
+      "content:'GWT';" +
+    "}" +
+    ".gwt-DevModeError div:before{" +
+      "content:'FAILED';" +
+    "}";
+  // Only insert common css the first time
+  css = (moduleIdx == 1 ? css : '') +
+    ".gwt-DevModeModule-" + moduleIdx + ".gwt-DevModeCompiling div:before{" +
+      "content:'COMPILING org_juxtapose_streamline_gwt';" +
+      "font-size:24px;" +
+      "color:#d2d9ee;" +
+    "}";
+  if ('styleSheet' in compileStyle) {
+    // IE8
+    compileStyle.styleSheet.cssText = css;
+  } else {
+    compileStyle.appendChild($doc.createTextNode(css));
   }
 
-  function setupInstallLocation(){
-    if (frameDoc) {
+  // Set a different compile function name per module
+  var compileFunction = '__gwt_compile_' + moduleIdx;
+
+  compileButton.onclick = function() {
+    $wnd[compileFunction]();
+  };
+
+  // defer so as the body is ready
+  setTimeout(function(){
+    $head.insertBefore(devModeScript, $head.firstElementChild || $head.children[0]);
+    $doc.body.appendChild($wnd.__gwt_compileElem);
+  }, 1);
+
+  // Flag to avoid compiling in parallel.
+  var compiling = false;
+  // Compile function available in window so as it can be run from jsni.
+  // TODO(manolo): make Super Dev Mode script set this function in __gwt_activeModules
+  $wnd[compileFunction] = function() {
+    if (compiling) {
       return;
     }
-    var scriptFrame = $doc_0.createElement('iframe');
-    scriptFrame.src = 'javascript:""';
-    scriptFrame.id = 'org_juxtapose_streamline_gwt';
-    scriptFrame.style.cssText = 'position:absolute; width:0; height:0; border:none; left: -1000px;' + ' top: -1000px;';
-    scriptFrame.tabIndex = -1;
-    $doc_0.body.appendChild(scriptFrame);
-    frameDoc = scriptFrame.contentDocument;
-    if (!frameDoc) {
-      frameDoc = scriptFrame.contentWindow.document;
-    }
-    frameDoc.open();
-    var doctype = document.compatMode == 'CSS1Compat'?'<!doctype html>':'';
-    frameDoc.write(doctype + '<html><head><\/head><body><\/body><\/html>');
-    frameDoc.close();
+    compiling = true;
+
+    // Compute an unique name for each callback to avoid cache issues
+    // in IE, and to avoid the same function being called twice.
+    var callback = '__gwt_compile_callback_' + moduleIdx + '_' + new Date().getTime();
+    $wnd[callback] = function(r) {
+      if (r && r.status && r.status == 'ok') {
+        $wnd.location.reload();
+      }
+      compileButton.className = buttonClassName + ' gwt-DevModeError';
+      delete $wnd[callback];
+      compiling = false;
+    };
+
+    // Insert the jsonp script to compile the current module
+    // TODO(manolo): we don't have a way to detect when the server is unreachable,
+    // maybe a request returning status='idle'
+    var compileScript = $doc.createElement('script');
+    compileScript.src = serverUrl +
+      '/recompile/org_juxtapose_streamline_gwt?user.agent=' + ua + '&_callback=' + callback;
+    $head.appendChild(compileScript);
+    compileButton.className = buttonClassName  + ' gwt-DevModeCompiling';
   }
 
-  function installScript(filename){
-    function setupWaitForBodyLoad(callback){
-      function isBodyLoaded(){
-        if (typeof $doc_0.readyState == 'undefined') {
-          return typeof $doc_0.body != 'undefined' && $doc_0.body != null;
-        }
-        return /loaded|complete/.test($doc_0.readyState);
-      }
+  // Run this block after the app has been loaded.
+  setTimeout(function(){
+    // Maintaining the hook key in session can cause problems
+    // if we try to run classic code server so we remove it
+    // after a while.
+    $wnd.sessionStorage.removeItem(devModeHookKey);
 
-      var bodyDone = isBodyLoaded();
-      if (bodyDone) {
-        callback();
-        return;
-      }
-      function onBodyDone(){
-        if (!bodyDone) {
-          bodyDone = true;
-          callback();
-          if ($doc_0.removeEventListener) {
-            $doc_0.removeEventListener('DOMContentLoaded', onBodyDone, false);
-          }
-          if (onBodyDoneTimerId) {
-            clearInterval(onBodyDoneTimerId);
-          }
-        }
-      }
-
-      if ($doc_0.addEventListener) {
-        $doc_0.addEventListener('DOMContentLoaded', onBodyDone, false);
-      }
-      var onBodyDoneTimerId = setInterval(function(){
-        if (isBodyLoaded()) {
-          onBodyDone();
-        }
-      }
-      , 50);
-    }
-
-    function installCode(code){
-      function removeScript(body, element){
-      }
-
-      var docbody = getInstallLocation();
-      var doc = getInstallLocationDoc();
-      var script;
-      if (navigator.userAgent.indexOf('Chrome') > -1 && window.JSON) {
-        var scriptFrag = doc.createDocumentFragment();
-        scriptFrag.appendChild(doc.createTextNode('eval("'));
-        for (var i = 0; i < code.length; i++) {
-          var c = window.JSON.stringify(code[i]);
-          scriptFrag.appendChild(doc.createTextNode(c.substring(1, c.length - 1)));
-        }
-        scriptFrag.appendChild(doc.createTextNode('");'));
-        script = doc.createElement('script');
-        script.language = 'javascript';
-        script.appendChild(scriptFrag);
-        docbody.appendChild(script);
-        removeScript(docbody, script);
-      }
-       else {
-        for (var i = 0; i < code.length; i++) {
-          script = doc.createElement('script');
-          script.language = 'javascript';
-          script.text = code[i];
-          docbody.appendChild(script);
-          removeScript(docbody, script);
-        }
-      }
-    }
-
-    org_juxtapose_streamline_gwt.onScriptDownloaded = function(code){
-      setupWaitForBodyLoad(function(){
-        installCode(code);
-      }
-      );
-    }
-    ;
-    sendStats('moduleStartup', 'moduleRequested');
-    var script_0 = $doc_0.createElement('script');
-    script_0.src = filename;
-    $doc_0.getElementsByTagName('head')[0].appendChild(script_0);
-  }
-
-  org_juxtapose_streamline_gwt.__startLoadingFragment = function(fragmentFile){
-    return computeUrlForResource(fragmentFile);
-  }
-  ;
-  org_juxtapose_streamline_gwt.__installRunAsyncCode = function(code){
-    var docbody = getInstallLocation();
-    var script = getInstallLocationDoc().createElement('script');
-    script.language = 'javascript';
-    script.text = code;
-    docbody.appendChild(script);
-  }
-  ;
-  function processMetas(){
-    var metaProps = {};
-    var propertyErrorFunc;
-    var onLoadErrorFunc;
-    var metas = $doc_0.getElementsByTagName('meta');
-    for (var i = 0, n = metas.length; i < n; ++i) {
-      var meta = metas[i], name_1 = meta.getAttribute('name'), content_0;
-      if (name_1) {
-        name_1 = name_1.replace('org_juxtapose_streamline_gwt::', '');
-        if (name_1.indexOf('::') >= 0) {
-          continue;
-        }
-        if (name_1 == 'gwt:property') {
-          content_0 = meta.getAttribute('content');
-          if (content_0) {
-            var value_0, eq = content_0.indexOf('=');
-            if (eq >= 0) {
-              name_1 = content_0.substring(0, eq);
-              value_0 = content_0.substring(eq + 1);
-            }
-             else {
-              name_1 = content_0;
-              value_0 = '';
-            }
-            metaProps[name_1] = value_0;
-          }
-        }
-         else if (name_1 == 'gwt:onPropertyErrorFn') {
-          content_0 = meta.getAttribute('content');
-          if (content_0) {
-            try {
-              propertyErrorFunc = eval(content_0);
-            }
-             catch (e) {
-              alert('Bad handler "' + content_0 + '" for "gwt:onPropertyErrorFn"');
-            }
-          }
-        }
-         else if (name_1 == 'gwt:onLoadErrorFn') {
-          content_0 = meta.getAttribute('content');
-          if (content_0) {
-            try {
-              onLoadErrorFunc = eval(content_0);
-            }
-             catch (e) {
-              alert('Bad handler "' + content_0 + '" for "gwt:onLoadErrorFn"');
-            }
-          }
-        }
-      }
-    }
-    __gwt_getMetaProperty = function(name_0){
-      var value = metaProps[name_0];
-      return value == null?null:value;
-    }
-    ;
-    __propertyErrorFunction = propertyErrorFunc;
-    org_juxtapose_streamline_gwt.__errFn = onLoadErrorFunc;
-  }
-
-  function computeScriptBase(){
-    function getDirectoryOfFile(path){
-      var hashIndex = path.lastIndexOf('#');
-      if (hashIndex == -1) {
-        hashIndex = path.length;
-      }
-      var queryIndex = path.indexOf('?');
-      if (queryIndex == -1) {
-        queryIndex = path.length;
-      }
-      var slashIndex = path.lastIndexOf('/', Math.min(queryIndex, hashIndex));
-      return slashIndex >= 0?path.substring(0, slashIndex + 1):'';
-    }
-
-    function ensureAbsoluteUrl(url){
-      if (url.match(/^\w+:\/\//)) {
-      }
-       else {
-        var img = $doc_0.createElement('img');
-        img.src = url + 'clear.cache.gif';
-        url = getDirectoryOfFile(img.src);
-      }
-      return url;
-    }
-
-    function tryMetaTag(){
-      var metaVal = __gwt_getMetaProperty('baseUrl');
-      if (metaVal != null) {
-        return metaVal;
-      }
-      return '';
-    }
-
-    function tryNocacheJsTag(){
-      var scriptTags = $doc_0.getElementsByTagName('script');
-      for (var i = 0; i < scriptTags.length; ++i) {
-        if (scriptTags[i].src.indexOf('org_juxtapose_streamline_gwt.nocache.js') != -1) {
-          return getDirectoryOfFile(scriptTags[i].src);
-        }
-      }
-      return '';
-    }
-
-    function tryBaseTag(){
-      var baseElements = $doc_0.getElementsByTagName('base');
-      if (baseElements.length > 0) {
-        return baseElements[baseElements.length - 1].href;
-      }
-      return '';
-    }
-
-    function isLocationOk(){
-      var loc = $doc_0.location;
-      return loc.href == loc.protocol + '//' + loc.host + loc.pathname + loc.search + loc.hash;
-    }
-
-    var tempBase = tryMetaTag();
-    if (tempBase == '') {
-      tempBase = tryNocacheJsTag();
-    }
-    if (tempBase == '') {
-      tempBase = tryBaseTag();
-    }
-    if (tempBase == '' && isLocationOk()) {
-      tempBase = getDirectoryOfFile($doc_0.location.href);
-    }
-    tempBase = ensureAbsoluteUrl(tempBase);
-    return tempBase;
-  }
-
-  function computeUrlForResource(resource){
-    if (resource.match(/^\//)) {
-      return resource;
-    }
-    if (resource.match(/^[a-zA-Z]+:\/\//)) {
-      return resource;
-    }
-    return org_juxtapose_streamline_gwt.__moduleBase + resource;
-  }
-
-  function getCompiledCodeFilename(){
-    var answers = [];
-    var softPermutationId;
-    function unflattenKeylistIntoAnswers(propValArray, value){
-      var answer = answers;
-      for (var i = 0, n = propValArray.length - 1; i < n; ++i) {
-        answer = answer[propValArray[i]] || (answer[propValArray[i]] = []);
-      }
-      answer[propValArray[n]] = value;
-    }
-
-    var values = [];
-    var providers = [];
-    function computePropValue(propName){
-      var value = providers[propName](), allowedValuesMap = values[propName];
-      if (value in allowedValuesMap) {
-        return value;
-      }
-      var allowedValuesList = [];
-      for (var k in allowedValuesMap) {
-        allowedValuesList[allowedValuesMap[k]] = k;
-      }
-      if (__propertyErrorFunc) {
-        __propertyErrorFunc(propName, allowedValuesList, value);
-      }
-      throw null;
-    }
-
-    providers['user.agent'] = function(){
-      var ua = navigator.userAgent.toLowerCase();
-      var makeVersion = function(result){
-        return parseInt(result[1]) * 1000 + parseInt(result[2]);
-      }
-      ;
-      if (function(){
-        return ua.indexOf('opera') != -1;
-      }
-      ())
-        return 'opera';
-      if (function(){
-        return ua.indexOf('webkit') != -1;
-      }
-      ())
-        return 'safari';
-      if (function(){
-        return ua.indexOf('msie') != -1 && $doc_0.documentMode >= 9;
-      }
-      ())
-        return 'ie9';
-      if (function(){
-        return ua.indexOf('msie') != -1 && $doc_0.documentMode >= 8;
-      }
-      ())
-        return 'ie8';
-      if (function(){
-        var result = /msie ([0-9]+)\.([0-9]+)/.exec(ua);
-        if (result && result.length == 3)
-          return makeVersion(result) >= 6000;
-      }
-      ())
-        return 'ie6';
-      if (function(){
-        return ua.indexOf('gecko') != -1;
-      }
-      ())
-        return 'gecko1_8';
-      return 'unknown';
-    }
-    ;
-    values['user.agent'] = {gecko1_8:0, ie6:1, ie8:2, ie9:3, opera:4, safari:5};
-    __gwt_isKnownPropertyValue = function(propName, propValue){
-      return propValue in values[propName];
-    }
-    ;
-    org_juxtapose_streamline_gwt.__getPropMap = function(){
-      var result = {};
-      for (var key in values) {
-        if (values.hasOwnProperty(key)) {
-          result[key] = computePropValue(key);
-        }
-      }
-      return result;
-    }
-    ;
-    org_juxtapose_streamline_gwt.__computePropValue = computePropValue;
-    $wnd_0.__gwt_activeModules['org_juxtapose_streamline_gwt'].bindings = org_juxtapose_streamline_gwt.__getPropMap;
-    sendStats('bootstrap', 'selectingPermutation');
-    if (isHostedMode()) {
-      return computeUrlForResource('org_juxtapose_streamline_gwt.devmode.js');
-    }
-    var strongName;
-    try {
-      unflattenKeylistIntoAnswers(['ie8'], '1EBAA03EC01DF90433DF684D8A2BB319');
-      unflattenKeylistIntoAnswers(['safari'], '2BAC473868CF1D04FAA8B13AFAD3B631');
-      unflattenKeylistIntoAnswers(['ie9'], '44052BF8E8DB0A81833A071D3DD1F6B4');
-      unflattenKeylistIntoAnswers(['ie6'], '89B37E32590753F5327EC7E5CFC69A89');
-      unflattenKeylistIntoAnswers(['gecko1_8'], 'C421B52C14BB2BC8D31807C241F26131');
-      unflattenKeylistIntoAnswers(['opera'], 'E5F1914E000601A848185E469F2C52BD');
-      strongName = answers[computePropValue('user.agent')];
-      var idx = strongName.indexOf(':');
-      if (idx != -1) {
-        softPermutationId = parseInt(strongName.substring(idx + 1), 10);
-        strongName = strongName.substring(0, idx);
-      }
-    }
-     catch (e) {
-    }
-    org_juxtapose_streamline_gwt.__softPermutationId = softPermutationId;
-    return computeUrlForResource(strongName + '.cache.js');
-  }
-
-  function loadExternalStylesheets(){
-    if (!$wnd_0.__gwt_stylesLoaded) {
-      $wnd_0.__gwt_stylesLoaded = {};
-    }
-    function installOneStylesheet(stylesheetUrl){
-      if (!__gwt_stylesLoaded[stylesheetUrl]) {
-        var l = $doc_0.createElement('link');
-        l.setAttribute('rel', 'stylesheet');
-        l.setAttribute('href', computeUrlForResource(stylesheetUrl));
-        $doc_0.getElementsByTagName('head')[0].appendChild(l);
-        __gwt_stylesLoaded[stylesheetUrl] = true;
-      }
-    }
-
-    sendStats('loadExternalRefs', 'begin');
-    installOneStylesheet('gwt/clean/clean.css');
-    sendStats('loadExternalRefs', 'end');
-  }
-
-  processMetas();
-  org_juxtapose_streamline_gwt.__moduleBase = computeScriptBase();
-  activeModules['org_juxtapose_streamline_gwt'].moduleBase = org_juxtapose_streamline_gwt.__moduleBase;
-  var filename_0 = getCompiledCodeFilename();
-  if ($wnd_0) {
-    $wnd_0.__gwt_activeModules['org_juxtapose_streamline_gwt'].canRedirect = true;
-  }
-  var devModeKey = '__gwtDevModeHook:org_juxtapose_streamline_gwt';
-  var devModeUrl = $wnd_0.sessionStorage[devModeKey];
-  if (devModeUrl && !$wnd_0[devModeKey]) {
-    $wnd_0[devModeKey] = true;
-    var script_1 = $doc_0.createElement('script');
-    $wnd_0[devModeKey + ':moduleBase'] = computeScriptBase();
-    script_1.src = devModeUrl;
-    var head = $doc_0.getElementsByTagName('head')[0];
-    head.insertBefore(script_1, head.firstElementChild || head.children[0]);
-    return false;
-  }
-  loadExternalStylesheets();
-  sendStats('bootstrap', 'end');
-  installScript(filename_0);
-  return true;
-}
-
-org_juxtapose_streamline_gwt.succeeded = org_juxtapose_streamline_gwt();
+    // Re-attach compile button because sometimes app clears the dom
+    $doc.body.appendChild($wnd.__gwt_compileElem);
+  }, 2000);
+})(window, document);
