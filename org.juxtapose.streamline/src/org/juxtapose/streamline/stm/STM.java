@@ -5,6 +5,7 @@ import static org.juxtapose.streamline.tools.STMAssertionUtil.PRODUCER_SERVICES;
 import static org.juxtapose.streamline.tools.STMMessageConstants.PRODUCER_NOT_EXISTS;
 import static org.juxtapose.streamline.tools.STMMessageConstants.REQUEST_NOT_SUPPORTED;
 
+import java.lang.management.ManagementFactory;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.juxtapose.streamline.producer.ISTMEntryKey;
 import org.juxtapose.streamline.producer.ISTMEntryProducer;
@@ -42,7 +46,7 @@ import com.trifork.clj_ds.IPersistentMap;
  *Software Transactional Memory
  *
  */
-public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySubscriber, ISTMEntryProducer
+public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySubscriber, ISTMEntryProducer, STMMBean
 {
 	protected final ConcurrentHashMap<String, ISTMEntry> keyToData = new ConcurrentHashMap<String, ISTMEntry>();	
 	//Services that create producers to data id is service ID
@@ -79,6 +83,17 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 		{
 			clientConnector = new ClientConnector( "127.0.0.1", 8085, this );
 			clientConnector.run();
+		}
+		
+		try
+		{
+			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+			ObjectName name = new ObjectName("org.juxtpose.streamline.stm:type=STM");
+			mbs.registerMBean(this, name);
+		}
+		catch( Exception mox )
+		{
+			logError( mox.getMessage(), mox);
 		}
 	}
 	
@@ -573,6 +588,23 @@ public abstract class STM implements ISTM, ISTMEntryProducerService, ISTMEntrySu
 	public void request( int inTag, long inType, ISTMRequestor inRequestor, String inVariable, IPersistentMap<String, Object> inData  )
 	{
 		inRequestor.reply( inTag, DataConstants.RESPONSE_TYPE_ERROR,  REQUEST_NOT_SUPPORTED, null );
+	}
+	
+	public int getEntryCount()
+	{
+		return keyToData.size();
+	}
+	
+	public String getEntries()
+	{
+		StringBuilder sb = new StringBuilder();
+		for( String key : keyToData.keySet() )
+		{
+			sb.append(key);
+			sb.append(" ");
+		}
+		
+		return sb.toString();
 	}
 	
 	

@@ -14,6 +14,7 @@ import static org.juxtapose.streamline.tools.STMUtil.createEntryKey;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +133,12 @@ public class DSService extends DataProducerService implements IDSService
 		
 		try 
 		{
-			file = new File(FileLocator.resolve(fileURL).toURI());
+			URL url = FileLocator.resolve(fileURL);
+			String str = url.toExternalForm();
+			str = str.replaceAll(" ", "%20");
+			URI uri = new URI(str);
+//			URI uri = url.toURI();
+			file = new File(uri);
 
 			BufferedReader br = new BufferedReader( new FileReader( file ) );
 

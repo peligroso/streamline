@@ -1,12 +1,19 @@
 package org.juxtapose.streamline.stm.osgi;
 
+import java.lang.management.ManagementFactory;
+
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.juxtapose.streamline.producer.executor.BlockingQueueExecutor;
 import org.juxtapose.streamline.producer.executor.StickyHashDisruptorExecutor;
 import org.juxtapose.streamline.stm.BlockingSTM;
 import org.juxtapose.streamline.stm.ISTMEntryFactory;
+import org.juxtapose.streamline.stm.STMMBean;
 import org.osgi.service.component.ComponentContext;
 
-public class BSTMActivator extends BlockingSTM
+public class BSTMActivator extends BlockingSTM implements STMMBean
 {
 	public static String PROP_DATA_FACTORY_CLASS = "PROP_DATA_FACTORY_CLASS";
 	
@@ -39,6 +46,7 @@ public class BSTMActivator extends BlockingSTM
 		}
 		init( new BlockingQueueExecutor( 3, 3, 2, 2 ), true);
 //		init( new StickyHashDisruptorExecutor( 3, 3, 2, 2, true ));
+		
 	}
 
 }
